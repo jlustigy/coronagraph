@@ -137,17 +137,18 @@ def atlast_noise(Ahr, lamhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
 
       
     # Compute count rates
-    cp     =  cplan(q, X, T, lam, dlam, Fp, diam)     # planet count rate
-    cz     =  czodi(q, X, T, lam, dlam, diam, MzV)    # solar system zodi count rate
+    cp     =  cplan(q, X, T, lam, dlam, Fp, diam)                    # planet count rate
+    cz     =  czodi(q, X, T, lam, dlam, diam, MzV)                   # solar system zodi count rate
     cez    =  cezodi(q, X, T, lam, dlam, diam, r, \
-        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)         # exo-zodi count rate
+        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                    # exo-zodi count rate
     csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam) # speckle count rate
-    cD     =  cdark(De, X, lam, diam, theta, DNHpix)  # dark current count rate
-    cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax)  # readnoise count rate
-    cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis) # internal thermal count rate
-    cnoise =  cp + 2*(cz + cez + csp + cD + cR + cth)   # assumes background subtraction
+    cD     =  cdark(De, X, lam, diam, theta, DNHpix)                 # dark current count rate
+    cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax)          # readnoise count rate
+    cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)              # internal thermal count rate
+    cnoise =  cp + 2*(cz + cez + csp + cD + cR + cth)                # assumes background subtraction
     cb = (cz + cez + csp + cD + cR + cth)
     ctot = cp + cz + cez + csp + cD + cR + cth
+    
     '''
     Giada: where does the factor of 2 come from?
 
