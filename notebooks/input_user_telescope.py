@@ -1,4 +1,4 @@
-lammin = 0.3         # Minimum wavelength (um)
+#lammin = 0.3         # Minimum wavelength (um)
 #lammax = 2.0         # Maximum wavelength (um)
 #resolution = 70.     # Spectral resolution (lambda / delta-lambda)
 #throughput = 0.2     # Telescope throughput  

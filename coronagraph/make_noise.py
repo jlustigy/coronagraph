@@ -1,0 +1,152 @@
+# Import dependent modules
+import numpy as np
+from degrade_spec import degrade_spec
+from noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, cdark, cread, ctherm
+import pdb
+
+def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,\
+    SILENT = False):
+    
+    # Assign Class attributes to local variables
+    alpha = planet.alpha
+    Phi = planet.Phi
+    Rp = planet.Rp
+    Teff = star.Teff
+    Rs=star.Rs
+    r=planet.a
+    d=planet.distance
+    Nez=planet.Nez
+    lammin=telescope.lammin
+    lammax=telescope.lammax
+    Res=telescope.resolution
+    diam=telescope.diameter
+    Tput=telescope.throughput
+    C=telescope.contrast
+    IWA=telescope.IWA
+    OWA=telescope.OWA
+    Tsys=telescope.temperature
+    emis=telescope.emissivity
+
+    # Set key system parameters
+    De     = telescope.darkcurrent  # dark current (s**-1)
+    DNHpix = telescope.DNHpix       # horizontal pixel spread of IFS spectrum
+    Re     = telescope.readnoise    # read noise per pixel
+    Dtmax  = telescope.Dtmax        # maximum exposure time (hr)
+    X      = telescope.X            # size of photometric aperture (lambda/D)
+    q      = telescope.qe           # quantum efficiency
+  
+    # Set astrophysical parameters
+    MzV  = 23.0     # zodiacal light surface brightness (mag/arcsec**2)
+    MezV = 22.0     # exozodiacal light surface brightness (mag/arcsec**2)
+
+    # Compute angular size of lenslet
+    theta = lammin/1.e6/diam/2.*(180/np.pi*3600.) #assumes sampled at ~lambda/2D (arcsec)
+
+    # Set wavelength grid
+    if COMPUTE_LAM:
+        lam  = lammin #in [um]
+        Nlam = 1
+        while (lam < lammax):
+            lam  = lam + lam/Res
+            Nlam = Nlam +1 
+        lam    = np.zeros(Nlam)
+        lam[0] = lammin
+        for j in range(1,Nlam):
+            lam[j] = lam[j-1] + lam[j-1]/Res
+    Nlam = len(lam)
+    dlam = np.zeros(Nlam) #grid widths (um)
+    for j in range(1,Nlam-1):
+        dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
+    #widths at edges are same as neighbor
+    dlam[0] = dlam[1]
+    dlam[Nlam-1] = dlam[Nlam-2]
+
+    # Set throughput      
+    T    = np.zeros(Nlam)
+    T[:] = Tput
+    sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
+    iIWA = ( sep < IWA*lam/diam/1.e6 )
+    if (True if True in iIWA else False):
+          T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
+          if ~SILENT: 
+              print 'WARNING: portions of spectrum inside IWA'
+    if FIX_OWA:
+          if ( sep > OWA*lammin/diam/1.e6 ):
+            T[:] = 0. #planet outside OWA, where there is no throughput
+            if ~SILENT: 
+                print 'WARNING: planet outside fixed OWA'
+    else:
+          iOWA = ( sep > OWA*lam/diam/1.e6 )
+          if (True if True in iOWA else False):
+            T[iOWA] = 0. #points outside OWA have no throughput
+            if ~SILENT:
+                print 'WARNING: portions of spectrum outside OWA'
+
+
+    # Degrade albedo spectrum
+    if COMPUTE_LAM:
+        A = degrade_spec(Ahr,lamhr,lam,dlam=dlam)
+    else: 
+        A = Ahr
+
+    # Compute fluxes
+    Fs = Fstar(lam, Teff, Rs, r, AU=True) # stellar flux on planet
+    Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope
+    Cratio = FpFs(A, Phi, Rp, r)
+
+      
+    # Compute count rates
+    cp     =  cplan(q, X, T, lam, dlam, Fp, diam)                    # planet count rate
+    cz     =  czodi(q, X, T, lam, dlam, diam, MzV)                   # solar system zodi count rate
+    cez    =  cezodi(q, X, T, lam, dlam, diam, r, \
+        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                    # exo-zodi count rate
+    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam) # speckle count rate
+    cD     =  cdark(De, X, lam, diam, theta, DNHpix)                 # dark current count rate
+    cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax)          # readnoise count rate
+    cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)              # internal thermal count rate
+    cnoise =  cp + 2*(cz + cez + csp + cD + cR + cth)                # assumes background subtraction
+    cb = (cz + cez + csp + cD + cR + cth)
+    ctot = cp + cz + cez + csp + cD + cR + cth
+    
+    '''
+    Giada: where does the factor of 2 come from?
+
+    Ty (Via email): That's due to "background subtraction".  
+    If you were to take a single exposure, and had the ability 
+    to post-process the image to the Poisson noise limit, you 
+    wouldn't have the factor of two.  However, it's not yet 
+    clear that we'll be able to reach the Poisson, single observation limit.  
+    Instead, the current idea is that you take two observations (with 
+    exposure time Delta t/2), with the telescope rotated by a 
+    small amount between exposures, and then subtract the two images.  
+    So, for a fixed exoplanet count (cp), the roll technique would 
+    give you 2x as many noise counts due to background sources as 
+    would the single-observation technique. 
+    See also the top of page 4 of Brown (2005).
+    '''    
+
+    # Exposure time to SNR    
+    DtSNR = np.zeros(Nlam)
+    DtSNR[:] = 0.
+    i = (cp > 0.)
+    if (True if True in i else False): 
+        DtSNR[i] = (wantsnr**2.*cnoise[i])/cp[i]**2./3600. # (hr)
+    # added by Giada:
+    #if whichplanet == 'earth':
+    #    print 'Functionality not added to python version... yet.'
+        #pt5 = closest(lam, 0.55) ;same wavelength chris stark used
+        #time = dtsnr(pt5)*3600.*1
+        #save, time, filename='~/idl/noise_model/earthtime.sav'
+    #if whichplanet != 'earth': 
+    #    print 'Functionality not added to python version... yet.'    
+        #then restore, '~/idl/noise_model/earthtime.sav'
+         
+    # These pieces are fundamental, but should go outside this function
+    # as they depend on the particular exposure time, not just the telescope    
+    #noisyspec = np.random.poisson(cnoise * time)
+    #planet = noisyspec - 2.*(cz + cez + csp + cD + cR + cth)*  time
+    #sun = (time * cp)/A
+    #SNR = cp*time/np.sqrt((cp+2*cb)*time)
+    #noisy = np.random.randn(len(A))*A/SNR+A
+
+    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR

@@ -1,5 +1,5 @@
 #import numpy as np
-name = 'earth'    # Planet name from database
+#name = 'earth'    # Planet name from database
 #star = 'sun'      # Planet host star
 #distance = 10.0   # Distance to system (pc)
 #Nez = 1.0         # Number of exzodis (zodis)
