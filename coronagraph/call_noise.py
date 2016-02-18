@@ -3,7 +3,8 @@ from make_noise import make_noise
 from teleplanstar import Star
 import pdb
 
-def call_noise(telescope,planet,Ahr='',lamhr=''):
+def call_noise(telescope,planet,Ahr='',lamhr='',\
+              planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/'):
     '''
     (Ahr='', lamhr='', planet='earth', startype='sun', \
     lammin=0.3,lammax=2.0, Res=70., Tput=0.2, diam=8.0, Tsys=274.,\
@@ -23,7 +24,6 @@ def call_noise(telescope,planet,Ahr='',lamhr=''):
 
     whichplanet = planet.name
     startype = planet.star
-    planetdir = '../planets/'
 
     if Ahr == '' and lamhr == '':
         
