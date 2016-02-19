@@ -85,7 +85,7 @@ def generate_observation(wlhr, spechr, etime, tag='', startype='sun', \
     ----------
     lam : float64
         Wavelength grid of observed spectrum
-    spec : float65
+    spec : float64
         Albedo grid of observed spectrum
     sig : float64
         One sigma errorbars on albedo spectrum
