@@ -2,6 +2,8 @@
 A Python noise model for directly imaging exoplanets with a space based coronagraph 
 
 # Examples
+
+Use coronagraph noise model to generate an observation of high-resolution SMART output:
 ```python
 # Import coronagraph package
 import coronagraph as cg
@@ -21,3 +23,5 @@ integration_time = 20.0  # hours
 lam, spec, sig, wlhr, Ahr = cg.smart_observation(smart_rad_file, integration_time, telescope, planet, star)
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/example1.png" width="100%" height="100%" align="middle" />
+
+See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
