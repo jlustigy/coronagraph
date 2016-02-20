@@ -22,3 +22,4 @@ integration_time = 20.0  # hours
 # Observe!
 lam, spec, sig, wlhr, Ahr = cg.smart_observation(smart_rad_file, integration_time, telescope, planet, star)
 ```
+<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/example1.png" width="100%" height="100%" align="middle" />
