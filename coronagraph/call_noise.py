@@ -39,7 +39,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 1.0     # semi-major axis (AU) 
 
         if whichplanet == 'venus':
-            fn = pldir+'Venus_geo_albedo.txt'
+            fn = planetdir+'Venus_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -47,7 +47,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 0.72     #semi-major axis (AU)
 
         if whichplanet == 'archean':
-            fn = pldir+'ArcheanEarth_geo_albedo.txt'
+            fn = planetdir+'ArcheanEarth_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]     	
@@ -55,7 +55,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 1.0     #semi-major axis (AU)
 
         if whichplanet == 'earlymars':
-            fn = pldir+'EarlyMars_geo_albedo.txt'
+            fn = planetdir+'EarlyMars_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -63,7 +63,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 1.52     #semi-major axis (AU)
 
         if whichplanet == 'hazyarchean':
-            fn = pldir+'Hazy_ArcheanEarth_geo_albedo.txt'
+            fn = planetdir+'Hazy_ArcheanEarth_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]     	
@@ -71,7 +71,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 1.0     #semi-major axis (AU)
 
         if whichplanet == 'earlyvenus':
-            fn = pldir+'EarlyVenus_geo_albedo.txt'
+            fn = planetdir+'EarlyVenus_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -79,7 +79,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 0.72     #semi-major axis (AU)
 
         if whichplanet == 'jupiter':
-            fn = pldir+'Jupiter_geo_albedo.txt'
+            fn = planetdir+'Jupiter_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -87,7 +87,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 5.20     #semi-major axis (AU)
 
         if whichplanet == 'saturn':
-            fn = pldir+'Saturn_geo_albedo.txt'
+            fn = planetdir+'Saturn_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -95,7 +95,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 9.54     #semi-major axis (AU)
 
         if whichplanet == 'uranus':
-            fn = pldir+'Uranus_geo_albedo.txt'
+            fn = planetdir+'Uranus_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -104,7 +104,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
 
 
         if whichplanet == 'warmuranus':
-            fn = pldir+'Uranus_geo_albedo.txt'
+            fn = planetdir+'Uranus_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -112,7 +112,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 5.20     #semi-major axis (AU)
         
         if whichplanet == 'warmneptune':
-            fn = pldir+'Neptune_geo_albedo.txt'
+            fn = planetdir+'Neptune_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -120,7 +120,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
             planet.r     = 5.20     #semi-major axis (AU)
 
         if whichplanet == 'neptune':
-            fn = pldir+'Neptune_geo_albedo.txt'
+            fn = planetdir+'Neptune_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
@@ -129,7 +129,7 @@ def call_noise(telescope,planet,Ahr='',lamhr='',\
 
 
         if whichplanet == 'mars':
-            fn = pldir+'Mars_geo_albedo.txt'
+            fn = planetdir+'Mars_geo_albedo.txt'
             model = np.loadtxt(planetdir+fn) 
             lamhr = model[:,0] 
             Ahr   = model[:,1]
