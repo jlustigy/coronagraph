@@ -68,7 +68,7 @@ class Telescope(object):
         self.qe=q
     
     def __str__(self):
-        string = 'Coronograph: \n------------\n'+\
+        string = 'Coronagraph: \n------------\n'+\
             '- Minimum wavelength (um) : '+"%s" % (self.lammin)+'\n'+\
             '- Maximum wavelength (um)  : '+"%s" % (self.lammax)+'\n'+\
             '- Spectral resolution (lambda / delta-lambda)  : '+"%s" % (self.resolution)+' \n'+\
@@ -184,6 +184,6 @@ class Star(object):
     
     def __str__(self):
         string = 'Star: \n-----\n'+\
-            '- Effective Temperature  : '+"%s" % (self.Teff)+'\n'+\
-            '- Radius : '+"%s" % (self.Rs)
+            '- Effective Temperature (K) : '+"%s" % (self.Teff)+'\n'+\
+            '- Radius (Solar Radii) : '+"%s" % (self.Rs)
         return string

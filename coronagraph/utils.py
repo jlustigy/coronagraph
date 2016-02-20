@@ -3,7 +3,7 @@ from types import ModuleType, FunctionType, StringType
 
 class Input(object):
     '''Reads default and user input files and creates a class where the input file 
-    variables are attributes.
+    variables are attributes. See inputs/ to customize. 
     
     '''
     def __init__(self, input_type = ''):
@@ -20,8 +20,8 @@ class Input(object):
         except KeyError:
             pass
     
-        default_input_file = 'input_default_'+input_type+'.py'
-        user_input_file = 'input_user_'+input_type+'.py'
+        default_input_file = 'inputs/input_default_'+input_type+'.py'
+        user_input_file = 'inputs/input_user_'+input_type+'.py'
     
         self._input = imp.load_source("input", default_input_file)            # Load default inputs into self._input
                                  
