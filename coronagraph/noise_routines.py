@@ -72,7 +72,7 @@ def cplan(q, X, T, lam, dlam, Fplan, D):
     '''
     hc  = 1.986446e-25 # h*c (kg*m**3/s**2)
     fpa = 1. - special.jv(0,np.pi*X)**2. - special.jv(1,np.pi*X)**2. # fraction of power in Airy disk to X*lambda/D
-    return np.pi*q*fpa*T*(lam*1.e-6/hc)*dlam*Fplan*(D/2)**2.
+    return np.pi*q*fpa*T*(lam*1.e-6/hc)*dlam*Fplan*(D/2.)**2.
 
 def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False):
     '''
@@ -170,6 +170,7 @@ def cdark(De, X, lam, D, theta, DNhpix, IMAGE=False):
     '''
     Omega = np.pi*(X*lam*1.e-6/D*180.*3600./np.pi)**2. # aperture size (arcsec**2)
     Npix  = Omega/np.pi/theta**2.
+    # If not in imaging mode
     if ~IMAGE: 
         Npix = 2*DNhpix*Npix
     return De*Npix
@@ -189,6 +190,7 @@ def cread(Re, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False):
     '''
     Omega = np.pi*(X*lam*1.e-6/D*180.*3600./np.pi)**2. # aperture size (arcsec**2)
     Npix  = Omega/np.pi/theta**2.
+    # If not in imaging mode
     if ~IMAGE: 
         Npix = 2*DNhpix*Npix  
     return Npix/(Dtmax*3600.)*Re

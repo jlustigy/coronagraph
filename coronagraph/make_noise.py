@@ -26,6 +26,12 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
     OWA=telescope.OWA
     Tsys=telescope.temperature
     emis=telescope.emissivity
+    
+    # Set the Imaging Mode?
+    if telescope.mode == 'Imager':
+        IMAGE = True
+    else:
+        IMAGE = False
 
     # Set key system parameters
     De     = telescope.darkcurrent  # dark current (s**-1)
@@ -42,7 +48,7 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
     # Compute angular size of lenslet
     theta = lammin/1.e6/diam/2.*(180/np.pi*3600.) #assumes sampled at ~lambda/2D (arcsec)
 
-    # Set wavelength grid
+    # Set wavelength grid 
     if COMPUTE_LAM:
         lam  = lammin #in [um]
         Nlam = 1
@@ -95,16 +101,16 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
     Cratio = FpFs(A, Phi, Rp, r)
 
       
-    # Compute count rates
-    cp     =  cplan(q, X, T, lam, dlam, Fp, diam)                    # planet count rate
-    cz     =  czodi(q, X, T, lam, dlam, diam, MzV)                   # solar system zodi count rate
+    ##### Compute count rates #####
+    cp     =  cplan(q, X, T, lam, dlam, Fp, diam)                            # planet count rate
+    cz     =  czodi(q, X, T, lam, dlam, diam, MzV)                           # solar system zodi count rate
     cez    =  cezodi(q, X, T, lam, dlam, diam, r, \
-        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                    # exo-zodi count rate
-    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam) # speckle count rate
-    cD     =  cdark(De, X, lam, diam, theta, DNHpix)                 # dark current count rate
-    cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax)          # readnoise count rate
-    cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)              # internal thermal count rate
-    cnoise =  cp + 2*(cz + cez + csp + cD + cR + cth)                # assumes background subtraction
+        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                            # exo-zodi count rate
+    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam)         # speckle count rate
+    cD     =  cdark(De, X, lam, diam, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
+    cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
+    cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)                      # internal thermal count rate
+    cnoise =  cp + 2*(cz + cez + csp + cD + cR + cth)                        # assumes background subtraction
     cb = (cz + cez + csp + cD + cR + cth)
     ctot = cp + cz + cez + csp + cD + cR + cth
     

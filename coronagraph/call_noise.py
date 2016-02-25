@@ -6,13 +6,6 @@ import pdb
 def call_noise(telescope,planet,Ahr='',lamhr='',\
               planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/'):
     '''
-    (Ahr='', lamhr='', planet='earth', startype='sun', \
-    lammin=0.3,lammax=2.0, Res=70., Tput=0.2, diam=8.0, Tsys=274.,\
-    IWA=0.5, OWA=30000., d=10., Nez=1., emis=0.9, wantsnr=10.,\
-    C=1.e-10, alpha=90., Phi=1./np.pi, planetdir='planets/', \
-    Rp=1.0, r=1.0):
-    '''
-    '''
     planet choices: 
         earth, venus, archean,
         earlymars, hazyarchean, earlyvenus,

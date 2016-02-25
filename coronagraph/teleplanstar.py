@@ -1,7 +1,6 @@
 import numpy as np
 
-'''
-Contains the Telescope, Planet, and Star classes.
+'''The Telescope, Planet, and Star classes.
 '''
 
 class Telescope(object):
@@ -9,7 +8,8 @@ class Telescope(object):
     '''
     Parameters
     ----------
-    
+    mode : str
+        Telescope observing modes: 'IFS', 'Imager' 
     lammin : float
         Minimum wavelength (um)
     lammax : float 
@@ -45,10 +45,10 @@ class Telescope(object):
     '''
     
     # Define a constructor
-    def __init__(self, lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
+    def __init__(self, mode='IFS', lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
                  D=8.0,Tsys=274.,IWA=0.5, OWA=30000.,emis=0.9,\
                  C=1e-10,De=1e-4,DNHpix=3.,Re=0.1,Dtmax=1.0,X=0.7,q=0.9):
-        
+        self.mode=mode
         self.lammin=lammin
         self.lammax=lammax
         self.resolution=R
@@ -69,6 +69,7 @@ class Telescope(object):
     
     def __str__(self):
         string = 'Coronagraph: \n------------\n'+\
+            '- Telescope observing mode : '+"%s" % (self.mode)+'\n'+\
             '- Minimum wavelength (um) : '+"%s" % (self.lammin)+'\n'+\
             '- Maximum wavelength (um)  : '+"%s" % (self.lammax)+'\n'+\
             '- Spectral resolution (lambda / delta-lambda)  : '+"%s" % (self.resolution)+' \n'+\
