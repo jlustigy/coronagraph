@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
 
 class Filter(object):
     """Filter for telescope imaging mode.
@@ -54,6 +56,35 @@ class Wheel(object):
             Name to give new filter attribute
         """
         setattr(self, name, filt)
+     
+    def plot(self, ax=None):
+        
+        if ax == None:
+            fig = plt.figure(figsize=(14,10))
+            gs = gridspec.GridSpec(1,1) 
+            ax1 = plt.subplot(gs[0])
+            ax1.set_ylabel(r"Filter Response")
+            ax1.set_xlabel(r"Wavelength [$\mu$m]")
+            #ax1.set_ylim([0.0,1.0])
+        else:
+            ax1 = ax.twinx()
+            #ax1.set_ylim([0.0,10.0])
+            ax1.axes.get_yaxis().set_visible(False)          
+
+        Nfilt = len(self.__dict__)   
+        #colors,scalarMap,cNorm = scalarmap(np.arange(Nfilt),cmap='Dark2')     
+        i = 0
+        fmax = 1.0
+        for attr, value in self.__dict__.iteritems():
+            if np.max(value.response) > fmax: fmax = np.max(value.response)
+            wl, response = value.wl, value.response
+            #ax1.plot(wl,response, lw=3.0, label=value.name, c=colors[i])
+            ax1.fill_between(wl,response, color='purple', alpha=0.3)
+            i += 1
+        ax1.set_ylim([0.0,fmax*10.])
+        
+        if ax==None:
+            return ax1
         
     def __str__(self):
         string = []
@@ -129,3 +160,34 @@ class landsat(Wheel):
         self.SWIR2=Filter(name=LANDSAT_names[6], bandcenter=bandcenters[6], FWHM=FWHM[6], wl=wl[6], response=response[6], notes='LANDSAT')
         self.Pan=Filter(name=LANDSAT_names[7], bandcenter=bandcenters[7], FWHM=FWHM[7], wl=wl[7], response=response[7], notes='LANDSAT')
         self.Cirrus=Filter(name=LANDSAT_names[8], bandcenter=bandcenters[8], FWHM=FWHM[8], wl=wl[8], response=response[8], notes='LANDSAT')
+        
+        
+def read_jc2():
+    path = 'coronagraph/filters/UBVRI2/'
+    U = np.genfromtxt(path+'Bessel_U-1.txt', skip_header=1)
+    U[:,0] = U[:,0]/1e3
+    B = np.genfromtxt(path+'Bessel_B-1.txt', skip_header=1)
+    B[:,0] = B[:,0]/1e3
+    V = np.genfromtxt(path+'Bessel_V-1.txt', skip_header=1)
+    V[:,0] = V[:,0]/1e3
+    R = np.genfromtxt(path+'Bessel_R-1.txt', skip_header=1)
+    R[:,0] = R[:,0]/1e3
+    I = np.genfromtxt(path+'Bessel_I-1.txt', skip_header=1)
+    I[:,0] = I[:,0]/1e3
+    filters = np.array([U[::-1,:],B[::-1,:],V[::-1,:],R[::-1,:],I[::-1,:]])
+    filter_names = ['U','B','V','R','I']
+    bandcenters = np.array([365.6, 435.3, 547.7, 634.9, 879.7]) / 1e3
+    FWHM = np.array([34.0, 78.1, 99.1, 106.56, 289.2]) / 1e3
+    return filters, filter_names, bandcenters, FWHM
+
+class johnson_cousins2(Wheel):
+    
+    def __init__(self):
+        
+        filters, filter_names, bandcenters, FWHM = read_jc2()
+        
+        self.U=Filter(name='U', bandcenter=bandcenters[0], FWHM=FWHM[0], wl=filters[0][:,0], response=filters[0][:,1], notes='Johnson-Cousins')
+        self.B=Filter(name='B', bandcenter=bandcenters[1], FWHM=FWHM[1], wl=filters[1][:,0], response=filters[1][:,1], notes='Johnson-Cousins')
+        self.V=Filter(name='V', bandcenter=bandcenters[2], FWHM=FWHM[2], wl=filters[2][:,0], response=filters[2][:,1], notes='Johnson-Cousins')
+        self.R=Filter(name='R', bandcenter=bandcenters[3], FWHM=FWHM[3], wl=filters[3][:,0], response=filters[3][:,1], notes='Johnson-Cousins')
+        self.I=Filter(name='I', bandcenter=bandcenters[4], FWHM=FWHM[4], wl=filters[4][:,0], response=filters[4][:,1], notes='Johnson-Cousins')

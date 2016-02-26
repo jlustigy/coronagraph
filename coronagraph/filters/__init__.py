@@ -1,1 +1,1 @@
-from .imager import johnson_cousins, landsat, Filter, Wheel
+from .imager import johnson_cousins, johnson_cousins2, landsat, Filter, Wheel
