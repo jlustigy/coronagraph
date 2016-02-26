@@ -1,4 +1,4 @@
-#mode = 'IFS'         # Telescope observing modes: 'IFS', 'Imager'
+#mode = 'IFS'         # Telescope observing modes: 'IFS', 'Imaging'
 #lammin = 0.3         # Minimum wavelength (um)
 #lammax = 2.0         # Maximum wavelength (um)
 #resolution = 70.     # Spectral resolution (lambda / delta-lambda)

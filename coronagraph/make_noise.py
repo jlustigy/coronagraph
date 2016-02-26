@@ -1,6 +1,7 @@
 # Import dependent modules
 import numpy as np
 from degrade_spec import degrade_spec
+from .convolve_spec import convolve_spec
 from noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, cdark, cread, ctherm
 import pdb
 
@@ -26,10 +27,19 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
     OWA=telescope.OWA
     Tsys=telescope.temperature
     emis=telescope.emissivity
-    
+
     # Set the Imaging Mode?
-    if telescope.mode == 'Imager':
+    if telescope.mode == 'Imaging':
+        filters = telescope.filter_wheel
         IMAGE = True
+        COMPUTE_LAM = False
+        # sorted filter dict by bandcenters
+        tdict = sorted(filters.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
+        # Construct array of wavelengths
+        lam = np.array([x[1].bandcenter for x in tdict])
+        # Construct array of wavelength bin widths (FWHM)
+        dlam = np.array([x[1].FWHM for x in tdict])
+        Nlam = len(lam)
     else:
         IMAGE = False
 
@@ -59,13 +69,20 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
         lam[0] = lammin
         for j in range(1,Nlam):
             lam[j] = lam[j-1] + lam[j-1]/Res
-    Nlam = len(lam)
-    dlam = np.zeros(Nlam) #grid widths (um)
-    for j in range(1,Nlam-1):
-        dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
-    #widths at edges are same as neighbor
-    dlam[0] = dlam[1]
-    dlam[Nlam-1] = dlam[Nlam-2]
+        Nlam = len(lam)
+        dlam = np.zeros(Nlam) #grid widths (um)
+        # Set wavelength widths
+        for j in range(1,Nlam-1):
+            dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
+        #widths at edges are same as neighbor
+        dlam[0] = dlam[1]
+        dlam[Nlam-1] = dlam[Nlam-2]
+    elif IMAGE:
+        pass
+    else:
+        # Throw error 
+        print "Error in make_noise: Not computing wavelength grid or providing filters!"
+        return None
 
     # Set throughput      
     T    = np.zeros(Nlam)
@@ -73,17 +90,17 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
     iIWA = ( sep < IWA*lam/diam/1.e6 )
     if (True if True in iIWA else False):
-          T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
-          if ~SILENT: 
-              print 'WARNING: portions of spectrum inside IWA'
+        T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
+        if ~SILENT: 
+            print 'WARNING: portions of spectrum inside IWA'
     if FIX_OWA:
-          if ( sep > OWA*lammin/diam/1.e6 ):
+        if ( sep > OWA*lammin/diam/1.e6 ):
             T[:] = 0. #planet outside OWA, where there is no throughput
             if ~SILENT: 
                 print 'WARNING: planet outside fixed OWA'
     else:
-          iOWA = ( sep > OWA*lam/diam/1.e6 )
-          if (True if True in iOWA else False):
+        iOWA = ( sep > OWA*lam/diam/1.e6 )
+        if (True if True in iOWA else False):
             T[iOWA] = 0. #points outside OWA have no throughput
             if ~SILENT:
                 print 'WARNING: portions of spectrum outside OWA'
@@ -92,7 +109,10 @@ def make_noise(Ahr, lamhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = Fals
     # Degrade albedo spectrum
     if COMPUTE_LAM:
         A = degrade_spec(Ahr,lamhr,lam,dlam=dlam)
-    else: 
+    elif IMAGE:
+        # Convolve with filter response
+        A = convolve_spec(Ahr, lamhr, filters)
+    else:
         A = Ahr
 
     # Compute fluxes

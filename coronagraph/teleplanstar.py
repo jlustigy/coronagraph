@@ -9,7 +9,7 @@ class Telescope(object):
     Parameters
     ----------
     mode : str
-        Telescope observing modes: 'IFS', 'Imager' 
+        Telescope observing modes: 'IFS', 'Imaging' 
     lammin : float
         Minimum wavelength (um)
     lammax : float 
@@ -42,13 +42,16 @@ class Telescope(object):
         Size of photometric aperture (lambda/D)
     q : float
         Quantum efficiency
+    filter_wheel : Wheel (optional)
+        Wheel object containing imaging filters
     '''
     
     # Define a constructor
     def __init__(self, mode='IFS', lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
                  D=8.0,Tsys=274.,IWA=0.5, OWA=30000.,emis=0.9,\
-                 C=1e-10,De=1e-4,DNHpix=3.,Re=0.1,Dtmax=1.0,X=0.7,q=0.9):
-        self.mode=mode
+                 C=1e-10,De=1e-4,DNHpix=3.,Re=0.1,Dtmax=1.0,X=0.7,q=0.9,\
+                 filter_wheel=None):
+        self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
         self.resolution=R
@@ -66,6 +69,36 @@ class Telescope(object):
         self.Dtmax=Dtmax
         self.X=X
         self.qe=q
+        
+        self._filter_wheel=filter_wheel
+        
+        if self._mode == 'Imaging':
+            from filters.imager import johnson_cousins
+            self._filter_wheel = johnson_cousins()
+    
+    @property
+    def mode(self):
+        return self._mode 
+  
+    @mode.setter
+    def mode(self, value):
+        if value == 'Imaging':
+            from filters.imager import johnson_cousins
+            self._filter_wheel = johnson_cousins()
+        else:
+            self._filter_wheel = None
+    
+    @property
+    def filter_wheel(self):
+        return self._filter_wheel
+  
+    @filter_wheel.setter
+    def filter_wheel(self, value):
+        if (value.__class__.__name__ == 'Wheel') or (value.__class__.__base__.__name__ == 'Wheel'):
+            self._filter_wheel = value
+        else:
+            print "Error in Telescope: Specified filter wheel is not of type 'Wheel'"
+            self._filter_wheel = None
     
     def __str__(self):
         string = 'Coronagraph: \n------------\n'+\

@@ -81,15 +81,21 @@ def generate_observation(wlhr, Ahr, itime, telescope, planet, star,
         
         # Plot observed spectrum; save pdf if saveplot=True 
         lammin,lammax = np.min(lam), np.max(lam)
+        Amin, Amax = np.min(A)-np.max(sig)*1.1, np.max(A)+np.max(sig)*1.1
         plot_tag = 'observed_'+tag+'.pdf'
         fig = plt.figure(figsize=(15,10))
         gs = gridspec.GridSpec(1, 1) 
         ax0 = plt.subplot(gs[0])
-        ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        ax0.plot(wlhr, Ahr, alpha=0.5, c='k')
+        if telescope.mode != 'Imaging':
+            ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        else:
+            ax0.plot(lam, A, 'o', alpha=0.7, color='orange', ms = 10.0)
         ax0.errorbar(lam, spec, yerr=sig, fmt='o', color='k')
         ax0.set_ylabel('Reflectivity')
         ax0.set_xlabel('Wavelength [$\mu$m]')
         ax0.set_xlim([lammin-0.1,lammax+0.1])
+        ax0.set_ylim([Amin, Amax])
         #ax0.set_ylim([-0.01,1.01])
         ax0.text(0.99, 0.99, plot_text,\
              verticalalignment='top', horizontalalignment='right',\
@@ -192,17 +198,22 @@ def smart_observation(radfile, itime, telescope, planet, star,
         
         # Plot observed spectrum; save pdf if saveplot=True 
         lammin,lammax = np.min(lam), np.max(lam)
+        Amin, Amax = np.min(A)-np.max(sig)*1.1, np.max(A)+np.max(sig)*1.1
         #ymin,ymax = np.min(A), np.max(A)
         plot_tag = 'observed_smart_'+tag+'.pdf'
         fig = plt.figure(figsize=(15,10))
         gs = gridspec.GridSpec(1, 1) 
         ax0 = plt.subplot(gs[0])
-        #ax0.plot(wlhr, Ahr, alpha=0.2, color='k')
-        ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        ax0.plot(wlhr, Ahr, alpha=0.5, c='k')
+        if telescope.mode != 'Imaging':
+            ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        else:
+            ax0.plot(lam, A, 'o', alpha=0.7, color='orange', ms = 10.0)
         ax0.errorbar(lam, spec, yerr=sig, fmt='o', color='k')
         ax0.set_ylabel('Reflectivity')
         ax0.set_xlabel('Wavelength [$\mu$m]')
         ax0.set_xlim([lammin-0.1,lammax+0.1])
+        ax0.set_ylim([Amin, Amax])
         #ax0.set_ylim([-0.01,ymax+0.1])
         #ax0.set_ylim([-0.01,1.01])
         ax0.text(0.99, 0.99, plot_text,\

@@ -6,3 +6,4 @@ from .observe import generate_observation, smart_observation
 from .utils import Input
 from .degrade_spec import degrade_spec
 import filters
+from .convolve_spec import convolve_spec

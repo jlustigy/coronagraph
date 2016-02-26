@@ -57,7 +57,8 @@ class Wheel(object):
         
     def __str__(self):
         string = []
-        for attr, value in self.__dict__.iteritems():
+        tdict = sorted(self.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
+        for attr, value in tdict:
             string.append(attr)
         print string 
         return ''#str(string)    
