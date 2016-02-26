@@ -82,6 +82,7 @@ class Telescope(object):
   
     @mode.setter
     def mode(self, value):
+        self._mode = value
         if value == 'Imaging':
             from filters.imager import johnson_cousins
             self._filter_wheel = johnson_cousins()
