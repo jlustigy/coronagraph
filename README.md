@@ -3,7 +3,7 @@ A Python noise model for directly imaging exoplanets with a space based coronagr
 
 # Examples
 
-### Observe with the Integral Field Spectrograph (IFS)
+### Simulate observation with the Integral Field Spectrograph (IFS)
 
 Use coronagraph noise model to generate an observation of high-resolution SMART output:
 ```python
@@ -26,7 +26,7 @@ lam, spec, sig, wlhr, Ahr = cg.smart_observation(smart_rad_file, integration_tim
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/example1.png" width="100%" height="100%" align="middle" />
 
-### Observe with the Imaging camera
+### Simulate observation with the Imaging camera
 
 ```python
 # Set telescope to 'Imaging' mode
