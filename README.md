@@ -14,7 +14,6 @@ git clone --recursive git@github.com:jlustigy/coronagraph.git
 
 #### Simulate observation with the Integral Field Spectrograph (IFS)
 
-Use coronagraph noise model to generate an observation of high-resolution SMART output:
 ```python
 # Import coronagraph package
 import coronagraph as cg
