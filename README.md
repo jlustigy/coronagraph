@@ -15,16 +15,18 @@ telescope = cg.Telescope()
 planet = cg.Planet()
 star = cg.Star()
 
-# Set location of SMART .rad file to be "observed"
-smart_rad_file = 'planets/F2V_5.e-1fCO2_1.e6H2Volc_1.e10BIF.out_toa.rad'
+# Read-in wavelength, reflectance model data
+model = np.loadtxt('planets/earth_quadrature_radiance_refl.dat', skiprows=8)
+lam = model[:,0]            # wavelength (microns)
+refl = np.pi * model[:,3]   # geometric albedo
 
-# Specify telescope integration time
-integration_time = 20.0  # hours
+# Specify telescope integration time in hours
+integration_time = 10.0
 
 # Observe!
-lam, spec, sig, wlhr, Ahr = cg.smart_observation(smart_rad_file, integration_time, telescope, planet, star)
+lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope, planet, star)
 ```
-<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/example1.png" width="100%" height="100%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
 
 ### Simulate observation with the Imaging camera
 
@@ -34,12 +36,15 @@ telescope.mode = 'Imaging'
 
 # Load Filter Wheel for obsevation (if not the default Johnson-Counsins filters)
 landsat = cg.filters.landsat()
+jc = cg.filters.johnson_cousins2()
 
 # Add Filter Wheel to Telescope
-telescope.filter_wheel = landsat
+telescope.filter_wheel = jc
 
 # Observe!
-lam, spec, sig, wlhr, Ahr = cg.smart_observation(smart_rad_file, integration_time, telescope, planet, star)
+lam, spec, sig = cg.smart_observation(lam, refl, integration_time, telescope, planet, star)
 ```
+<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
+
 
 See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
