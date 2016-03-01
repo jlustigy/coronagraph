@@ -15,7 +15,7 @@ telescope = cg.Telescope()
 planet = cg.Planet()
 star = cg.Star()
 
-# Read-in wavelength, reflectance model data
+# Read-in wavelength, reflectance model
 model = np.loadtxt('planets/earth_quadrature_radiance_refl.dat', skiprows=8)
 lam = model[:,0]            # wavelength (microns)
 refl = np.pi * model[:,3]   # geometric albedo
@@ -42,7 +42,7 @@ jc = cg.filters.johnson_cousins2()
 telescope.filter_wheel = jc
 
 # Observe!
-lam, spec, sig = cg.smart_observation(lam, refl, integration_time, telescope, planet, star)
+lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope, planet, star)
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
 
