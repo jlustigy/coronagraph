@@ -34,7 +34,7 @@ lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope,
 # Set telescope to 'Imaging' mode
 telescope.mode = 'Imaging'
 
-# Load Filter Wheel for obsevation (if not the default Johnson-Counsins filters)
+# Load Filter Wheel for obsevation (the default filters are the Johnson-Counsins UBVRI filters)
 landsat = cg.filters.landsat()
 jc = cg.filters.johnson_cousins2()
 
