@@ -12,7 +12,7 @@ git clone --recursive git@github.com:jlustigy/coronagraph.git
 
 ## Examples
 
-### Simulate observation with the Integral Field Spectrograph (IFS)
+#### Simulate observation with the Integral Field Spectrograph (IFS)
 
 Use coronagraph noise model to generate an observation of high-resolution SMART output:
 ```python
@@ -37,7 +37,7 @@ lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope,
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
 
-### Simulate observation with the Imaging camera
+#### Simulate observation with the Imaging camera
 
 ```python
 # Set telescope to 'Imaging' mode
