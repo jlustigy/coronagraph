@@ -1,7 +1,16 @@
 # coronagraph
+
 A Python noise model for directly imaging exoplanets with a space based coronagraph. See [Robinson et al (2015)](http://arxiv.org/abs/1507.00777) for a thorough description of the model. 
 
-# Examples
+## Install
+
+* Clone this github repository and the dependent [readsmart](https://github.com/jlustigy/readsmart) module within:
+```shell
+git clone --recursive git@github.com:jlustigy/coronagraph.git
+```
+* Add to python path
+* Test 
+## Examples
 
 ### Simulate observation with the Integral Field Spectrograph (IFS)
 
