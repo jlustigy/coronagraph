@@ -4,11 +4,15 @@ A Python noise model for directly imaging exoplanets with a space based coronagr
 
 ## Install
 
-* Clone this github repository, and the dependent [readsmart](https://github.com/jlustigy/readsmart) module within:
+* Clone this github repository, and the dependent [`readsmart`](https://github.com/jlustigy/readsmart) module within:
 ```shell
 git clone --recursive git@github.com:jlustigy/coronagraph.git
 ```
-* (optional) Add to python path
+* (optional) Add to python path to use `coronagraph` in any dirctory
+```shell
+# For .cshrc (I know, terrible...)
+setenv PYTHONPATH ${PYTHONPATH}:location/of/coronagraph/
+```
 
 ## Examples
 
