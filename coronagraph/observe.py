@@ -10,7 +10,7 @@ import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
-def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
+def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = 'planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
     """Uses coronagraph model to observe planets located in planetdir
 
     Parameters
@@ -53,6 +53,13 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     star choices (for now):
     sun, f2v
     '''
+
+    import os
+    try:
+        l = os.listdir(planetdir)
+    except OSError:
+        print "Error in planetzoo_observation(): planetdir does not exist in current location. \nSet planetdir='location/of/planets/'"
+        return None
 
     whichplanet = name
     startype = planet.star
