@@ -10,7 +10,40 @@ import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
-def planetzoo(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
+def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
+    """Uses coronagraph model to observe planets located in planetdir
+
+    Parameters
+    ----------
+    name : str (optional)
+        Name of the planet
+    telescope : Telescope (optional)
+        Telescope object to be used for observation
+    planet : Planet (optional)
+        Planet object to be used for observation
+    itime : float (optional)
+        Integration time (hours)
+    planetdir : str 
+        Location of planets/ directory
+    plot : bool (optional)
+        Make plot flag
+    savedata : bool (optional)
+        Save output as data file
+    saveplot : bool (optional)
+        Save plot as PDF
+    ref_lam : float (optional)
+        Wavelength at which SNR is computed
+
+    Returns
+    -------
+    lam : array
+        Observed wavelength array (microns)
+    spec : array
+        Observed reflectivity spectrum
+    sig : array
+        Observed 1-sigma error bars on spectrum
+    """
+
     '''
     planet choices: 
         earth, venus, archean,
@@ -241,7 +274,6 @@ def planetzoo(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, 
         print 'Saved: '+data_tag
     
     # Return Synthetic data and high-res spec
-    
     return lam, spec, sig
     
 def generate_observation(wlhr, Ahr, itime, telescope, planet, star,
