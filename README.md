@@ -58,5 +58,7 @@ lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope,
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
 
+## Notes
 
-See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
+* See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
+* Check out the [SVO Filter Profile Service](http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=2MASS/2MASS.J&&mode=browse&gname=2MASS&gname2=2MASS#filter)
