@@ -1,6 +1,8 @@
 # coronagraph
 
-A Python noise model for directly imaging exoplanets with a space based coronagraph. See [Robinson et al (2015)](http://arxiv.org/abs/1507.00777) for a thorough description of the model. 
+A Python noise model for directly imaging exoplanets with a space based coronagraph. 
+
+If you use this model in your own research please cite [Robinson et al (2015)](http://arxiv.org/abs/1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/". 
 
 ## Install
 
