@@ -10,6 +10,32 @@ import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
+class Observe(object):
+    """
+    Container object for coronagraph observations.
+    """
+    def __init__(self, wlhr=None, Ahr=None, solhr=None, itime=None,
+                 telescope=None, planet=None, star=None):
+
+        self.wlhr = wlhr
+        self.Ahr = Ahr
+        self.solhr = solhr
+        self.itime = itime
+        self.telescope = telescope
+        self.planet = planet
+        self.star = star
+
+    @classmethod
+    def load_from_smart(cls, radpath, name=None):
+        # Read-in .rad file
+        wlhr, wno, solar_spec, TOA_flux, rad_streams = readsmart.rad(radfile,getdata=True)
+
+        # Calculate Hi-res reflectivity spectrum
+        Ahr = (TOA_flux / solar_spec) #* np.pi / planet.Phi
+
+        # Possibly convolve with gaussian?
+
+
 def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = 'planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
     """Uses coronagraph model to observe planets located in planetdir
 
@@ -222,7 +248,58 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     spec, sig, SNR = process_noise(time, Cratio, cp, cb)
 
     if plot:
-        plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+
+        wlhr = lamhr
+
+        # Set string for plot text
+        if itime > 2.0:
+            timestr = "{:.0f}".format(itime)+' hours'
+        else:
+            timestr = "{:.0f}".format(itime*60)+' mins'
+        plot_text = r'Distance = '+"{:.1f}".format(planet.distance)+' pc'+\
+        '\n Integration time = '+timestr
+
+        # If a reference wavelength is specified then return the SNR at that wl
+        # corresponding to the integration time given
+        if ref_lam:
+            ireflam = find_nearest(lam,ref_lam)
+            ref_SNR = SNR[ireflam]
+            plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
+                ' at '+"{:.2f}".format(lam[ireflam])+r' $\mu$m'
+
+        # Plot observed spectrum; save pdf if saveplot=True
+        lammin,lammax = np.min(lam)-0.1, np.max(lam)+0.1
+        Amin, Amax = np.min(A)-np.max(sig)*1.1, np.max(A)+np.max(sig)*1.1
+        tmin = np.min(Ahr[(wlhr > lammin) & (wlhr < lammax)])
+        tmax = np.max(Ahr[(wlhr > lammin) & (wlhr < lammax)])
+        if tmin < Amin: Amin = tmin
+        if tmax > Amax: Amax = tmax
+        plot_tag = 'observed_'+tag+'.pdf'
+        fig = plt.figure(figsize=(15,10))
+        gs = gridspec.GridSpec(1, 1)
+        ax0 = plt.subplot(gs[0])
+        ax0.plot(wlhr, Ahr, alpha=0.5, c='k')
+        if telescope.mode != 'Imaging':
+            ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        else:
+            ax0.plot(lam, A, 'o', alpha=0.7, color='orange', ms = 10.0)
+            telescope.filter_wheel.plot(ax=ax0)
+        ax0.errorbar(lam, spec, yerr=sig, fmt='o', color='k', ms=10.0)
+        ax0.set_ylabel('Reflectivity')
+        ax0.set_xlabel('Wavelength [$\mu$m]')
+        ax0.set_title(tag)
+        ax0.set_xlim([lammin,lammax])
+        ax0.set_ylim([Amin, Amax])
+        #ax0.set_ylim([-0.01,1.01])
+        ax0.text(0.99, 0.99, plot_text,\
+             verticalalignment='top', horizontalalignment='right',\
+             transform=ax0.transAxes,\
+             color='black', fontsize=20)
+        # Save plot if saveplot==True
+        if saveplot:
+            fig.savefig(plot_tag)
+            print 'Saved: '+plot_tag
+        fig.show()
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -295,7 +372,55 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
 
     if plot:
-        plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+
+        # Set string for plot text
+        if itime > 2.0:
+            timestr = "{:.0f}".format(itime)+' hours'
+        else:
+            timestr = "{:.0f}".format(itime*60)+' mins'
+        plot_text = r'Distance = '+"{:.1f}".format(planet.distance)+' pc'+\
+        '\n Integration time = '+timestr
+
+        # If a reference wavelength is specified then return the SNR at that wl
+        # corresponding to the integration time given
+        if ref_lam:
+            ireflam = find_nearest(lam,ref_lam)
+            ref_SNR = SNR[ireflam]
+            plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
+                ' at '+"{:.2f}".format(lam[ireflam])+r' $\mu$m'
+
+        # Plot observed spectrum; save pdf if saveplot=True
+        lammin,lammax = np.min(lam)-0.1, np.max(lam)+0.1
+        Amin, Amax = np.min(A)-np.max(sig)*1.1, np.max(A)+np.max(sig)*1.1
+        tmin = np.min(Ahr[(wlhr > lammin) & (wlhr < lammax)])
+        tmax = np.max(Ahr[(wlhr > lammin) & (wlhr < lammax)])
+        if tmin < Amin: Amin = tmin
+        if tmax > Amax: Amax = tmax
+        plot_tag = 'observed_'+tag+'.pdf'
+        fig = plt.figure(figsize=(15,10))
+        gs = gridspec.GridSpec(1, 1)
+        ax0 = plt.subplot(gs[0])
+        ax0.plot(wlhr, Ahr, alpha=0.5, c='k')
+        if telescope.mode != 'Imaging':
+            ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        else:
+            ax0.plot(lam, A, 'o', alpha=0.7, color='orange', ms = 10.0)
+            telescope.filter_wheel.plot(ax=ax0)
+        ax0.errorbar(lam, spec, yerr=sig, fmt='o', color='k', ms=10.0)
+        ax0.set_ylabel('Fp/Fs')
+        ax0.set_xlabel('Wavelength [$\mu$m]')
+        ax0.set_xlim([lammin,lammax])
+        ax0.set_ylim([Amin, Amax])
+        #ax0.set_ylim([-0.01,1.01])
+        ax0.text(0.99, 0.99, plot_text,\
+             verticalalignment='top', horizontalalignment='right',\
+             transform=ax0.transAxes,\
+             color='black', fontsize=20)
+        # Save plot if saveplot==True
+        if saveplot:
+            fig.savefig(plot_tag)
+            print 'Saved: '+plot_tag
+        fig.show()
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -379,7 +504,57 @@ def smart_observation(radfile, itime, telescope, planet, star,
     spec, sig, SNR = process_noise(time, Cratio, cp, cb)
 
     if plot:
-        plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+
+        # Set string for plot text
+        if itime > 2.0:
+            timestr = "{:.0f}".format(itime)+' hours'
+        else:
+            timestr = "{:.0f}".format(itime*60)+' mins'
+        plot_text = r'Distance = '+"{:.1f}".format(planet.distance)+' pc'+\
+        '\n Integration time = '+timestr
+
+        # If a reference wavelength is specified then return the SNR at that wl
+        # corresponding to the integration time given
+        if ref_lam:
+            ireflam = find_nearest(lam,ref_lam)
+            ref_SNR = SNR[ireflam]
+            plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
+                ' at '+"{:.2f}".format(lam[ireflam])+r' $\mu$m'
+
+        # Plot observed spectrum; save pdf if saveplot=True
+        lammin,lammax = np.min(lam)-0.1, np.max(lam)+0.1
+        Amin, Amax = np.min(A)-np.max(sig)*1.1, np.max(A)+np.max(sig)*1.1
+        tmin = np.min(Ahr[(wlhr > lammin) & (wlhr < lammax)])
+        tmax = np.max(Ahr[(wlhr > lammin) & (wlhr < lammax)])
+        if tmin < Amin: Amin = tmin
+        if tmax > Amax: Amax = tmax
+        #ymin,ymax = np.min(A), np.max(A)
+        plot_tag = 'observed_smart_'+tag+'.pdf'
+        fig = plt.figure(figsize=(15,10))
+        gs = gridspec.GridSpec(1, 1)
+        ax0 = plt.subplot(gs[0])
+        ax0.plot(wlhr, Ahr, alpha=0.5, c='k')
+        if telescope.mode != 'Imaging':
+            ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
+        else:
+            ax0.plot(lam, A, 'o', alpha=0.7, color='orange', ms = 10.0)
+            telescope.filter_wheel.plot(ax=ax0)
+        ax0.errorbar(lam, spec, yerr=sig, fmt='o', color='k', ms=10.0)
+        ax0.set_ylabel('Fp/Fs')
+        ax0.set_xlabel('Wavelength [$\mu$m]')
+        ax0.set_xlim([lammin,lammax])
+        ax0.set_ylim([Amin, Amax])
+        #ax0.set_ylim([-0.01,ymax+0.1])
+        #ax0.set_ylim([-0.01,1.01])
+        ax0.text(0.99, 0.99, plot_text,\
+             verticalalignment='top', horizontalalignment='right',\
+             transform=ax0.transAxes,\
+             color='black', fontsize=20)
+        # Save plot if saveplot==True
+        if saveplot:
+            fig.savefig(plot_tag)
+            print 'Saved: '+plot_tag
+        fig.show()
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -447,55 +622,6 @@ def plot_spec():
         fig.savefig(plot_tag)
         print 'Saved: '+plot_tag
     fig.show()
-
-def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
-                              truth=None,
-                              xlim=None, ylim=None,
-                              title="",
-                              save=False, tag=""):
-
-    # Set matplotlib params
-    mpl.rc('font', family='Times New Roman')
-    mpl.rcParams['font.size'] = 25.0
-
-    # Create figure
-    fig = plt.figure(figsize=(12,10))
-    gs = gridspec.GridSpec(1,1)
-    ax = plt.subplot(gs[0])
-
-    # Set string for plot text
-    if itime > 2.0:
-        timestr = "{:.0f}".format(itime)+' hours'
-    else:
-        timestr = "{:.0f}".format(itime*60)+' mins'
-    plot_text = r'Distance = '+"{:.1f}".format(d)+' pc'+\
-    '\n Integration time = '+timestr
-
-    # If a reference wavelength is specified then return the SNR at that wl
-    # corresponding to the integration time given
-    if ref_lam:
-        ireflam = find_nearest(wl,ref_lam)
-        ref_SNR = SNR[ireflam]
-        plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
-            ' at '+"{:.2f}".format(wl[ireflam])+r' $\mu$m'
-
-    if truth is not None:
-        ax.plot(wl, truth*1e9, lw=2.0, color="purple", alpha=0.7, ls="steps-mid")
-    ax.errorbar(wl, ofrat*1e9, yerr=sig*1e9, fmt='o', color='k', ms=5.0)
-
-    ax.set_ylabel(r"F$_p$/F$_s$ ($\times 10^9$)")
-    ax.set_xlabel("Wavelength [$\mu$m]")
-    ax.set_title(title)
-    ax.text(0.99, 0.99, plot_text,\
-         verticalalignment='top', horizontalalignment='right',\
-         transform=ax.transAxes,\
-         color='black', fontsize=20)
-
-    if ylim is not None: ax.set_ylim(ylim)
-    if xlim is not None: ax.set_xlim(xlim)
-
-    if save:
-        fig.savefig(title+tag+".pdf")
 
 def process_noise(Dt, Cratio, cp, cb):
     """
