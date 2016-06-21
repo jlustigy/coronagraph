@@ -85,16 +85,16 @@ class Telescope(object):
         L = Loadin(path)
 
         # Return new class instance
-        return cls(mode=L.mode, lammin=L.lammin, lammax=L.lammax, resolution=L.resolution,
+        return cls(mode=L.mode, lammin=L.lammin, lammax=L.lammax, R=L.resolution,
                    Tput=L.throughput, D=L.diameter, Tsys=L.temperature, IWA=L.IWA,
                    OWA=L.OWA, emis=L.emissivity, C=L.contrast, De=L.darkcurrent,
                    DNHpix=L.DNHpix, Re=L.readnoise, Dtmax=L.Dtmax, X=L.X,
-                   q=L.de, filter_wheel=L.filter_wheel)
+                   q=L.qe, filter_wheel=L.filter_wheel)
 
     @classmethod
     def default_luvoir(cls):
         # Return new class instance
-        return cls(mode="IFS", lammin=0.4, lammax=2.5, resolution=70.,
+        return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
                    Tput=0.05, D=12., Tsys=150., IWA=3.0,
                    OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
                    DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
