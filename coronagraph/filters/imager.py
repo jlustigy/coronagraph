@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
+import os
 
 class Filter(object):
     """Filter for telescope imaging mode.
@@ -96,7 +97,9 @@ class Wheel(object):
 
 
 def read_jc():
-    path = 'coronagraph/filters/UBVRI/'
+    path = 'UBVRI/'
+    # set file path relative to this file
+    path = os.path.join(os.path.dirname(__file__), path)
     U = np.genfromtxt(path+'bess-u.pass')
     U[:,0] = U[:,0]/1e4
     B = np.genfromtxt(path+'bess-b.pass')
@@ -127,7 +130,9 @@ class johnson_cousins(Wheel):
 
         
 def read_landsat():
-    path = 'coronagraph/filters/LANDSAT/'
+    path = 'LANDSAT/'
+    # set file path relative to this file
+    path = os.path.join(os.path.dirname(__file__), path)
     blue = np.genfromtxt(path+'Blue.txt', skip_header=1)
     green = np.genfromtxt(path+'Green.txt', skip_header=1)
     red = np.genfromtxt(path+'Red.txt', skip_header=1)
@@ -163,7 +168,9 @@ class landsat(Wheel):
         
         
 def read_jc2():
-    path = 'coronagraph/filters/UBVRI2/'
+    path = 'UBVRI2/'
+    # set file path relative to this file
+    path = os.path.join(os.path.dirname(__file__), path)
     U = np.genfromtxt(path+'Bessel_U-1.txt', skip_header=1)
     U[:,0] = U[:,0]/1e3
     B = np.genfromtxt(path+'Bessel_B-1.txt', skip_header=1)

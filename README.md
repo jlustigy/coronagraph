@@ -1,11 +1,25 @@
 # coronagraph
-A Python noise model for directly imaging exoplanets with a space based coronagraph. See [Robinson et al (2015)](http://arxiv.org/abs/1507.00777) for a thorough description of the model. 
 
-# Examples
+A Python noise model for directly imaging exoplanets with a space based coronagraph. 
 
-### Simulate observation with the Integral Field Spectrograph (IFS)
+If you use this model in your own research please cite [Robinson et al (2015)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/". 
 
-Use coronagraph noise model to generate an observation of high-resolution SMART output:
+## Install
+
+* Clone this github repository, and the dependent [`readsmart`](https://github.com/jlustigy/readsmart) module within:
+```shell
+git clone --recursive git@github.com:jlustigy/coronagraph.git
+```
+* (optional) Add to python path to use `coronagraph` in any dirctory
+```shell
+# For .cshrc (I know, terrible...)
+setenv PYTHONPATH ${PYTHONPATH}:location/of/coronagraph/
+```
+
+## Examples
+
+#### Simulate observation with the Integral Field Spectrograph (IFS)
+
 ```python
 # Import coronagraph package
 import coronagraph as cg
@@ -28,7 +42,7 @@ lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope,
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
 
-### Simulate observation with the Imaging camera
+#### Simulate observation with the Imaging camera
 
 ```python
 # Set telescope to 'Imaging' mode
@@ -46,5 +60,7 @@ lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope,
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
 
+## Notes
 
-See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
+* See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
+* Check out the [SVO Filter Profile Service](http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=2MASS/2MASS.J&&mode=browse&gname=2MASS&gname2=2MASS#filter)

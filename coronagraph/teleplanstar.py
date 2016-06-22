@@ -1,40 +1,42 @@
 import numpy as np
+from .utils import Input, Loadin
 
-'''The Telescope, Planet, and Star classes.
-'''
+"""
+Telescope, Planet, and Star classes.
+"""
 
 class Telescope(object):
-    
+
     '''
     Parameters
     ----------
     mode : str
-        Telescope observing modes: 'IFS', 'Imaging' 
+        Telescope observing modes: 'IFS', 'Imaging'
     lammin : float
         Minimum wavelength (um)
-    lammax : float 
+    lammax : float
         Maximum wavelength (um)
-    R : float 
+    R : float
         Spectral resolution (lambda / delta-lambda)
-    Tsys : float 
+    Tsys : float
         Telescope temperature (K)
     D : float
-        Telescope diameter (m) 
-    emis : float 
+        Telescope diameter (m)
+    emis : float
         Telescope emissivity
     IWA : float
         Inner Working Angle (lambda/D)
-    OWA : float 
+    OWA : float
         Outer Working Angle (lambda/D)
-    Tput : float 
-        Telescope throughput   
-    C : float 
+    Tput : float
+        Telescope throughput
+    C : float
         Raw Contrast
-    De : float 
+    De : float
         Dark current (s**-1)
     DNHpix : float
         Horizontal pixel spread of IFS spectrum
-    Re : float 
+    Re : float
         Read noise per pixel
     Dtmax : float
         Maximum exposure time (hr)
@@ -45,7 +47,7 @@ class Telescope(object):
     filter_wheel : Wheel (optional)
         Wheel object containing imaging filters
     '''
-    
+
     # Define a constructor
     def __init__(self, mode='IFS', lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
                  D=8.0,Tsys=274.,IWA=0.5, OWA=30000.,emis=0.9,\
@@ -62,24 +64,46 @@ class Telescope(object):
         self.OWA=OWA
         self.emissivity=emis
         self.contrast=C
-        
+
         self.darkcurrent=De
         self.DNHpix=DNHpix
         self.readnoise=Re
         self.Dtmax=Dtmax
         self.X=X
         self.qe=q
-        
+
         self._filter_wheel=filter_wheel
-        
+
         if self._mode == 'Imaging':
             from filters.imager import johnson_cousins
             self._filter_wheel = johnson_cousins()
-    
+
+    @classmethod
+    def from_file(cls, path):
+
+        # Read-in Telescope params using Loadin class
+        L = Loadin(path)
+
+        # Return new class instance
+        return cls(mode=L.mode, lammin=L.lammin, lammax=L.lammax, R=L.resolution,
+                   Tput=L.throughput, D=L.diameter, Tsys=L.temperature, IWA=L.IWA,
+                   OWA=L.OWA, emis=L.emissivity, C=L.contrast, De=L.darkcurrent,
+                   DNHpix=L.DNHpix, Re=L.readnoise, Dtmax=L.Dtmax, X=L.X,
+                   q=L.qe, filter_wheel=L.filter_wheel)
+
+    @classmethod
+    def default_luvoir(cls):
+        # Return new class instance
+        return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
+                   Tput=0.05, D=12., Tsys=150., IWA=3.0,
+                   OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
+                   DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
+                   q=0.9, filter_wheel=None)
+
     @property
     def mode(self):
-        return self._mode 
-  
+        return self._mode
+
     @mode.setter
     def mode(self, value):
         self._mode = value
@@ -88,11 +112,11 @@ class Telescope(object):
             self._filter_wheel = johnson_cousins()
         else:
             self._filter_wheel = None
-    
+
     @property
     def filter_wheel(self):
         return self._filter_wheel
-  
+
     @filter_wheel.setter
     def filter_wheel(self, value):
         if (value.__class__.__name__ == 'Wheel') or (value.__class__.__base__.__name__ == 'Wheel'):
@@ -100,7 +124,7 @@ class Telescope(object):
         else:
             print "Error in Telescope: Specified filter wheel is not of type 'Wheel'"
             self._filter_wheel = None
-    
+
     def __str__(self):
         string = 'Coronagraph: \n------------\n'+\
             '- Telescope observing mode : '+"%s" % (self.mode)+'\n'+\
@@ -134,10 +158,10 @@ def lambertPhaseFunction(alpha):
 
 class Planet(object):
     '''Parameters of the planet to be observed.
-    
+
     Parameters
     ----------
-    
+
     name : string
         Planet name from database
     star : string
@@ -159,7 +183,7 @@ class Planet(object):
     MezV : float
         exozodiacal light surface brightness (mag/arcsec**2)
     '''
-    
+
     # Define a constructor
     def __init__(self, name='earth', star='sun', d=10.0,Nez=1.0,\
                  Rp=1.0, a=1.0, alpha=90.,\
@@ -174,25 +198,35 @@ class Planet(object):
         self._Phi = None
         self.MzV  = MzV     # zodiacal light surface brightness (mag/arcsec**2)
         self.MezV = MezV     # exozodiacal light surface brightness (mag/arcsec**2)
-        
+
         if self._Phi is None:
             self._Phi = lambertPhaseFunction(self._alpha)
         else:
             raise Exception("Error in Planet Phase Function (Phi)")
-  
+
+    @classmethod
+    def from_file(cls, path):
+
+        # Read-in Telescope params using Loadin class
+        L = Loadin(path)
+
+        # Return new class instance
+        return cls(name=L.name, star=L.star, d=L.distance, Nez=L.Nez,
+                   Rp=L.Rp, a=L.a, alpha=L.alpha, MzV=L.MzV, MezV=L.MezV)
+
     @property
     def alpha(self):
         return self._alpha
-  
+
     @alpha.setter
     def alpha(self, value):
         self._alpha = value
         self._Phi = lambertPhaseFunction(value)
-  
+
     @property
     def Phi(self):
         return self._Phi
-  
+
     @Phi.setter
     def Phi(self, value):
         self._Phi = value
@@ -210,13 +244,22 @@ class Planet(object):
             '- Zodiacal light surface brightness (mag/arcsec**2) : '+"%s" % (self.MzV)+'\n'+\
             '- Exozodiacal light surface brightness (mag/arcsec**2) : '+"%s" % (self.MezV)
         return string
-            
+
 class Star(object):
-    
+
     def __init__(self, Teff=5780.0, Rs=1.0):
         self.Teff=Teff
         self.Rs=Rs
-    
+
+    @classmethod
+    def from_file(cls, path):
+
+        # Read-in Telescope params using Loadin class
+        L = Loadin(path)
+
+        # Return new class instance
+        return cls(Teff=L.Teff, Rs=L.Rs)
+
     def __str__(self):
         string = 'Star: \n-----\n'+\
             '- Effective Temperature (K) : '+"%s" % (self.Teff)+'\n'+\
