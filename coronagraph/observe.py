@@ -264,10 +264,16 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
     -------
     lam : array
         Wavelength grid of observed spectrum
+    dlam: array
+
+    A : array
+
     spec : array
         Albedo grid of observed spectrum
     sig : array
         One sigma errorbars on albedo spectrum
+    SNR : array
+
 
     Output
     ------
@@ -306,7 +312,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
     # Return Synthetic data and high-res spec
 
-    return lam, spec, sig
+    return lam, dlam, Cratio, spec, sig, SNR
 
 
 def smart_observation(radfile, itime, telescope, planet, star,
