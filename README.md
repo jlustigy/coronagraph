@@ -40,7 +40,7 @@ integration_time = 10.0
 
 # Observe!
 lam, dlam, Cratio, spec, sig, SNR = \
-      generate_observation(lam, refl, solhr, integration_time, telescope, planet, star)
+      cg.generate_observation(lam, refl, solhr, integration_time, telescope, planet, star)
 
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
