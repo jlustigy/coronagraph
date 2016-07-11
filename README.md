@@ -33,12 +33,15 @@ star = cg.Star()
 model = np.loadtxt('planets/earth_quadrature_radiance_refl.dat', skiprows=8)
 lam = model[:,0]            # wavelength (microns)
 refl = np.pi * model[:,3]   # geometric albedo
+solhr = model[:,2]          # solar flux
 
 # Specify telescope integration time in hours
 integration_time = 10.0
 
 # Observe!
-lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope, planet, star)
+lam, dlam, Cratio, spec, sig, SNR = \
+      cg.generate_observation(lam, refl, solhr, integration_time, telescope, planet, star)
+
 ```
 <img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
 
