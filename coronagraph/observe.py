@@ -10,7 +10,9 @@ import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
-def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = 'planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
+def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0,
+                            planetdir = 'planets/', plot=True, savedata=False, saveplot=False,
+                            ref_lam=0.55, THERMAL=False):
     """Uses coronagraph model to observe planets located in planetdir
 
     Parameters
@@ -206,7 +208,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     # Shawn: "I don't like noise.  It makes me sad."
 
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
-        = make_noise(Ahr, lamhr, solhr, telescope, planet, star, COMPUTE_LAM=True)
+        = make_noise(Ahr, lamhr, solhr, telescope, planet, star, COMPUTE_LAM=True, THERMAL=THERMAL)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
@@ -235,7 +237,8 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     return lam, spec, sig
 
 def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
-                         ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False):
+                         ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
+                         THERMAL=False):
     """
     Parameters
     ----------
@@ -283,7 +286,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
     # Skip call_noise and just call: noise
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        make_noise(Ahr, wlhr, solhr, telescope, planet, star, wantsnr=10.0, COMPUTE_LAM=True)
+        make_noise(Ahr, wlhr, solhr, telescope, planet, star, wantsnr=10.0, COMPUTE_LAM=True, THERMAL=THERMAL)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
@@ -316,7 +319,8 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
 
 def smart_observation(radfile, itime, telescope, planet, star,
-                         ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False):
+                         ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
+                         THERMAL=False):
     """Uses coronagraph noise model to create an observation of high resolution SMART output.
 
     Parameters
@@ -369,7 +373,7 @@ def smart_observation(radfile, itime, telescope, planet, star,
 
     # Skip call_noise and just call: noise
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        make_noise(Ahr, wlhr, solar_spec, telescope, planet, star, wantsnr=10.0, COMPUTE_LAM=True)
+        make_noise(Ahr, wlhr, solar_spec, telescope, planet, star, wantsnr=10.0, COMPUTE_LAM=True, THERMAL=THERMAL)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
