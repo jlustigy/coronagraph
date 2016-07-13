@@ -5,6 +5,10 @@ from .utils import Input, Loadin
 Telescope, Planet, and Star classes.
 """
 
+################################################################################
+# TELESCOPE
+################################################################################
+
 class Telescope(object):
 
     '''
@@ -94,9 +98,29 @@ class Telescope(object):
     @classmethod
     def default_luvoir(cls):
         # Return new class instance
-        return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
+        return cls(mode="IFS", lammin=0.5, lammax=1.0, R=70.,
                    Tput=0.05, D=12., Tsys=150., IWA=3.0,
                    OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
+                   DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
+                   q=0.9, filter_wheel=None)
+
+    @classmethod
+    def default_habex(cls):
+        print "These HabEx parameters are not confirmed yet!"
+        # Return new class instance
+        return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
+                   Tput=0.05, D=6., Tsys=150., IWA=3.0,
+                   OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
+                   DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
+                   q=0.9, filter_wheel=None)
+
+    @classmethod
+    def default_wfirst(cls):
+        print "These WFIRST parameters are not confirmed yet!"
+        # Return new class instance
+        return cls(mode="IFS", lammin=0.6, lammax=1.0, R=70.,
+                   Tput=0.05, D=2.4, Tsys=150., IWA=3.0,
+                   OWA=20.0, emis=0.9, C=1e-9, De=1e-4,
                    DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
                    q=0.9, filter_wheel=None)
 
@@ -145,6 +169,10 @@ class Telescope(object):
             '- Size of photometric aperture (lambda/D)  : '+"%s" % (self.X)+' \n'+\
             '- Quantum efficiency  : '+"%s" % (self.qe)+''
         return string
+
+################################################################################
+# PLANET
+################################################################################
 
 def lambertPhaseFunction(alpha):
     '''Calculate the Lambertian Phase Function from the phase angle.
@@ -244,6 +272,10 @@ class Planet(object):
             '- Zodiacal light surface brightness (mag/arcsec**2) : '+"%s" % (self.MzV)+'\n'+\
             '- Exozodiacal light surface brightness (mag/arcsec**2) : '+"%s" % (self.MezV)
         return string
+
+################################################################################
+# STAR
+################################################################################
 
 class Star(object):
 
