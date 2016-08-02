@@ -129,7 +129,7 @@ if plot:
 
     # Save plot if requested
     if saveplot:
-        plot_tag = "plots/luvoir_demo_"+title+tag+".png"
+        plot_tag = "luvoir_demo_"+title+tag+".png"
         fig.savefig(plot_tag)
         print 'Saved: ' + plot_tag
     else:
@@ -141,7 +141,7 @@ if plot:
 
 # Save Synthetic data file (wavelength, albedo, error) if requested
 if savefile:
-    data_tag = 'output/luvoir_demo_'+tag+'.txt'
+    data_tag = 'luvoir_demo_'+tag+'.txt'
     y_sav = np.array([lam,spec,sig])
     np.savetxt(data_tag, y_sav.T)
     print 'Saved: ' + data_tag
