@@ -18,6 +18,17 @@ setenv PYTHONPATH ${PYTHONPATH}:location/of/coronagraph/
 
 ## Examples
 
+#### Running `luvoir_demo.py`
+You can start to get a feel for how the coronagraph noise model works by examining and running `luvoir_demo.py`. From the command line type:
+```bash
+python luvoir_demo.py
+```
+You'll get an output file that looks like this:
+
+<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/luvoir_demo_.png" width="60%" height="60%" align="middle" />
+
+Now you can create your own scripts like this to play with all the tunable parameters!
+
 #### Simulate observation with the Integral Field Spectrograph (IFS)
 
 ```python
