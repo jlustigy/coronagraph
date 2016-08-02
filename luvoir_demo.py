@@ -129,7 +129,7 @@ if plot:
 
     # Save plot if requested
     if saveplot:
-        plot_tag = "plots/luvoir_demo_"+title+tag+".pdf"
+        plot_tag = "plots/luvoir_demo_"+title+tag+".png"
         fig.savefig(plot_tag)
         print 'Saved: ' + plot_tag
     else:
