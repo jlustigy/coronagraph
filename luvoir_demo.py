@@ -17,7 +17,7 @@ import coronagraph as cg
 ################################
 
 # Integration time (hours)
-Dt = 10.0
+Dt = 20.0
 
 # Planet params
 alpha = 90.     # phase angle at quadrature
@@ -36,14 +36,14 @@ Nez  = 1.      # number of exo-zodis
 # Plot params
 plot = True
 ref_lam = 0.55
-saveplot = False
+saveplot = True
 title = ""
-ylim = None
-xlim = None
+ylim =  [-0.1, 0.8]
+xlim =  None
 tag = ""
 
 # Save params
-savefile = False
+savefile = True
 
 ################################
 # READ-IN DATA
@@ -63,9 +63,10 @@ Ahr   = np.pi*(np.pi*radhr/solhr)
 # RUN CORONAGRAPH MODEL
 ################################
 
-# Run coronagraph with default telescope (aka no keyword arguments)
+# Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
 lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-    cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez)
+    cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez
+                   )
 
 # Calculate background photon count rates
 cb = (cz + cez + csp + cD + cR + cth)
@@ -74,13 +75,13 @@ cb = (cz + cez + csp + cD + cR + cth)
 Dts = Dt * 3600.
 
 # Calculate signal-to-noise assuming background subtraction (the "2")
-SNR  = cp*Dt/np.sqrt((cp + 2*cb)*Dt)
+SNR  = cp*Dts/np.sqrt((cp + 2*cb)*Dts)
 
 # Calculate 1-sigma errors
 sig= Cratio/SNR
 
 # Add gaussian noise to flux ratio
-spec = Cratio + np.random.randn(len(Cratio))*sigma
+spec = Cratio + np.random.randn(len(Cratio))*sig
 
 ################################
 # PLOTTING
@@ -94,7 +95,7 @@ if plot:
     ax = plt.subplot(gs[0])
 
     # Set string for plot text
-    if itime > 2.0:
+    if Dt > 2.0:
         timestr = "{:.0f}".format(Dt)+' hours'
     else:
         timestr = "{:.0f}".format(Dt*60)+' mins'
@@ -110,8 +111,7 @@ if plot:
             ' at '+"{:.2f}".format(lam[ireflam])+r' $\mu$m'
 
     # Draw plot
-    if truth is not None:
-        ax.plot(lam, Cratio*1e9, lw=2.0, color="purple", alpha=0.7, ls="steps-mid")
+    ax.plot(lam, Cratio*1e9, lw=2.0, color="purple", alpha=0.7, ls="steps-mid")
     ax.errorbar(lam, spec*1e9, yerr=sig*1e9, fmt='o', color='k', ms=5.0)
 
     # Set labels
@@ -129,7 +129,7 @@ if plot:
 
     # Save plot if requested
     if saveplot:
-        plot_tag = "luvoir_demo_"+title+tag+".pdf"
+        plot_tag = "plots/luvoir_demo_"+title+tag+".pdf"
         fig.savefig(plot_tag)
         print 'Saved: ' + plot_tag
     else:
@@ -141,7 +141,7 @@ if plot:
 
 # Save Synthetic data file (wavelength, albedo, error) if requested
 if savefile:
-    data_tag = 'luvoir_demo_'+tag+'.txt'
+    data_tag = 'output/luvoir_demo_'+tag+'.txt'
     y_sav = np.array([lam,spec,sig])
     np.savetxt(data_tag, y_sav.T)
     print 'Saved: ' + data_tag

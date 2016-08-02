@@ -1,6 +1,4 @@
 *.pyc
 *.py~
-*.pdf
-*.txt
 */*.pyc
 */*~
