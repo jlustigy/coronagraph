@@ -7,3 +7,4 @@ from .utils import Input
 from .degrade_spec import degrade_spec
 import filters
 from .convolve_spec import convolve_spec
+from .count_rates import count_rates_wrapper, count_rates
