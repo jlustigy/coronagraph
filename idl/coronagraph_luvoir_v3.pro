@@ -29,7 +29,7 @@
 ; Cratio  - planet-star contrast (flux) ratio
 ;     cp  - planet count rate (s**-1)
 ;    csp  - speckle count rate (s**-1)
-;     cz  - zodiacal light count rate (s**-1) 
+;     cz  - zodiacal light count rate (s**-1)
 ;    cez  - exozodiacal light count rate (s**-1)
 ;     cD  - dark current count rate (s**-1)
 ;     cR  - read noise count rate (s**-1)
@@ -37,13 +37,13 @@
 ;  DtSNR  - integration time to SNR=1 (hr)
 ;
 ;  options:
-;        FIX_OWA - set to fix OWA at OWA*lammin/D, as would occur 
+;        FIX_OWA - set to fix OWA at OWA*lammin/D, as would occur
 ;                  if lenslet array is limiting the OWA
-;    COMPUTE_LAM - set to compute lo-res wavelength grid, otherwise 
+;    COMPUTE_LAM - set to compute lo-res wavelength grid, otherwise
 ;                  the grid input as variable 'lam' is used
-;   COMPUTE_DLAM - set to compute lo-res wavelength grid widths,  
+;   COMPUTE_DLAM - set to compute lo-res wavelength grid widths,
 ;                  otherwise the grid input as variable 'dlam' is used
-;            NIR - re-adjusts pixel size in NIR, as would occur if a 
+;            NIR - re-adjusts pixel size in NIR, as would occur if a
 ;                  second instrument was designed to handle the NIR
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,13 +71,13 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
   fpa    = f_airy(X) ; fraction of planetary signal in Airy pattern
   DNhpix = 3      ; horizontal pixel spread of IFS spectrum
   Dtmax  = 1.     ; maximum exposure time (hr)
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;; set astrophys parameters ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   MzV  = 23.0 ; zodiacal light surface brightness (mag/arcsec**2)
   MezV = 22.0 ; exozodiacal light surface brightness (mag/arcsec**2)
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;   set wavelength grid    ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -87,7 +87,7 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
     WHILE lam LT lammax DO BEGIN
       lam  = lam + lam/res
       Nlam = Nlam +1
-    ENDWHILE 
+    ENDWHILE
     lam    = FLTARR(Nlam)
     lam[0] = lammin
     FOR j=1,Nlam-1 DO BEGIN
@@ -104,7 +104,7 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
     dlam[0] = dlam[1]
     dlam[Nlam-1] = dlam[Nlam-2]
   ENDIF
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;  set quantum efficiency  ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -117,7 +117,7 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
     ENDELSE
     IF q[j] LT 0 THEN q[j] = 0.
   ENDFOR
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;  set dark current and read noise ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -125,7 +125,7 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
   De[*] = 1.d-4
   Re = FLTARR(Nlam)
   Re[*] = 0.1
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;  angular size of lenslet ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -135,25 +135,25 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
     iVIS  = WHERE(lam LE 1.0)
     iNIR  = WHERE(lam GT 1.0)
     theta[iVIS] = lammin/1.d6/diam/2.*(180/!DPI*3600.)
-    
+
     IF (iNIR NE -1) THEN BEGIN
       theta[iNIR] = 1.0/1.d6/diam/2.*(180/!DPI*3600.)
       q[iNIR]  = 0.90
       Re[iNIR] = 2.
-      
+
       ; set dark current based on NIR detector properties
       IF ( lammax LE 2.0 ) THEN De[iNIR] = 1.e-3*10.^( (Tdet-120.)*7./100. )
       IF ( lammax GT 2.0 AND lammax LE 4.0 ) THEN De[iNIR] = 1.e-3*10.^( (Tdet-80.)*9./140. )
       IF ( lammax GT 4.0 AND lammax LE 7.0 ) THEN De[iNIR] = 1.e-3*10.^( (Tdet-40.)*11./140. )
       IF ( lammax GT 7.0 ) THEN De[iNIR] = 1.e-3*10.^( (Tdet-30.)*11./70. )
-    
+
       ; don't let dark current fall below a threshold
       iDe = WHERE(De[iNIR] LT 1.d-3)
       IF (iDe[0] NE -1) THEN De[iDe] = 1.d-3
     ENDIF
-    
+
   ENDIF
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;      set throughput      ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -168,7 +168,7 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
     iOWA = WHERE( OWA*lam/diam/1.d6 LT sep  )
     IF (iOWA[0] NE -1) THEN T[iOWA] = 0. ;points outside OWA have no throughput
   ENDELSE
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;; degrade albedo spectrum  ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,14 +176,14 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
   IF ~KEYWORD_SET(compute_lam) THEN A  = Ahr
   IF KEYWORD_SET(compute_lam)  THEN Fs = DEGRADE_SPEC(solhr,lamhr,lam,DLAM=dlam)
   IF ~KEYWORD_SET(compute_lam) THEN Fs = solhr
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;      compute fluxes      ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;Fs = Fstar(lam, Teff, Rs, r, /AU) ;stellar flux on planet
   Fp = Fplan(A, Phi, Fs, Rp, d)     ;planet flux at telescope
   Cratio = FpFs(A, Phi, Rp, r)
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;    compute count rates   ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -196,7 +196,7 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
   cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)
   ctot   = cp + cz + cez + csp + cD + cR + cth
   cnoise = cp + 2*(cz + cez + csp + cD + cR + cth) ; assumes background subtraction
-  
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;  exposure time to SNR=1  ;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -204,5 +204,5 @@ PRO CORONAGRAPH_LUVOIR, Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez, 
   DtSNR[*] = 0.d
   i     = WHERE(cp GT 0)
   IF (i[0] NE -1) THEN DtSNR[i] = cnoise[i]/cp[i]^2./3600. ; (hr)
-  
+
 END

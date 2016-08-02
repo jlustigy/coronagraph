@@ -54,7 +54,7 @@ class Telescope(object):
 
     # Define a constructor
     def __init__(self, mode='IFS', lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
-                 D=8.0,Tsys=274.,IWA=0.5, OWA=30000.,emis=0.9,\
+                 D=8.0,Tsys=274.,Tdet=50.,IWA=0.5, OWA=30000.,emis=0.9,\
                  C=1e-10,De=1e-4,DNHpix=3.,Re=0.1,Dtmax=1.0,X=0.7,q=0.9,\
                  filter_wheel=None):
         self._mode=mode
@@ -63,7 +63,8 @@ class Telescope(object):
         self.resolution=R
         self.throughput=Tput
         self.diameter=D
-        self.temperature=Tsys
+        self.Tsys=Tsys
+        self.Tdet=Tdet
         self.IWA=IWA
         self.OWA=OWA
         self.emissivity=emis
@@ -90,7 +91,7 @@ class Telescope(object):
 
         # Return new class instance
         return cls(mode=L.mode, lammin=L.lammin, lammax=L.lammax, R=L.resolution,
-                   Tput=L.throughput, D=L.diameter, Tsys=L.temperature, IWA=L.IWA,
+                   Tput=L.throughput, D=L.diameter, Tsys=L.Tsys, Tdet=L.Tdet, IWA=L.IWA,
                    OWA=L.OWA, emis=L.emissivity, C=L.contrast, De=L.darkcurrent,
                    DNHpix=L.DNHpix, Re=L.readnoise, Dtmax=L.Dtmax, X=L.X,
                    q=L.qe, filter_wheel=L.filter_wheel)
@@ -99,7 +100,7 @@ class Telescope(object):
     def default_luvoir(cls):
         # Return new class instance
         return cls(mode="IFS", lammin=0.5, lammax=1.0, R=70.,
-                   Tput=0.05, D=12., Tsys=150., IWA=3.0,
+                   Tput=0.05, D=12., Tsys=150., Tdet=50., IWA=3.0,
                    OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
                    DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
                    q=0.9, filter_wheel=None)
@@ -109,7 +110,7 @@ class Telescope(object):
         print "These HabEx parameters are not confirmed yet!"
         # Return new class instance
         return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
-                   Tput=0.05, D=6., Tsys=150., IWA=3.0,
+                   Tput=0.05, D=6., Tsys=150., Tdet=50., IWA=3.0,
                    OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
                    DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
                    q=0.9, filter_wheel=None)
@@ -119,7 +120,7 @@ class Telescope(object):
         print "These WFIRST parameters are not confirmed yet!"
         # Return new class instance
         return cls(mode="IFS", lammin=0.6, lammax=1.0, R=70.,
-                   Tput=0.05, D=2.4, Tsys=150., IWA=3.0,
+                   Tput=0.05, D=2.4, Tsys=150., Tdet=50., IWA=3.0,
                    OWA=20.0, emis=0.9, C=1e-9, De=1e-4,
                    DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
                    q=0.9, filter_wheel=None)
@@ -155,7 +156,8 @@ class Telescope(object):
             '- Minimum wavelength (um) : '+"%s" % (self.lammin)+'\n'+\
             '- Maximum wavelength (um)  : '+"%s" % (self.lammax)+'\n'+\
             '- Spectral resolution (lambda / delta-lambda)  : '+"%s" % (self.resolution)+' \n'+\
-            '- Telescope temperature (K)  : '+"%s" % (self.temperature)+' \n'+\
+            '- Telescope/System temperature (K)  : '+"%s" % (self.Tsys)+' \n'+\
+            '- Detector temperature (K)  : '+"%s" % (self.Tdet)+' \n'+\
             '- Telescope diameter (m)  : '+"%s" % (self.diameter)+' \n'+\
             '- Telescope emissivity  : '+"%s" % (self.emissivity)+' \n'+\
             '- Inner Working Angle (lambda/D)  : '+"%s" % (self.IWA)+' \n'+\

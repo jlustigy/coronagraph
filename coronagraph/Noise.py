@@ -1,8 +1,6 @@
 import numpy as np
-from .make_noise import make_noise
 
-
-class Noise(object):
+class Output(object):
 
     def __init__(self, lam=None, dlam=None, A=None, q=None, Cratio=None,
                  cp=None, csp=None, cz=None, cez=None, cD=None, cR=None,
