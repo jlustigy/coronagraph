@@ -51,7 +51,8 @@ def make_noise(Ahr, lamhr, solhr, telescope, planet, star, wantsnr=10.0, FIX_OWA
     C=telescope.contrast
     IWA=telescope.IWA
     OWA=telescope.OWA
-    Tsys=telescope.temperature
+    Tsys=telescope.Tsys
+    Tdet=telescope.Tdet
     emis=telescope.emissivity
 
     # Set the Imaging Mode?
