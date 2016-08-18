@@ -10,10 +10,17 @@ If you use this model in your own research please cite [Robinson et al (2015)](h
 ```shell
 git clone --recursive git@github.com:jlustigy/coronagraph.git
 ```
-* (optional) Add to python path to use `coronagraph` in any dirctory
+* (optional) Add to python path to use `coronagraph` in any dirctory. This is ideal if you want to be able to access the core coronagraph functions from different project directories. If you're on a mac, then open up the `.bash_profile` file and add the following lines:
+```bash
+# create python path if it isn't already an environment variable 
+export PYTHONPATH=$PATH
+# add this repo to the python path
+export PYTHONPATH=${PYTHONPATH}:/Users/Name/Folder/coronagraph/
+```
+If you use the `.cshrc` file it might look something like this:
 ```shell
 # For .cshrc (I know, terrible...)
-setenv PYTHONPATH ${PYTHONPATH}:location/of/coronagraph/
+setenv PYTHONPATH ${PYTHONPATH}:/Users/Name/Folder/coronagraph/
 ```
 
 ## Examples
