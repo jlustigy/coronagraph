@@ -231,7 +231,7 @@ def count_rates(Ahr, lamhr, solhr,
         cthe = ctherm_earth(q, X, lam, dlam, diam, Itherm)
         # Add earth thermal photon counts to telescope thermal counts
         cth = cth + cthe
-        if True:
+        if False:
             import matplotlib.pyplot as plt; from matplotlib import gridspec
             fig2 = plt.figure(figsize=(8,6))
             gs = gridspec.GridSpec(1,1)

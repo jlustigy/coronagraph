@@ -17,16 +17,16 @@ import coronagraph as cg
 ################################
 
 # Integration time (hours)
-Dt = 10.
+Dt = 1.
 
 # Planet params
 alpha = 90.     # phase angle at quadrature
 Phi   = 1.      # phase function at quadrature (already included in SMART run)
-Rp    = 1.074     # Earth radii
-r     = 1.0     # semi-major axis (AU)
+Rp    = 1.     # Earth radii
+r     = 1.     # semi-major axis (AU)
 
 # Stellar params
-Teff  = 5700.   # Sun-like Teff (K)
+Teff  = 5000.   # Sun-like Teff (K)
 Rs    = 1.      # star radius in solar radii
 
 # Planetary system params
@@ -35,14 +35,14 @@ Nez  = 1.      # number of exo-zodis
 
 # Telescope parameters
 lammin = 0.3
-lammax = 4.9
+lammax = 4.7
 Res    = 70.0
 diam   = 30.0
 Tput   = 0.05
 C      = 1e-10
 IWA    = 1.0
 OWA    = 40.0
-Tsys   = 150.0
+Tsys   = 280.0
 Tdet   = 50.0
 emis   = 0.9
 De     = 1e-4
@@ -62,10 +62,10 @@ saveplot = True
 title = ""
 ylim =  [-100, 500]
 xlim =  None
-tag = "GroundMIR_EarthThermal100hr"
+tag = "GroundMIR_280mirror_1hr"
 
 # Save params
-savefile = True
+savefile = False
 
 ################################
 # READ-IN DATA
@@ -89,6 +89,7 @@ Ahr   = np.pi*(np.pi*radhr/solhr)
 lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
     cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                    GROUND = True,
+                   THERMAL = True,
                    lammin = lammin,
                    lammax = lammax,
                    Res    = Res   ,
