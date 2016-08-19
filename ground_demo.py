@@ -17,30 +17,52 @@ import coronagraph as cg
 ################################
 
 # Integration time (hours)
-Dt = 20.0
+Dt = 10.
 
 # Planet params
 alpha = 90.     # phase angle at quadrature
 Phi   = 1.      # phase function at quadrature (already included in SMART run)
-Rp    = 1.0     # Earth radii
+Rp    = 1.074     # Earth radii
 r     = 1.0     # semi-major axis (AU)
 
 # Stellar params
-Teff  = 5780.   # Sun-like Teff (K)
+Teff  = 5700.   # Sun-like Teff (K)
 Rs    = 1.      # star radius in solar radii
 
 # Planetary system params
 d    = 10.     # distance to system (pc)
 Nez  = 1.      # number of exo-zodis
 
+# Telescope parameters
+lammin = 0.3
+lammax = 4.9
+Res    = 70.0
+diam   = 30.0
+Tput   = 0.05
+C      = 1e-10
+IWA    = 1.0
+OWA    = 40.0
+Tsys   = 150.0
+Tdet   = 50.0
+emis   = 0.9
+De     = 1e-4
+DNHpix = 3.0
+Re     = 0.1
+Dtmax  = 1.0
+X      = 1.5
+qe     = 0.9
+MzV    = 23.0
+MezV   = 22.0
+
+
 # Plot params
 plot = True
 ref_lam = 0.55
 saveplot = True
 title = ""
-ylim =  [-0.1, 0.8]
+ylim =  [-100, 500]
 xlim =  None
-tag = ""
+tag = "GroundMIR_EarthThermal100hr"
 
 # Save params
 savefile = True
@@ -66,7 +88,27 @@ Ahr   = np.pi*(np.pi*radhr/solhr)
 # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
 lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
     cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
-                   )
+                   GROUND = True,
+                   lammin = lammin,
+                   lammax = lammax,
+                   Res    = Res   ,
+                   diam   = diam  ,
+                   Tput   = Tput  ,
+                   C      = C     ,
+                   IWA    = IWA   ,
+                   OWA    = OWA   ,
+                   Tsys   = Tsys  ,
+                   Tdet   = Tdet  ,
+                   emis   = emis  ,
+                   De     = De    ,
+                   DNHpix = DNHpix,
+                   Re     = Re    ,
+                   Dtmax  = Dtmax ,
+                   X      = X     ,
+                   qe     = qe    ,
+                   MzV    = MzV   ,
+                   MezV   = MezV  )
+
 
 # Calculate background photon count rates
 cb = (cz + cez + csp + cD + cR + cth)
@@ -129,7 +171,7 @@ if plot:
 
     # Save plot if requested
     if saveplot:
-        plot_tag = "luvoir_demo_"+title+tag+".png"
+        plot_tag = "ground_demo_"+title+tag+".png"
         fig.savefig(plot_tag)
         print 'Saved: ' + plot_tag
     else:
@@ -141,7 +183,7 @@ if plot:
 
 # Save Synthetic data file (wavelength, albedo, error) if requested
 if savefile:
-    data_tag = 'luvoir_demo_'+tag+'.txt'
+    data_tag = 'ground_demo_'+tag+'.txt'
     y_sav = np.array([lam,spec,sig])
     np.savetxt(data_tag, y_sav.T)
     print 'Saved: ' + data_tag

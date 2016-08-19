@@ -340,3 +340,19 @@ def ctherm(q, X, lam, dlam, D, Tsys, emis):
     Bsys  = c1/( (lambd**5.)*(np.exp(power)-1.) )*1.e-6/np.pi # system Planck function (W/m**2/um/sr)
     Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
     return np.pi*q*dlam*emis*Bsys*Omega*(lam*1.e-6/hc)*(D/2)**2.
+
+def ctherm_earth(q, X, lam, dlam, D, Itherm):
+    '''
+    telescope thermal count rate
+    --------
+        q - quantum efficiency
+        X - size of photometric aperture (lambda/D)
+        lam - wavelength (um)
+        dlam - spectral element width (um)
+        D - telescope diameter (m)
+        Itherm - Earth thermal intensity [W/m**2/um/sr]
+    cthe - telescope thermal photon count rate (s**-1)
+    '''
+    hc    = 1.986446e-25  # h*c (kg*m**3/s**2)
+    Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
+    return np.pi*q*dlam*Itherm*Omega*(lam*1.e-6/hc)*(D/2)**2.
