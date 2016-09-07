@@ -166,7 +166,7 @@ def count_rates(Ahr, lamhr, solhr,
     # Modify throughput by atmospheric transmission if GROUND-based
     if GROUND:
         # Read in earth transmission file
-        fn = os.path.join(os.path.dirname(__file__), "ground/earth_transmission.txt")
+        fn = os.path.join(os.path.dirname(__file__), "ground/earth_transmission_atacama_30deg.txt")
         tdata = np.genfromtxt(fn, skip_header=5)
         wl_atmos = tdata[:,0]
         Tatmoshr = tdata[:,1]
@@ -219,10 +219,10 @@ def count_rates(Ahr, lamhr, solhr,
     # Add earth thermal photons if GROUND
     if GROUND:
         # Read in earth thermal data
-        fn = os.path.join(os.path.dirname(__file__), "ground/earth_thermal.txt")
+        fn = os.path.join(os.path.dirname(__file__), "ground/earth_thermal_atacama_30deg.txt")
         tdata = np.genfromtxt(fn, skip_header=6)
         wl_therm = tdata[:,0]  # um
-        Fthermhr = tdata[:,3]  # W/m^2/um
+        Fthermhr = tdata[:,1]  # W/m^2/um
         # Degrade earth thermal flux
         Ftherm = degrade_spec(Fthermhr, wl_therm,lam,dlam=dlam)
         # Compute intensity
