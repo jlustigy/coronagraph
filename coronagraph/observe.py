@@ -565,6 +565,61 @@ def draw_noisy_spec(spectrum, SNR, apparent=False):
 
     return spec_noise, sigma
 
+def interp_cont_over_band(lam, cp, icont, iband):
+    """
+    Interpolate the continuum of a spectrum over a masked absorption or emission
+    band.
+
+    Parameters
+    ----------
+    lam : array
+        Wavelength grid (abscissa)
+    cp : array
+        Planet photon count rates or any spectrum
+    icont : list
+        Indicies of continuum (neighboring points)
+    iband : list
+        Indicies of spectral feature (the band)
+
+    Returns
+    -------
+    ccont : list
+        Continuum planet photon count rates across spectral feature, where
+        len(ccont) == len(iband)
+    """
+    # Linearly interpolate continuum points to band
+    ccont = np.interp(lam[sorted(iband)], lam[sorted(icont)], cp[sorted(icont)])
+    return ccont
+
+def exptime_band(cp, ccont, cb, iband, SNR=5.0):
+    """
+    Calc the exposure time necessary to get a given S/N on a molecular band
+    following Eqn 7 from Robinson et al. 2016.
+
+
+    Parameters
+    ----------
+    cp :
+        Planet count rate
+    ccont :
+        Continuum count rate
+    cb :
+        Background count rate
+    iband :
+        Indicies of molecular band
+    SNR :
+        Desired signal-to-noise ratio on molecular band
+
+    Returns
+    -------
+    Telescope exposure time [seconds]
+    """
+
+    numerator = np.sum(cp[iband] + 2.*cb[iband])
+    denominator = np.power(np.sum(np.fabs(ccont - cp[iband])),2)
+
+    return np.power(SNR, 2) * numerator / denominator
+
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
     return idx
