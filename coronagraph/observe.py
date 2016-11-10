@@ -7,7 +7,6 @@ import os
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 mpl.rcParams['font.size'] = 20.0
 
-import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
@@ -367,8 +366,17 @@ def smart_observation(radfile, itime, telescope, planet, star,
     If savedata=True then data will be saved
     """
 
+    # try importing readsmart
+    try:
+        import readsmart as rs
+    except ImportError:
+        print "Module 'readsmart' not found. Please install on your local machine \
+        to proceed with this function. The source can be found at: \
+        https://github.com/jlustigy/readsmart"
+        return None, None, None, None, None
+
     # Read-in .rad file
-    wlhr, wno, solar_spec, TOA_flux, rad_streams = readsmart.rad(radfile,getdata=True)
+    wlhr, wno, solar_spec, TOA_flux, rad_streams = rs.rad(radfile,getdata=True)
 
     # Calculate Hi-res reflectivity spectrum
     Ahr = (TOA_flux / solar_spec) #* np.pi / planet.Phi
