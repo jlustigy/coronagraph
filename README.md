@@ -1,8 +1,8 @@
 # coronagraph
 
-A Python noise model for directly imaging exoplanets with a space based coronagraph. 
+A Python noise model for directly imaging exoplanets with a space based coronagraph.
 
-If you use this model in your own research please cite [Robinson et al (2015)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/". 
+If you use this model in your own research please cite [Robinson et al (2015)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/".
 
 ## Install
 
@@ -12,7 +12,7 @@ git clone --recursive git@github.com:jlustigy/coronagraph.git
 ```
 * (optional) Add to python path to use `coronagraph` in any dirctory. This is ideal if you want to be able to access the core coronagraph functions from different project directories. If you're on a mac, then open up the `.bash_profile` file and add the following lines:
 ```bash
-# create python path if it isn't already an environment variable 
+# create python path if it isn't already an environment variable
 export PYTHONPATH=$PATH
 # add this repo to the python path
 export PYTHONPATH=${PYTHONPATH}:/Users/Name/Folder/coronagraph/
@@ -32,7 +32,7 @@ python luvoir_demo.py
 ```
 You'll get an output file that looks like this:
 
-<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/luvoir_demo_.png" width="60%" height="60%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/examples/plots/luvoir_demo_.png" width="60%" height="60%" align="middle" />
 
 Now you can create your own scripts like this to play with all the tunable parameters!
 
@@ -61,7 +61,7 @@ lam, dlam, Cratio, spec, sig, SNR = \
       cg.generate_observation(lam, refl, solhr, integration_time, telescope, planet, star)
 
 ```
-<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/examples/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
 
 #### Simulate observation with the Imaging camera
 
@@ -79,7 +79,7 @@ telescope.filter_wheel = jc
 # Observe!
 lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope, planet, star)
 ```
-<img src="https://github.com/jlustigy/coronagraph/blob/master/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/examples/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
 
 ## Notes
 
