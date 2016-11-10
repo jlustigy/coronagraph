@@ -6,9 +6,9 @@ If you use this model in your own research please cite [Robinson et al (2016)](h
 
 ## Install
 
-* Clone this github repository, and the dependent [`readsmart`](https://github.com/jlustigy/readsmart) module within:
-```shell
-git clone --recursive git@github.com:jlustigy/coronagraph.git
+* Clone this github repository:
+```bash
+git clone git@github.com:jlustigy/coronagraph.git
 ```
 * (optional) Add to python path to use `coronagraph` in any dirctory. This is ideal if you want to be able to access the core coronagraph functions from different project directories. If you're on a mac, then open up the `.bash_profile` file and add the following lines:
 ```bash
@@ -83,5 +83,4 @@ lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope,
 
 ## Notes
 
-* See [notebooks](https://github.com/jlustigy/coronagraph/tree/master/notebooks) for more examples
 * Check out the [SVO Filter Profile Service](http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?id=2MASS/2MASS.J&&mode=browse&gname=2MASS&gname2=2MASS#filter)
