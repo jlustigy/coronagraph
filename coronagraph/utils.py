@@ -1,5 +1,9 @@
 import imp, sys
 from types import ModuleType, FunctionType, StringType
+import os
+
+inpath = "inputs/"
+relpath = os.path.join(os.path.dirname(__file__), inpath)
 
 class Input(object):
     """
@@ -21,8 +25,8 @@ class Input(object):
         except KeyError:
             pass
 
-        default_input_file = 'inputs/input_default_'+input_type+'.py'
-        user_input_file = 'inputs/input_user_'+input_type+'.py'
+        default_input_file = os.path.join(relpath,'input_default_'+input_type+'.py')
+        user_input_file = os.path.join(relpath,'input_user_'+input_type+'.py')
 
         self._input = imp.load_source("input", default_input_file)            # Load default inputs into self._input
 
