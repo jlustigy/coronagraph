@@ -36,21 +36,22 @@ Nez  = 1.      # number of exo-zodis
 # Plot params
 plot = True
 ref_lam = 0.55
-saveplot = True
 title = ""
 ylim =  [-0.1, 0.8]
 xlim =  None
 tag = ""
 
 # Save params
-savefile = True
+savefile = False
+saveplot = False
+
 
 ################################
 # READ-IN DATA
 ################################
 
 # Read-in spectrum file
-fn = 'planets/earth_quadrature_radiance_refl.dat'
+fn = '../coronagraph/planets/earth_quadrature_radiance_refl.dat'
 model = np.loadtxt(fn, skiprows=8)
 lamhr = model[:,0]
 radhr = model[:,1]

@@ -58,7 +58,6 @@ MezV   = 22.0
 # Plot params
 plot = True
 ref_lam = 0.55
-saveplot = True
 title = ""
 ylim =  [-100, 500]
 xlim =  None
@@ -66,13 +65,15 @@ tag = "GroundIR_500hr_new"
 
 # Save params
 savefile = False
+saveplot = False
+
 
 ################################
 # READ-IN DATA
 ################################
 
 # Read-in spectrum file
-fn = 'planets/earth_quadrature_radiance_refl.dat'
+fn = '../coronagraph/planets/earth_quadrature_radiance_refl.dat'
 model = np.loadtxt(fn, skiprows=8)
 lamhr = model[:,0]
 radhr = model[:,1]

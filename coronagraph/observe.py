@@ -3,6 +3,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib import rc
+import os
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 mpl.rcParams['font.size'] = 20.0
 
@@ -10,8 +11,11 @@ import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
+planetdir = "planets/"
+relpath = os.path.join(os.path.dirname(__file__), planetdir)
+
 def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0,
-                            planetdir = 'planets/', plot=True, savedata=False, saveplot=False,
+                            planetdir = relpath, plot=True, savedata=False, saveplot=False,
                             ref_lam=0.55, THERMAL=False):
     """Uses coronagraph model to observe planets located in planetdir
 
@@ -71,7 +75,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         #if whichplanet == 'earth':
         fn = 'earth_quadrature_radiance_refl.dat'
-        model = np.loadtxt(planetdir+fn, skiprows=8)
+        model = np.loadtxt(os.path.join(planetdir,fn), skiprows=8)
         lamhr = model[:,0]
         radhr = model[:,1]
         solhr = model[:,2]
@@ -82,7 +86,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'venus':
             fn = 'Venus_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 0.95     #Earth radii
@@ -90,7 +94,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'archean':
             fn = 'ArcheanEarth_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 1.0     #Earth radii
@@ -98,7 +102,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'earlymars':
             fn = 'EarlyMars_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 0.53     #Earth radii
@@ -106,7 +110,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'hazyarchean':
             fn = 'Hazy_ArcheanEarth_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 1.0     #Earth radii
@@ -114,7 +118,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'earlyvenus':
             fn = 'EarlyVenus_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 0.95     #Earth radii
@@ -122,7 +126,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'jupiter':
             fn = planetdir+'Jupiter_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 10.86     #Earth radii
@@ -130,7 +134,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'saturn':
             fn = planetdir+'Saturn_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 9.00     #Earth radii
@@ -138,7 +142,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'uranus':
             fn = 'Uranus_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 3.97     #Earth radii
@@ -147,7 +151,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'warmuranus':
             fn = 'Uranus_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 3.97     #Earth radii
@@ -155,7 +159,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'warmneptune':
             fn = 'Neptune_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 3.97     #Earth radii
@@ -163,7 +167,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'neptune':
             fn = 'Neptune_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 3.85     #Earth radii
@@ -172,7 +176,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
         if whichplanet == 'mars':
             fn = 'Mars_geo_albedo.txt'
-            model = np.loadtxt(planetdir+fn)
+            model = np.loadtxt(os.path.join(planetdir,fn))
             lamhr = model[:,0]
             Ahr   = model[:,1]
             planet.Rp    = 0.53     #Earth radii
@@ -238,7 +242,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
 def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
                          ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
-                         THERMAL=False):
+                         THERMAL=False, wantsnr=10):
     """
     Parameters
     ----------
@@ -286,7 +290,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
     # Skip call_noise and just call: noise
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        make_noise(Ahr, wlhr, solhr, telescope, planet, star, wantsnr=10.0, COMPUTE_LAM=True, THERMAL=THERMAL)
+        make_noise(Ahr, wlhr, solhr, telescope, planet, star, wantsnr=wantsnr, COMPUTE_LAM=True, THERMAL=THERMAL)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
@@ -320,7 +324,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
 def smart_observation(radfile, itime, telescope, planet, star,
                          ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
-                         THERMAL=False):
+                         THERMAL=False, wantsnr=10.):
     """Uses coronagraph noise model to create an observation of high resolution SMART output.
 
     Parameters
@@ -373,7 +377,7 @@ def smart_observation(radfile, itime, telescope, planet, star,
 
     # Skip call_noise and just call: noise
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        make_noise(Ahr, wlhr, solar_spec, telescope, planet, star, wantsnr=10.0, COMPUTE_LAM=True, THERMAL=THERMAL)
+        make_noise(Ahr, wlhr, solar_spec, telescope, planet, star, wantsnr=wantsnr, COMPUTE_LAM=True, THERMAL=THERMAL)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
@@ -506,6 +510,8 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
 
     if save:
         fig.savefig(title+tag+".pdf")
+    else:
+        plt.show()
 
 def process_noise(Dt, Cratio, cp, cb):
     """
