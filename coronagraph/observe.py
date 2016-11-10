@@ -612,13 +612,13 @@ def exptime_band(cp, ccont, cb, iband, SNR=5.0):
 
     Returns
     -------
-    Telescope exposure time [seconds]
+    Telescope exposure time [hrs]
     """
 
     numerator = np.sum(cp[iband] + 2.*cb[iband])
     denominator = np.power(np.sum(np.fabs(ccont - cp[iband])),2)
 
-    return np.power(SNR, 2) * numerator / denominator
+    return np.power(SNR, 2) * numerator / denominator / 3600.0
 
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()

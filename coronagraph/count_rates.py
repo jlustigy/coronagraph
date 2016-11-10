@@ -1,7 +1,7 @@
 # Import dependent modules
 import numpy as np
 import sys
-from .degrade_spec import degrade_spec
+from .degrade_spec import degrade_spec, downbin_spec
 from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, cdark, cread, ctherm, ccic, f_airy, ctherm_earth
 import pdb
@@ -96,7 +96,7 @@ def count_rates(Ahr, lamhr, solhr,
         dlam = np.zeros(Nlam) #grid widths (um)
         # Set wavelength widths
         for j in range(1,Nlam-1):
-            dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
+            dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j]) #TODO This doesn't look right!
         #widths at edges are same as neighbor
         dlam[0] = dlam[1]
         dlam[Nlam-1] = dlam[Nlam-2]
@@ -190,6 +190,8 @@ def count_rates(Ahr, lamhr, solhr,
     if COMPUTE_LAM:
         A = degrade_spec(Ahr,lamhr,lam,dlam=dlam)
         Fs = degrade_spec(solhr, lamhr, lam, dlam=dlam)
+        #A = downbin_spec(Ahr,lamhr,lam,dlam=dlam)
+        #Fs = downbin_spec(solhr, lamhr, lam, dlam=dlam)
     elif IMAGE:
         # Convolve with filter response
         A = convolve_spec(Ahr, lamhr, filters)

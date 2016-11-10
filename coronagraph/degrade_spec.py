@@ -8,6 +8,7 @@ Created on Mon Jul  6 11:00:41 2015
 import numpy as np
 import scipy as sp
 from scipy import interpolate
+from scipy.stats import binned_statistic
 
 def degrade_spec(specHR, lamHR, lamLR, dlam=None):
 
@@ -90,3 +91,26 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
         specLO[i] = specs
 
     return specLO
+
+def downbin_spec(specHR, lamHR, lamLR, dlam=None):
+    """
+    """
+
+    if dlam is None:
+        ValueError("Please supply dlam in downbin_spec()")
+
+    # Reverse ordering if wl vector is decreasing with index
+    if lamHR[0] > lamHR[1]:
+        lamHI = np.array(lamHR[::-1])
+        spec = np.array(specHR[::-1])
+    if lamLR[0] > lamLR[1]:
+        lamLO = np.array(lamLR[::-1])
+        dlamLO = np.array(dlam[::-1])
+
+    # Calculate bin edges
+    LRedges = np.hstack([lamLR - 0.5*dlam, lamLR[-1]+0.5*dlam[-1]])
+
+    # Call scipy.stats.binned_statistic()
+    specLR = binned_statistic(lamHR, specHR, statistic="mean", bins=LRedges)[0]
+
+    return specLR
