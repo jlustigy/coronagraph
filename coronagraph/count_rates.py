@@ -11,7 +11,7 @@ from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
 import pdb
 import os
 
-def count_rates_new(Ahr, lamhr, solhr,
+def count_rates(Ahr, lamhr, solhr,
                 alpha, Phi, Rp, Teff, Rs, r, d, Nez,
                 mode   = "IFS",
                 filter_wheel = None,
@@ -61,7 +61,7 @@ def count_rates_new(Ahr, lamhr, solhr,
     r : float
         Planet semi-major axis [AU]
     d : float
-        Distance to observed star–planet system [pc]
+        Distance to observed star-planet system [pc]
     Nez : float
         Number of exozodis in exoplanetary disk
     mode : str, optional
