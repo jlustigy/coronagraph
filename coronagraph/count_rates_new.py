@@ -37,30 +37,118 @@ def count_rates_new(Ahr, lamhr, solhr,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = True, THERMAL = False, GROUND = False):
     """
-    Generate photon count rates for specified telescope and planet parameters
+    Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
+    photon count rates for specified telescope and system parameters.
 
     Parameters
     ----------
     Ahr : array
-        hi-res planetary albedo spectrum
+        High-res, wavelength-dependent planetary geometric albedo
     lamhr : array
-        wavelength grid for Ahr (um)
+        High-res wavelength grid  [um]
     solhr : array
-        hi-res TOA solar spectrum (W/m**2/um)
-    telescope : Telescope
-        Telescope object containing parameters
-    planet : Planet
-        Planet object containing parameters
-    star : Star
-        Star object containing parameters
-    FIX_OWA : bool
-        set to fix OWA at OWA*lammin/D, as would occur if lenslet array is limiting the OWA
-    COMPUTE_LAM : bool
-        set to compute lo-res wavelength grid, otherwise the grid input as variable 'lam' is used
-    NIR : bool
-        re-adjusts pixel size in NIR, as would occur if a second instrument was designed to handle the NIR
-    THERMAL : bool
-        set to compute thermal photon counts due to telescope temperature
+        High-res TOA solar spectrum [W/m**2/um]
+    alpha : float
+        Planet phase angle [deg]
+    Phi : float
+        Planet phase function
+    Rp : float
+        Planet radius [R_earth]
+    Teff : float
+        Stellar effective temperature [K]
+    Rs : float
+        Stellar radius [R_sun]
+    r : float
+        Planet semi-major axis [AU]
+    d : float
+        Distance to observed star–planet system [pc]
+    Nez : float
+        Number of exozodis in exoplanetary disk
+    mode : str, optional
+        Telescope observing mode: "IFS" or "Imaging"
+    filter_wheel : Wheel, optional
+        Wheel object containing imaging filters
+    lammin : float, optional
+        Minimum wavelength [um]
+    lammax : float, optional
+        Maximum wavelength [um]
+    Res : float, optional
+        Instrument spectral resolution (lambda / delta_lambda)
+    diam : float, optional
+        Telescope diameter [m]
+    Tput : float, optional
+        Telescope and instrument throughput
+    C : float, optional
+        Coronagraph design contrast
+    IWA : float, optional
+        Coronagraph Inner Working Angle ( * lambda / diam)
+    OWA : float, optional
+        Coronagraph Outer Working Angle ( * lambda / diam)
+    Tsys  : float, optional
+        Telescope mirror temperature [K]
+    Tdet  : float, optional
+        Telescope detector temperature [K]
+    emis : float, optional
+        Effective emissivity for the observing system (of order unity)
+    De : float, optional
+        Dark current [counts/s]
+    DNHpix : float, optional
+        Number of horizontal/spatial pixels for dispersed spectrum
+    Re : float, optional
+        Read noise counts per pixel
+    Dtmax : float, optional
+        Detector maximum exposure time [hours]
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    qe : float, optional
+        Detector quantum efficiency
+    MzV : float, optional
+        V-band zodiacal light surface brightness [Mag]
+    MezV : float, optional
+        V-band exozodiacal light surface brightness [Mag]
+    wantsnr : float, optional
+        Desired signal-to-noise ratio in each pixel
+    FIX_OWA : bool, optional
+        Set to fix OWA at OWA*lammin/D, as would occur if lenslet array is limiting the OWA
+    COMPUTE_LAM : bool, optional
+        Set to compute lo-res wavelength grid, otherwise the grid input as variable 'lam' is used
+    SILENT : bool, optional
+        Set to suppress print statements
+    NIR : bool, optional
+        Re-adjusts pixel size in NIR, as would occur if a second instrument was designed to handle the NIR
+    THERMAL : bool, optional
+        Set to compute thermal photon counts due to telescope temperature
+    GROUND : bool, optional
+        Set to simulate ground-based observations through atmosphere
+
+    Returns
+    -------
+    lam : ndarray
+        Observed wavelength grid [um]
+    dlam : ndarray
+        Observed delta-wavelength grid [um]
+    A : ndarray
+        Observed planetary geometric albedo
+    q : ndarray
+        Quantum efficiency grid
+    Cratio : ndarray
+        Planet-star contrast ratio
+    cp : ndarray
+        Planetary photon count rate on detector
+    csp : ndarray
+        Speckle photon count rate on detector
+    cz : ndarray
+        Zodiacal photon count rate on detector
+    cez : ndarray
+        Exozodiacal photon count rate on detector
+    cD : ndarray
+        Dark current photon count rate on detector
+    cR : ndarray
+        Read noise photon count rate on detector
+    cth : ndarray
+        Instrument thermal photon count rate on detector
+    DtSNR : ndarray
+        Exposure time required to get desired S/N (wantsnr) [hours]
     """
 
     convolution_function = downbin_spec

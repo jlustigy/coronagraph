@@ -11,7 +11,7 @@ Telescope, Planet, and Star classes.
 
 class Telescope(object):
 
-    '''
+    """
     Parameters
     ----------
     mode : str
@@ -50,7 +50,7 @@ class Telescope(object):
         Quantum efficiency
     filter_wheel : Wheel (optional)
         Wheel object containing imaging filters
-    '''
+    """
 
     # Define a constructor
     def __init__(self, mode='IFS', lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
