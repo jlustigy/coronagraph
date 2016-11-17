@@ -11,39 +11,62 @@ __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdar
            "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
-    '''
-    stellar flux function
-    --------
-    lam - wavelength (um)
-    Teff - effective temperature (K)
-    Rs - stellar radius (solar radii)
-    d - distance to star (pc)
-    AU - flag that indicates d is in AU
-    Fstar - stellar flux (W/m**2/um)
-    '''
-    Rsun  = 6.958e8        # solar radius (m)
-    ds    = 3.08567e16     # parsec (m)
+    """
+    Stellar flux function
+
+    Parameters
+    ----------
+    lam : float or array-like
+        Wavelength [um]
+    Teff : float
+        Stellar effective temperature [K]
+    Rs :
+        Stellar radius [solar radii]
+    d :
+        Distance to star [pc]
+    AU : bool, optional
+        Flag that indicates d is in AU
+
+    Returns
+    -------
+    Fstar : float or array-like
+        Stellar flux [W/m**2/um]
+    """
+    Rsun  = 6.958e8          # solar radius (m)
+    ds    = 3.08567e16       # parsec (m)
     if AU:
         ds = 1.495979e11     # AU (m)
-    lam= 1.e-6 * lam        # wavelength (m)
+    lam= 1.e-6 * lam         # wavelength (m)
     c1    = 3.7417715e-16    # 2*pi*h*c*c (kg m**4 / s**3)
     c2    = 1.4387769e-2     # h*c/k (m K)
-    power   = c2/lam/Teff     # (unitless)
+    power   = c2/lam/Teff    # (unitless)
     Fs    = c1/( (lam**5.)*(np.exp(power)-1.) ) * 1.e-6
     return Fs*(Rs*Rsun/d/ds)**2.
 
 def Fplan(A, Phi, Fstar, Rp, d, AU=False):
-    '''
-    planetary flux functiom
-    --------
-    A - planetary geometric albedo
-    Phi - planetary phase function
-    Fstar - stellar flux (W/m**2/um)
-    Rp - planetary radius (Earth radii)
-    d - distance (pc)
-    au - flag that indicates d is in AU
-    Fplan - planetary flux (W/**2/um)
-    '''
+    """
+    Planetary flux function
+
+    Parameters
+    ----------
+    A : float or array-like
+        Planetary geometric albedo
+    Phi : float
+        Planetary phase function
+    Fstar : float or array-like
+        Stellar flux [W/m**2/um]
+    Rp : float
+        Planetary radius [Earth radii]
+    d : float
+        Distance to star [pc]
+    AU : bool, optional
+        Flag that indicates d is in AU
+
+    Returns
+    -------
+    Fplan : float or array-like
+        Planetary flux [W/m**2/um]
+    """
     Re    = 6.371e6        # radius of Earth (m)
     ds    = 3.08567e16     # parsec (m)
     if AU:
@@ -51,15 +74,25 @@ def Fplan(A, Phi, Fstar, Rp, d, AU=False):
     return A*Phi*Fstar*(Rp*Re/d/ds)**2.
 
 def FpFs(A, Phi, Rp, r):
-    '''
-    planet-star flux ratio
-    --------
-    A - planetary geometric albedo
-    Phi - planetary phase function
-    Rp - planetary radius (Earth radii)
-    r - orbital distance (au)
-    FpFs - planet-star flux ratio
-    '''
+    """
+    Planet-star flux ratio
+
+    Parameters
+    ----------
+    A : float or array-like
+        Planetary geometric albedo
+    Phi : float
+        Planetary phase function
+    Rp : float
+        Planetary radius [Earth radii]
+    r : float
+        Planetary orbital semi-major axis [AU]
+
+    Returns
+    -------
+    FpFs : float or array-like
+        Planet-star flux ratio
+    """
     Re = 6.371e6         # radius of Earth (m)
     ds = 1.495979e11       # AU (m)
     return A*Phi*(Rp*Re/r/ds)**2.
