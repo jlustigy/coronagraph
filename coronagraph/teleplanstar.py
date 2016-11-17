@@ -10,8 +10,10 @@ Telescope, Planet, and Star classes.
 ################################################################################
 
 class Telescope(object):
-
     """
+    A class to represent a telescope object and all design specifications
+    therein
+
     Parameters
     ----------
     mode : str
@@ -50,6 +52,17 @@ class Telescope(object):
         Quantum efficiency
     filter_wheel : Wheel (optional)
         Wheel object containing imaging filters
+
+    Methods
+    -------
+    from_file(path)
+        Initialize telescope object using telescope parameters in the Input file
+    default_luvoir()
+        Initialize telescope object using current LUVOIR parameters (Not decided!)
+    default_habex()
+        Initialize telescope object using current HabEx parameters (Not decided!)
+    default_wfirst()
+        Initialize telescope object using current WFIRST parameters (Not decided!)
     """
 
     # Define a constructor
@@ -194,11 +207,12 @@ def lambertPhaseFunction(alpha):
     return (np.sin(alpha) + (np.pi - alpha) * np.cos(alpha)) / np.pi
 
 class Planet(object):
-    '''Parameters of the planet to be observed.
+    """
+    A class to represent a planet and all associated parameters of the planet
+    to be observed.
 
     Parameters
     ----------
-
     name : string
         Planet name from database
     star : string
@@ -219,7 +233,12 @@ class Planet(object):
         Zodiacal light surface brightness (mag/arcsec**2)
     MezV : float
         exozodiacal light surface brightness (mag/arcsec**2)
-    '''
+
+    Methods
+    -------
+    from_file()
+        Initialize object using planet parameters in the Input file
+    """
 
     # Define a constructor
     def __init__(self, name='earth', star='sun', d=10.0,Nez=1.0,\
@@ -287,6 +306,16 @@ class Planet(object):
 ################################################################################
 
 class Star(object):
+    """
+    A class to represent the stellar host for an exoplanet observation
+
+    Parameters
+    ----------
+    Teff : float
+        Stellar effective temperature [K]
+    Rs : float
+        Stellar radius [Solar Radii]
+    """
 
     def __init__(self, Teff=5780.0, Rs=1.0):
         self.Teff=Teff
