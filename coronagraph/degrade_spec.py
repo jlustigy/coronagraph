@@ -11,6 +11,25 @@ from scipy import interpolate
 from scipy.stats import binned_statistic
 
 def degrade_spec(specHR, lamHR, lamLR, dlam=None):
+    """
+    Degrade high-resolution spectrum to lower resolution
+
+    Parameters
+    ----------
+    specHR : array-like
+        Spectrum to be degraded
+    lamHR : array-like
+        High-res wavelength grid
+    lamLR : array-like
+        Low-res wavelength grid
+    dlam : array-like, optional
+        Low-res wavelength width grid
+
+    Returns
+    -------
+    specLO : ndarray
+        Low-res spectrum
+    """
 
     # Store input variables (not 100% necessary)
     lamHI  = np.array(lamHR)
@@ -94,6 +113,23 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
 
 def downbin_spec(specHR, lamHR, lamLR, dlam=None):
     """
+    Re-bin spectum to lower resolution using scipy.binned_statistic
+
+    Parameters
+    ----------
+    specHR : array-like
+        Spectrum to be degraded
+    lamHR : array-like
+        High-res wavelength grid
+    lamLR : array-like
+        Low-res wavelength grid
+    dlam : array-like, optional
+        Low-res wavelength width grid
+
+    Returns
+    -------
+    specLR : ndarray
+        Low-res spectrum
     """
 
     if dlam is None:
