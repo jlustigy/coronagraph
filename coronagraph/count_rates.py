@@ -103,9 +103,9 @@ def count_rates(Ahr, lamhr, solhr,
     qe : float, optional
         Detector quantum efficiency
     MzV : float, optional
-        V-band zodiacal light surface brightness [Mag]
+        V-band zodiacal light surface brightness [mag/arcsec**2]
     MezV : float, optional
-        V-band exozodiacal light surface brightness [Mag]
+        V-band exozodiacal light surface brightness [mag/arcsec**2]
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
@@ -124,11 +124,11 @@ def count_rates(Ahr, lamhr, solhr,
     Returns
     -------
     lam : ndarray
-        Observed wavelength grid [um]
+        Observational wavelength grid [um]
     dlam : ndarray
-        Observed delta-wavelength grid [um]
+        Observational spectral element width [um]
     A : ndarray
-        Observed planetary geometric albedo
+        Planetary geometric albedo on lam grid
     q : ndarray
         Quantum efficiency grid
     Cratio : ndarray

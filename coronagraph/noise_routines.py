@@ -98,46 +98,71 @@ def FpFs(A, Phi, Rp, r):
     return A*Phi*(Rp*Re/r/ds)**2.
 
 def cplan(q, fpa, T, lam, dlam, Fplan, D):
-    '''
-    planet photon count rate
-    --------
-    q - quantum efficiency
-    fpa - fraction of planet flux in Airy pattern
-    T - system throughput
-    lam - wavelength (um)
-    dlam - spectral element width (um)
-    Fplan - planetary flux (W/m**2/um)
-    D - telescope diameter (m)
-    cplan - planet photon count rate (s**-1)
-    '''
+    """
+    Exoplanetary photon count rate
+
+    Parameters
+    ----------
+    q : float or array-like
+        Quantum efficiency
+    fpa : float
+        Fraction of planetary light that falls within photometric aperture
+    T : float
+        Telescope and system throughput
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    Fplan : float or array-like
+        Planetary flux [W/m**2/um]
+    D : float
+        Telescope diameter [m]
+
+    Returns
+    -------
+    cplan : float or array-like
+        Exoplanetary photon count rate [1/s]
+    """
     hc  = 1.986446e-25 # h*c (kg*m**3/s**2)
     return np.pi*q*fpa*T*(lam*1.e-6/hc)*dlam*Fplan*(D/2.)**2.
 
 def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
-    '''
-    zodiacal light count rate
-    --------
-    q - quantum efficiency
-    X - size of photometric aperture (lambda/D)
-    T - system throughput
-    lam - wavelength (um)
-    dlam - spectral element width (um)
-    D - telescope diameter (m)
-    MzV - zodiacal light surface brightness (mag/arcsec**2)
-    SUN - set to use WMO solar spectrum
-    CIRC - keyword to use a circular aperture
+    """
+    Zodiacal light count rate
 
-    czodi - zodiacal light photon count rate (s**-1)
-    '''
+    Parameters
+    ----------
+    q : float or array-like
+        Quantum efficiency
+    X : float
+        Size of photometric aperture (lambda/D)
+    T : float
+        Telescope and system throughput
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    D : float
+        Telescope diameter [m]
+    MzV : float
+        Zodiacal light surface brightness [mag/arcsec**2]
+    SUN : bool, optional
+        Set to use solar spectrum (Not Implemented)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    czodi : float or array-like
+        Zodiacal light photon count rate [1/s]
+    """
     hc    = 1.986446e-25 # h*c (kg*m**3/s**2)
     F0V   = 3.6e-8     # zero-mag V-band flux (W/m**2/um)
     FsolV = 1.86e+3    # Solar V-band flux at 1 AU
     if SUN:
-        print("Error in czodi")
-        fn    = '/Users/robinson/Work/noise/wmo_solar_spectrum.dat'
+        print("Error in function czodi()")
+        raise NotImplementedError
         # Read-in solar spectrum and interpolate it onto lam using degrade_spec()
-        # READCOL, fn, lamsol, Fsol, SKIPLINE=32, /SILENT
-        # Fsol  = DEGRADE_SPEC(Fsol,lamsol,lam,DLAM=dlam) ; degrade solar spectrum (W/m**2/um)
     else:
         Teffs  = 5778. # Sun effective temperature
         Rs  = 1.       # Sun radius (in solar radii)
@@ -153,36 +178,49 @@ def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
     return np.pi*q*T*Omega*dlam*(lam*1.e-6/hc)*(D/2)**2.*rat*F0V*10**(-Mzv/2.5)
 
 def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
-    '''
-    exozodiacal light count rate
-    --------
-    q - quantum efficiency
-    X - size of photometric aperture (lambda/D)
-    T - system throughput
-    lam - wavelength (um)
-    dlam - spectral element width (um)
-    D - telescope diameter (m)
-    r - orbital distance (au)
-    Fstar - host star spectrum *at 1 au* (W/m**2/um)
-    Nez - number of exozodis
-    MezV - exozodiacal light surface brightness (mag/arcsec**2)
-    SUN - set to use WMO solar spectrum
-    CIRC - keyword to use a circular aperture
+    """
+    Exozodiacal light count rate
 
-    cezodi - exozodiacal light photon count rate (s**-1)
-    '''
-    hc    = 1.986446e-25 # h*c (kg*m**3/s**2)
-    F0V   = 3.6e-8     # zero-mag V-band flux (W/m**2/um)
-    FsolV = 1.86e+3    # Solar V-band flux at 1 AU
+    Parameters
+    ----------
+    q : float or array-like
+        Quantum efficiency
+    X : float
+        Size of photometric aperture (lambda/D)
+    T : float
+        System throughput
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    D : float
+        Telescope diameter [m]
+    r : float
+        Planetary orbital semi-major axis [AU]    Fstar - host star spectrum *at 1 au* (W/m**2/um)
+    Nez : float
+        Number of exozodis in exoplanetary disk
+    MezV : float
+        Exozodiacal light surface brightness [mag/arcsec**2]
+    SUN : bool, optional
+        Set to use solar spectrum (Not Implemented)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    cezodi : float or array-like
+        Exozodiacal light photon count rate [1/s]
+    """
+    hc    = 1.986446e-25   # h*c (kg*m**3/s**2)
+    F0V   = 3.6e-8         # zero-mag V-band flux (W/m**2/um)
+    FsolV = 1.86e+3        # Solar V-band flux at 1 AU
     if SUN:
-        print("Error in cezodi")
-        fn    = '/Users/robinson/Work/noise/wmo_solar_spectrum.dat'
+        print("Error in function cezodi()")
+        raise NotImplementedError
         # Read-in solar spectrum and interpolate it onto lam using degrade_spec()
-        # READCOL, fn, lamsol, Fsol, SKIPLINE=32, /SILENT
-        # Fsol  = DEGRADE_SPEC(Fsol,lamsol,lam,DLAM=dlam) ; degrade solar spectrum (W/m**2/um)
     else:
-        Teffs  = 5778.   # Sun effective temperature
-        Rs  = 1.       # Sun radius (in solar radii)
+        Teffs  = 5778.     # Sun effective temperature
+        Rs  = 1.           # Sun radius (in solar radii)
         #Fsol  = Fstar(lam, Teffs, Rs, 1., AU=True)  # Sun as blackbody (W/m**2/um)
     rat   = np.zeros(len(lam))
     rat[:]= Fstar[:]/FsolV # ratio of solar flux to V-band solar flux
@@ -195,36 +233,62 @@ def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     return np.pi*q*T*Omega*dlam*(lam*1.e-6/hc)*(D/2)**2.*(1./r)**2.*rat*Nez*F0V*10**(-Mezv/2.5)
 
 def cspeck(q, T, C, lam, dlam, Fstar, D):
-    '''
-    speckle count rate
-    --------
-    q - quantum efficiency
-    T - system throughput
-    C - design contrast
-    lam - wavelength (um)
-    dlam - spectral element width (um)
-    D - telescope diameter (m)
-    Fstar - host star spectrum at distance to system (W/m**2/um)
-    cspeck - speckle photon count rate (s**-1)
-    '''
+    """
+    Speckle count rate
+
+    Parameters
+    ----------
+    q : float or array-like
+        Quantum efficiency
+    T : float
+        System throughput
+    C : float, optional
+        Coronagraph design contrast
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    D : float
+        Telescope diameter [m]
+    Fstar : float or array-like
+        Host star spectrum at distance of planet (TOA) [W/m**2/um]
+
+    Returns
+    -------
+    cspeck : float or array-like
+        Speckle photon count rate [1/s]
+    """
     hc    = 1.986446e-25 # h*c (kg*m**3./s**2.)
     return np.pi*q*T*C*dlam*Fstar*(lam*1.e-6/hc)*(D/2.)**2.
 
 def cdark(De, X, lam, D, theta, DNhpix, IMAGE=False, CIRC=False):
-    '''
-    dark count rate
-    --------
-    De - dark count rate (s**-1)
-    X - size of photometric aperture (lambda/D)
-    lam - wavelength (um)
-    D - telescope diameter (m)
-    theta - angular size of lenslet or pixel (arcsec**2)
-    DNhpix - number of pixels spectrum spread over in horizontal, for IFS
-    IMAGE - keyword set to indicate imaging mode (not IFS)
-    CIRC - keyword to use a circular aperture
+    """
+    Dark current photon count rate
 
-    cdark - dark count rate (s**-1)
-    '''
+    Parameters
+    ----------
+    De : float, optional
+        Dark current [counts/s]
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    lam : float or array-like
+        Wavelength [um]
+    D : float
+        Telescope diameter [m]
+    theta :
+        Angular size of lenslet or pixel [arcsec**2]
+    DNHpix : float, optional
+        Number of horizontal/spatial pixels for dispersed spectrum
+    IMAGE : bool, optional
+        Set to indicate imaging mode (not IFS)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    cdark :
+        Dark current photon count rate (s**-1)
+    """
     if CIRC:
         # circular aperture diameter (arcsec**2)
         Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
@@ -238,20 +302,33 @@ def cdark(De, X, lam, D, theta, DNhpix, IMAGE=False, CIRC=False):
     return De*Npix
 
 def cread(Re, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
-    '''
-    read noise count rate
-    --------
-    Re - read noise counts per pixel
-    X - size of photometric aperture (lambda/D)
-    lam - wavelength (um)
-    D - telescope diameter (m)
-    theta - angular size of lenslet or pixel (arcsec**2)
-    Dtmax - maximum exposure time (hr)
-    IMAGE - keyword set to indicate imaging mode (not IFS)
-    CIRC - keyword to use a circular aperture
+    """
+    Read noise count rate (assuming detector has a maximum exposure time)
 
-    cread - read count rate (s**-1)
-    '''
+    Parameters
+    ----------
+    Re : float or array-like
+        Read noise counts per pixel
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    lam : float or array-like
+        Wavelength [um]
+    D : float
+        Telescope diameter [m]
+    theta :
+        Angular size of lenslet or pixel [arcsec**2]
+    Dtmax : float, optional
+        Detector maximum exposure time [hours]
+    IMAGE : bool, optional
+        Set to indicate imaging mode (not IFS)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    cread : float or array-like
+        Read noise photon count rate (s**-1)
+    """
     if CIRC:
         # circular aperture diameter (arcsec**2)
         Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
@@ -266,17 +343,31 @@ def cread(Re, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
 
 def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
     """
-    Clock induced charge count rate
-    --------
-    Rc - clock induced charge counts per pixel per read
-    X - diameter or length of photometric aperture (lambda/D)
-    lam - wavelength (um)
-    D - telescope diameter (m)
-    theta - angular diameter of lenslet or pixel (arcsec)
-    Dtmax - maximum exposure time (hr)
-    IMAGE - keyword set to indicate imaging mode (not IFS)
-    CIRC - keyword to use a circular aperture
-    cread - read count rate (s**-1)
+    Clock induced charge count rate (not currently in use)
+
+    Parameters
+    ----------
+    Rc : float or array-like
+        Clock induced charge counts per pixel per read
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    lam : float or array-like
+        Wavelength [um]
+    D : float
+        Telescope diameter [m]
+    theta :
+        Angular size of lenslet or pixel [arcsec**2]
+    Dtmax : float, optional
+        Detector maximum exposure time [hours]
+    IMAGE : bool, optional
+        Set to indicate imaging mode (not IFS)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    cread :
+        Read noise count rate [1/s]
     """
     if CIRC:
         # circular aperture diameter (arcsec**2)
@@ -293,12 +384,19 @@ def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
 
 def f_airy(X, CIRC=False):
     """
-    fraction of Airy power contained in square or circular aperture
-    --------
-    X - size of photometric aperture (lambda/D)
-    CIRC - keyword to use a circular aperture
+    Fraction of Airy power contained in square or circular aperture
 
-    f_airy - fraction of power in Airy pattern of size X*lambda/D
+    Parameters
+    ----------
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    f_airy : float
+        Fraction of planetary light that falls within photometric aperture X*lambda/D
     """
     if CIRC:
         # Circular aperture
@@ -331,13 +429,18 @@ def f_airy(X, CIRC=False):
 
 def f_airy_int(X):
     """
-    numerical integration to determine fraction of Airy power
+    Numerical integration to determine fraction of Airy power
     contained square aperture (SLOW!)
-    --------
 
-    X - size of photometric aperture (lambda/D)
+    Parameters
+    ----------
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
 
-    f_airy - fraction of Airy power in aperture of size X*lambda/D
+    Returns
+    -------
+    f_airy : float
+        Fraction of planetary light that falls within photometric aperture X*lambda/D
     """
     N = 1000      # sets horizontal and vertical grid resolution
     E0 = 1.27324  # total power contained in Airy pattern
@@ -361,51 +464,74 @@ def f_airy_int(X):
     fpa   = E/E0
 
 def ctherm(q, X, lam, dlam, D, Tsys, emis):
-    '''
-    telescope thermal count rate
+    """
+    Telescope thermal count rate
     --------
-        q - quantum efficiency
-        X - size of photometric aperture (lambda/D)
-      lam - wavelength (um)
-         dlam - spectral element width (um)
-        D - telescope diameter (m)
-         Tsys - telescope/system temperature (K)
-         emis - telescope/system emissivity
-     ctherm - telescope thermal photon count rate (s**-1)
-    '''
+    q : float or array-like
+        Quantum efficiency
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    D : float
+        Telescope diameter [m]
+    Tsys  : float
+        Telescope mirror temperature [K]
+    emis : float
+        Effective emissivity for the observing system (of order unity)
+
+    Returns
+    -------
+    ctherm : float or array-like
+        Telescope thermal photon count rate [1/s]
+    """
     hc    = 1.986446e-25  # h*c (kg*m**3/s**2)
     c1    = 3.7417715e-16 # 2*pi*h*c*c (kg m**4 / s**3)
     c2    = 1.4387769e-2  # h*c/k (m K)
-    lambd= 1.e-6*lam     # wavelength (m)
+    lambd= 1.e-6*lam      # wavelength (m)
     power   = c2/lambd/Tsys
     Bsys  = c1/( (lambd**5.)*(np.exp(power)-1.) )*1.e-6/np.pi # system Planck function (W/m**2/um/sr)
     Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
     return np.pi*q*dlam*emis*Bsys*Omega*(lam*1.e-6/hc)*(D/2)**2.
 
 def ctherm_earth(q, X, lam, dlam, D, Itherm):
-    '''
-    telescope thermal count rate
-    --------
-        q - quantum efficiency
-        X - size of photometric aperture (lambda/D)
-        lam - wavelength (um)
-        dlam - spectral element width (um)
-        D - telescope diameter (m)
-        Itherm - Earth thermal intensity [W/m**2/um/sr]
-    cthe - telescope thermal photon count rate (s**-1)
-    '''
+    """
+    Earth atmosphere thermal count rate
+
+    Parameters
+    ----------
+    q : float or array-like
+        Quantum efficiency
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    D : float
+        Telescope diameter [m]
+    Itherm : float or array-like
+        Earth thermal intensity [W/m**2/um/sr]
+
+    Returns
+    -------
+    cthe : float or array-like
+        Earth atmosphere thermal photon count rate [1/s]
+    """
     hc    = 1.986446e-25  # h*c (kg*m**3/s**2)
     Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
     return np.pi*q*dlam*Itherm*Omega*(lam*1.e-6/hc)*(D/2)**2.
 
 def lambertPhaseFunction(alpha):
     """
-    Calculate the Lambertian Phase Function from the phase angle.
+    Calculate the Lambertian Phase Function from the phase angle
 
     Parameters
     ----------
     alpha: float
-        Planet phase angle (degrees)
+        Planet phase angle [deg]
 
     Returns
     -------
@@ -418,7 +544,7 @@ def lambertPhaseFunction(alpha):
 @jit
 def construct_lam(lammin, lammax, Res):
     """
-    Construct wavelength grid.
+    Construct wavelength grid
 
     Parameters
     ----------
@@ -428,7 +554,15 @@ def construct_lam(lammin, lammax, Res):
         Maximum wavelength [microns]
     Res : float
         Resolving power (lambda / delta-lambda)
+
+    Returns
+    -------
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
     """
+
     # Set wavelength grid
     lam  = lammin #in [um]
     Nlam = 1
@@ -441,24 +575,37 @@ def construct_lam(lammin, lammax, Res):
         lam[j] = lam[j-1] + lam[j-1]/Res
     Nlam = len(lam)
     dlam = np.zeros(Nlam) #grid widths (um)
+
     # Set wavelength widths
     for j in range(1,Nlam-1):
         dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
-    #widths at edges are same as neighbor
+
+    #Set edges to be same as neighbor
     dlam[0] = dlam[1]
     dlam[Nlam-1] = dlam[Nlam-2]
+
     return lam, dlam
 
 @jit
 def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9):
     """
+    Set instrumental quantum efficiency
 
     Parameters
     ----------
-    NIR : bool (optional)
+    lam : float or array-like
+        Wavelength [um]
+    qe : float
+        Detector quantum efficiency
+    NIR : bool, optional
         Use near-IR detector proporties
-    q_nir : float (optional)
+    q_nir : float, optional
         NIR quantum efficiency
+
+    Returns
+    -------
+    q : array-like
+        Wavelength-dependent instrumental quantum efficiency
     """
     Nlam = len(lam)
     q = np.zeros(Nlam)
@@ -477,11 +624,11 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9):
 
 def set_dark_current(lam, De, lammax, Tdet, NIR=False, De_nir=1e-3):
     """
-    Set grid for dark current as a function of wavelength
+    Set dark current grid as a function of wavelength
 
     Parameters
     ----------
-    lam : ndarray
+    lam : array-like
         Wavelength grid [microns]
     De : float
         Dark current count rate per pixel (s**-1)
@@ -489,10 +636,15 @@ def set_dark_current(lam, De, lammax, Tdet, NIR=False, De_nir=1e-3):
         Maximum wavelength
     Tdet : float
         Detector Temperature [K]
-    NIR : bool (optional)
+    NIR : bool, optional
         Use near-IR detector proporties
-    De_nir : float (optional)
+    De_nir : float, optional
         NIR minimum dark current count rate per pixel
+
+    Returns
+    -------
+    De : array-like
+        Dark current as a function of wavelength
     """
     De = np.zeros(len(lam)) + De
 
@@ -511,18 +663,23 @@ def set_dark_current(lam, De, lammax, Tdet, NIR=False, De_nir=1e-3):
 
 def set_read_noise(lam, Re, NIR=False, Re_nir=2.):
     """
-    Set grid for read noise as a function of wavelength
+    Set read noise grid as a function of wavelength
 
     Parameters
     ----------
-    lam : ndarray
+    lam : array-like
         Wavelength grid [microns]
     Re : float
         Read noise counts per pixel (s**-1)
-    NIR : bool (optional)
+    NIR : bool, optional
         Use near-IR detector proporties
-    Re_nir : float (optional)
+    Re_nir : float, optional
         NIR read noise counts per pixel
+
+    Returns
+    -------
+    Re : array-like
+        Read noise as a function of wavelength
     """
     Re = np.zeros(len(lam)) + Re
 
@@ -549,6 +706,11 @@ def set_lenslet(lam, lammin, diam,
         Use near-IR detector proporties
     lammin_nir : float (optional)
         Wavelength min to use for NIR lenslet size
+
+    Returns
+    -------
+    theta : ndarray
+        Angular size of lenslet
     """
     Nlam = len(lam)
     if NIR:
@@ -566,7 +728,7 @@ def set_lenslet(lam, lammin, diam,
 def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
                    FIX_OWA=False, SILENT=False):
     """
-    Set wavelength dependent telescope throughput
+    Set wavelength-dependent telescope throughput
 
     Parameters
     ----------
@@ -584,9 +746,11 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
         Outer working angle
     lammin : float
         Minimum wavelength
-    FIX_OWA : bool
+    FIX_OWA : bool, optional
 
-    SILENT : bool
+    Returns
+    -------
+    SILENT : bool, optional
         Suppress printing
     """
     Nlam = len(lam)
@@ -611,8 +775,8 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
 
 def set_atmos_throughput(lam, dlam, convolve, plot=False):
     """
-    Use the atmospheric transmission to set a throughput term for radiation
-    through the atmosphere.
+    Use pre-computed Earth atmospheric transmission to set throughput term for
+    radiation through the atmosphere
 
     Parameters
     ----------
@@ -622,6 +786,11 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
         Wavelength bin width grid
     convolve : func
         Function used to degrade/downbin spectrum
+
+    Returns
+    -------
+    Tatmos : ndarray
+        Atmospheric throughput as a function of wavelength
     """
     # Read in earth transmission file
     fn = os.path.join(os.path.dirname(__file__), "ground/earth_transmission_atacama_30deg.txt")
@@ -643,16 +812,23 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
 
 def get_thermal_ground_intensity(lam, dlam, convolve):
     """
-    Get the intensity at the ground in each spectral element due to the sky background.
+    Get the intensity at the ground in each spectral element due to the sky
+    background
 
     Parameters
     ----------
     lam : ndarray
-        Wavelength grid
+        Wavelength grid [um]
     dlam : ndarray
-        Wavelength bin width grid
+        Wavelength bin width grid [um]
     convolve : func
         Function used to degrade/downbin spectrum
+
+    Returns
+    -------
+    Itherm : ndarray
+        Intensity at the ground due to the sky as a function of wavelength
+        [W/m**2/um/sr]
     """
     # Read in earth thermal data
     fn = os.path.join(os.path.dirname(__file__), "ground/earth_thermal_atacama_30deg.txt")
@@ -667,7 +843,7 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def exptime_element(lam, cp, cn, wantsnr):
     """
-    Calculate the exposure time (in hours) to get a specified signal-to-noise.
+    Calculate the exposure time (in hours) to get a specified signal-to-noise
 
     Parameters
     ----------
