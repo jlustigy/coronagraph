@@ -8,7 +8,7 @@ __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdar
            "cread", "ccic", "f_airy", "f_airy_int", "ctherm", "ctherm_earth",
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
            "set_read_noise", "set_lenslet", "set_throughput", "set_atmos_throughput",
-           "get_thermal_ground_intensity", "exptime_element"]
+           "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
     '''
@@ -364,6 +364,23 @@ def ctherm_earth(q, X, lam, dlam, D, Itherm):
     hc    = 1.986446e-25  # h*c (kg*m**3/s**2)
     Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
     return np.pi*q*dlam*Itherm*Omega*(lam*1.e-6/hc)*(D/2)**2.
+
+def lambertPhaseFunction(alpha):
+    """
+    Calculate the Lambertian Phase Function from the phase angle.
+
+    Parameters
+    ----------
+    alpha: float
+        Planet phase angle (degrees)
+
+    Returns
+    -------
+    Phi : float
+        Lambertian phase function
+    """
+    alpha = alpha * np.pi / 180.
+    return (np.sin(alpha) + (np.pi - alpha) * np.cos(alpha)) / np.pi
 
 @jit
 def construct_lam(lammin, lammax, Res):

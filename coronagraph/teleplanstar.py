@@ -177,12 +177,19 @@ class Telescope(object):
 ################################################################################
 
 def lambertPhaseFunction(alpha):
-    '''Calculate the Lambertian Phase Function from the phase angle.
-    Args:
-        alpha: Planet phase angle (degrees)
-    Returns:
-        The Lambertian phase function
-    '''
+    """
+    Calculate the Lambertian Phase Function from the phase angle.
+
+    Parameters
+    ----------
+    alpha: float
+        Planet phase angle (degrees)
+
+    Returns
+    -------
+    Phi : float
+        Lambertian phase function
+    """
     alpha = alpha * np.pi / 180.
     return (np.sin(alpha) + (np.pi - alpha) * np.cos(alpha)) / np.pi
 
