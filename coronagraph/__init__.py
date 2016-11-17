@@ -10,4 +10,3 @@ from .convolve_spec import convolve_spec
 from .count_rates import count_rates
 from .count_rates_wrapper import count_rates_wrapper
 import noise_routines
-from .count_rates_new import count_rates_new
