@@ -29,6 +29,8 @@ import datetime
 import os
 import sys
 
+sys.path.insert(0, os.path.abspath('..'))
+
 try:
     import astropy_helpers
 except ImportError:
@@ -169,4 +171,3 @@ if eval(setup_cfg.get('edit_on_github')):
 
 # -- Resolving issue number to links in changelog -----------------------------
 github_issues_url = 'https://github.com/{0}/issues/'.format(setup_cfg['github_project'])
-
