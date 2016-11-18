@@ -5,5 +5,5 @@
 Installation
 ============
 
-To install leonard, run::
+To install coronagraph, run::
     pip install coronagraph
