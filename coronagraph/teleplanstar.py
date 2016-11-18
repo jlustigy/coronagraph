@@ -1,9 +1,11 @@
-import numpy as np
-from .utils import Input, Loadin
-
 """
 Telescope, Planet, and Star classes.
 """
+
+import numpy as np
+from .utils import Input, Loadin
+
+__all__ = ['Telescope', 'Planet', 'Star']
 
 ################################################################################
 # TELESCOPE

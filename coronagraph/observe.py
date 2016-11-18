@@ -10,6 +10,8 @@ mpl.rcParams['font.size'] = 20.0
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
+__all__ = ['generate_observation', 'smart_observation', 'planetzoo_observation', 'process_noise', 'exptime_band', 'interp_cont_over_band']
+
 planetdir = "planets/"
 relpath = os.path.join(os.path.dirname(__file__), planetdir)
 

@@ -29,4 +29,4 @@ class Spectrum(object):
 
     @classmethod
     def from_solar_system(cls, name=None, planetdir='planets/'):
-        
+        return

@@ -11,6 +11,8 @@ from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
 import pdb
 import os
 
+__all__ = ['count_rates']
+
 def count_rates(Ahr, lamhr, solhr,
                 alpha, Phi, Rp, Teff, Rs, r, d, Nez,
                 mode   = "IFS",

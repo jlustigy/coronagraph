@@ -3,17 +3,17 @@ from make_noise import make_noise
 from teleplanstar import Star
 import pdb
 
-def call_noise(telescope,planet,Ahr='',lamhr='', solhr='',\
-              planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/'):
-    '''
-    planet choices:
-        earth, venus, archean,
-        earlymars, hazyarchean, earlyvenus,
-        jupiter, saturn, uranus, neptune, mars,
-        fstarozone
-    star choices (for now):
-    sun, f2v
-    '''
+__all__ = ['call_noise']
+
+def call_noise(telescope,planet,Ahr='',lamhr='', solhr='',
+               planetdir = '/astro/users/jlustigy/Models/coronagraph/planets/'):
+    """
+    Call noise model.
+    
+    planet choices: earth, venus, archean, earlymars, hazyarchean, earlyvenus,
+    jupiter, saturn, uranus, neptune, mars, fstarozone
+    star choices (for now): sun, f2v
+    """
 
     whichplanet = planet.name
     startype = planet.star

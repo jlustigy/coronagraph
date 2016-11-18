@@ -10,6 +10,8 @@ import scipy as sp
 from scipy import interpolate
 from scipy.stats import binned_statistic
 
+__all__ = ['degrade_spec', 'downbin_spec']
+
 def degrade_spec(specHR, lamHR, lamLR, dlam=None):
     """
     Degrade high-resolution spectrum to lower resolution

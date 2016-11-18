@@ -5,6 +5,8 @@ from .count_rates import count_rates
 from .Noise import Output
 import pdb
 
+__all__ = ['count_rates_wrapper']
+
 def count_rates_wrapper(Ahr, lamhr, solhr,
                    telescope, planet, star,
                    wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,

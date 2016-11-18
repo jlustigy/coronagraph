@@ -1,12 +1,18 @@
-from .teleplanstar import Telescope, Planet, Star
-from .call_noise import call_noise
-from .make_noise import make_noise
-import observe
-from .observe import generate_observation, smart_observation, planetzoo_observation, process_noise, exptime_band, interp_cont_over_band
-from .utils import Input
-from .degrade_spec import degrade_spec, downbin_spec
-import filters
-from .convolve_spec import convolve_spec
-from .count_rates import count_rates
-from .count_rates_wrapper import count_rates_wrapper
-import noise_routines
+# ----------------------------------------------------------------------------
+from ._astropy_init import *
+# ----------------------------------------------------------------------------
+
+# For egg_info test builds to pass, put package imports here.
+if not _ASTROPY_SETUP_:
+    from .teleplanstar import *
+    from .call_noise import *
+    from .make_noise import *
+    import observe
+    from .observe import *
+    from .utils import *
+    from .degrade_spec import *
+    import filters
+    from .convolve_spec import *
+    from .count_rates import *
+    from .count_rates_wrapper import *
+    import noise_routines

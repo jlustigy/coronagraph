@@ -5,6 +5,8 @@ from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, cdark, cread, ctherm, ccic, f_airy
 import pdb
 
+__all__ = ['make_noise']
+
 def make_noise(Ahr, lamhr, solhr, telescope, planet, star, wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,\
     SILENT = False, NIR = True, THERMAL = False):
     """

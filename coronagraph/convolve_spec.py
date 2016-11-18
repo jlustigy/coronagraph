@@ -4,15 +4,17 @@ from .degrade_spec import degrade_spec
 from scipy import interp
 from scipy import ndimage
 
+__all__ = ['convolve_spec']
+
 def convolve_spec(Ahr, lamhr, filters, forceTopHat=False):
-    
+
     # if wl grid is backwards reverse it
     if lamhr[1] > lamhr[0]:
         pass
     else:
         lamhr=lamhr[::-1]
         Ahr=Ahr[::-1]
-   
+
     # Sort filters by wavelength
     tdict = sorted(filters.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
     F = []
@@ -23,18 +25,18 @@ def convolve_spec(Ahr, lamhr, filters, forceTopHat=False):
         else:
             Fi = convolve_filter_response(lamhr, Ahr, x[1].wl, x[1].response, degrade=True)
         F.append(Fi)
-    
+
     return np.array(F)
-    
+
 def convolve_filter_response(wlh, fh, wlf, response, degrade=False):
-    
+
     # if wl grid is backwards reverse it
     if wlh[1] > wlh[0]:
         pass
     else:
         wlh=wlh[::-1]
         fh=fh[::-1]
-    
+
     Nfilt = len(wlf)
     wlmin = np.min(wlf)
     wlmax = np.max(wlf)
@@ -67,17 +69,17 @@ def convolve_filter_response(wlh, fh, wlf, response, degrade=False):
         # Interpolate spectrum to hi-res filter grid
         F = np.interp(wlf, wlhr, fhr)
         R = response
-       
-        
+
+
     # Convolve with normalized filter response function
     F = F * (R / np.sum(R))
-    
-    # Integrate by summing 
+
+    # Integrate by summing
     Fc = np.sum(F)
-    
+
     if Fc < 0.0:
         print Fc, wlf, degrade
-    
+
     return Fc
 
 def tophat_instrument(Fp, wl_hr, wlgrid, FWHM=0.035):
@@ -86,7 +88,7 @@ def tophat_instrument(Fp, wl_hr, wlgrid, FWHM=0.035):
     Fratio=interp(wlgrid,wl_hr,Fratio11)
 
     return Fratio
-    
+
 def tophatfold(lam, flux, FWHM=0.035):
     lammin=min(lam)
     lammax=max(lam)

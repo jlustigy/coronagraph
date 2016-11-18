@@ -2,6 +2,8 @@ import imp, sys
 from types import ModuleType, FunctionType, StringType
 import os
 
+__all__ = ['Input']
+
 inpath = "inputs/"
 relpath = os.path.join(os.path.dirname(__file__), inpath)
 
