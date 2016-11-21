@@ -108,6 +108,10 @@ setup(name=PACKAGENAME,
       version=VERSION,
       description=DESCRIPTION,
       scripts=scripts,
+      extras_require=dict(
+          plotting=['matplotlib'],
+          docs=['sphinx_rtd_theme']
+      ),
       install_requires=['astropy', 'numpy', 'scipy', 'matplotlib', 'numba'],
       author=AUTHOR,
       author_email=AUTHOR_EMAIL,
