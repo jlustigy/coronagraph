@@ -1,0 +1,11 @@
+name: coronagraph
+
+channels:
+    - astropy
+
+dependencies:
+    - astropy
+    - matplotlib
+    - numpy
+    - scipy
+    - numba
