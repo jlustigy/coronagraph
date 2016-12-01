@@ -75,7 +75,7 @@ def count_rates(Ahr, lamhr, solhr,
     lammax : float, optional
         Maximum wavelength [um]
     Res : float, optional
-        Instrument spectral resolution (lambda / delta_lambda)
+        Instrument spectral resolution (``lam / dlam``)
     diam : float, optional
         Telescope diameter [m]
     Tput : float, optional
@@ -83,9 +83,9 @@ def count_rates(Ahr, lamhr, solhr,
     C : float, optional
         Coronagraph design contrast
     IWA : float, optional
-        Coronagraph Inner Working Angle ( * lambda / diam)
+        Coronagraph Inner Working Angle (``lam / diam``)
     OWA : float, optional
-        Coronagraph Outer Working Angle ( * lambda / diam)
+        Coronagraph Outer Working Angle (``lam / diam``)
     Tsys  : float, optional
         Telescope mirror temperature [K]
     Tdet  : float, optional
@@ -101,7 +101,7 @@ def count_rates(Ahr, lamhr, solhr,
     Dtmax : float, optional
         Detector maximum exposure time [hours]
     X : float, optional
-        Width of photometric aperture ( * lambda / diam)
+        Width of photometric aperture (``lam / diam``)
     qe : float, optional
         Detector quantum efficiency
     MzV : float, optional
@@ -111,13 +111,16 @@ def count_rates(Ahr, lamhr, solhr,
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
-        Set to fix OWA at OWA*lammin/D, as would occur if lenslet array is limiting the OWA
+        Set to fix OWA at ``OWA*lammin/D``, as would occur if lenslet array is
+        limiting the OWA
     COMPUTE_LAM : bool, optional
-        Set to compute lo-res wavelength grid, otherwise the grid input as variable 'lam' is used
+        Set to compute lo-res wavelength grid, otherwise the grid input as
+        variable ``lam`` is used
     SILENT : bool, optional
         Set to suppress print statements
     NIR : bool, optional
-        Re-adjusts pixel size in NIR, as would occur if a second instrument was designed to handle the NIR
+        Re-adjusts pixel size in NIR, as would occur if a second instrument
+        was designed to handle the NIR
     THERMAL : bool, optional
         Set to compute thermal photon counts due to telescope temperature
     GROUND : bool, optional
