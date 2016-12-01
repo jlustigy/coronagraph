@@ -7,7 +7,7 @@ import os
 __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdark",
            "cread", "ccic", "f_airy", "f_airy_int", "ctherm", "ctherm_earth",
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
-           "set_read_noise", "set_lenslet", "set_throughput", "set_atmos_throughput",
+           "set_read_noise", "let", "set_throughput", "set_atmos_throughput",
            "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
@@ -171,11 +171,11 @@ def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
     rat[:]= Fsol[:]/FsolV # ratio of solar flux to V-band solar flux
     if CIRC:
         # circular aperture size (arcsec**2)
-        Omega = np.pi*(X/2.*lam*1e-6/D*180.*3600./np.pi)**2.
+        Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
     else:
         # square aperture size (arcsec**2)
-        Omega = (X*lam*1e-6/D*180.*3600./np.pi)**2.
-    return np.pi*q*T*Omega*dlam*(lam*1.e-6/hc)*(D/2)**2.*rat*F0V*10**(-Mzv/2.5)
+        Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    return np.pi*q*T*Omega*dlam*(lam*1.e-6/hc)*(D/2.)**2.*rat*F0V*10**(-Mzv/2.5)
 
 def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     """
@@ -226,11 +226,11 @@ def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     rat[:]= Fstar[:]/FsolV # ratio of solar flux to V-band solar flux
     if CIRC:
         # circular aperture size (arcsec**2)
-        Omega = np.pi*(X/2.*lam*1e-6/D*180.*3600./np.pi)**2.
+        Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
     else:
         # square aperture size (arcsec**2)
-        Omega = (X*lam*1e-6/D*180.*3600./np.pi)**2.
-    return np.pi*q*T*Omega*dlam*(lam*1.e-6/hc)*(D/2)**2.*(1./r)**2.*rat*Nez*F0V*10**(-Mezv/2.5)
+        Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    return np.pi*q*T*Omega*dlam*(lam*1.e-6/hc)*(D/2.)**2.*(1./r)**2.*rat*Nez*F0V*10.**(-Mezv/2.5)
 
 def cspeck(q, T, C, lam, dlam, Fstar, D):
     """
@@ -463,7 +463,7 @@ def f_airy_int(X):
     E = 4.*E # factor of 4 as integral only over one quadrant
     fpa   = E/E0
 
-def ctherm(q, X, lam, dlam, D, Tsys, emis):
+def ctherm(q, X, lam, dlam, D, Tsys, emis, CIRC=False):
     """
     Telescope thermal count rate
     --------
@@ -481,6 +481,9 @@ def ctherm(q, X, lam, dlam, D, Tsys, emis):
         Telescope mirror temperature [K]
     emis : float
         Effective emissivity for the observing system (of order unity)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
 
     Returns
     -------
@@ -493,10 +496,16 @@ def ctherm(q, X, lam, dlam, D, Tsys, emis):
     lambd= 1.e-6*lam      # wavelength (m)
     power   = c2/lambd/Tsys
     Bsys  = c1/( (lambd**5.)*(np.exp(power)-1.) )*1.e-6/np.pi # system Planck function (W/m**2/um/sr)
-    Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
+    if CIRC:
+        # circular aperture diameter (arcsec**2)
+        Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    else:
+        # square aperture diameter (arcsec**2)
+        Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    Omega = Omega/(206265.**2.) # aperture size (sr**2)
     return np.pi*q*dlam*emis*Bsys*Omega*(lam*1.e-6/hc)*(D/2)**2.
 
-def ctherm_earth(q, X, lam, dlam, D, Itherm):
+def ctherm_earth(q, X, lam, dlam, D, Itherm, CIRC=False):
     """
     Earth atmosphere thermal count rate
 
@@ -514,6 +523,8 @@ def ctherm_earth(q, X, lam, dlam, D, Itherm):
         Telescope diameter [m]
     Itherm : float or array-like
         Earth thermal intensity [W/m**2/um/sr]
+    CIRC : bool, optional
+        Set to use a circular aperture
 
     Returns
     -------
@@ -521,7 +532,13 @@ def ctherm_earth(q, X, lam, dlam, D, Itherm):
         Earth atmosphere thermal photon count rate [1/s]
     """
     hc    = 1.986446e-25  # h*c (kg*m**3/s**2)
-    Omega = np.pi*(X*lam*1.e-6/D)**2. # aperture size (sr**2)
+    if CIRC:
+        # circular aperture diameter (arcsec**2)
+        Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    else:
+        # square aperture diameter (arcsec**2)
+        Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    Omega = Omega/(206265.**2.) # aperture size (sr**2)
     return np.pi*q*dlam*Itherm*Omega*(lam*1.e-6/hc)*(D/2)**2.
 
 def lambertPhaseFunction(alpha):
@@ -689,7 +706,7 @@ def set_read_noise(lam, Re, NIR=False, Re_nir=2.):
 
     return Re
 
-def set_lenslet(lam, lammin, diam,
+def set_lenslet(lam, lammin, diam, X,
                 NIR=False, lammin_nir=1.0):
     """
     Set the angular size of the lenslet
@@ -702,6 +719,8 @@ def set_lenslet(lam, lammin, diam,
         Minimum wavelength
     diam : float
         Telescope Diameter [m]
+    X : float
+        Width of photometric aperture (``*lambda/diam``)
     NIR : bool (optional)
         Use near-IR detector proporties
     lammin_nir : float (optional)
@@ -717,9 +736,9 @@ def set_lenslet(lam, lammin, diam,
         theta = np.zeros(Nlam)
         iVIS  = (lam <= 1.0)
         iNIR  = (lam > 1.0)
-        theta[iVIS] = lammin/1e6/diam/2.*(180/np.pi*3600.)
+        theta[iVIS] = X*lammin/1e6/diam/2.*(180/np.pi*3600.)
         # If there are wavelength bins longer than 1um:
-        theta[iNIR] = lammin_nir/1e6/diam/2.*(180/np.pi*3600.)
+        theta[iNIR] = X*lammin_nir/1e6/diam/2.*(180/np.pi*3600.)
     else:
         theta = lammin/1.e6/diam/2.*(180/np.pi*3600.) # assumes sampled at ~lambda/2D (arcsec)
 
