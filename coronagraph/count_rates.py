@@ -37,7 +37,8 @@ def count_rates(Ahr, lamhr, solhr,
                 MzV    = 23.0,
                 MezV   = 22.0,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
-                SILENT = False, NIR = True, THERMAL = False, GROUND = False):
+                SILENT = False, NIR = True, THERMAL = False, GROUND = False,
+                vod=False):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -125,6 +126,8 @@ def count_rates(Ahr, lamhr, solhr,
         Set to compute thermal photon counts due to telescope temperature
     GROUND : bool, optional
         Set to simulate ground-based observations through atmosphere
+    vod : bool, optional
+        "Valley of Death" red QE parameterization from Robinson et al. (2016)
 
     Returns
     -------
@@ -192,7 +195,7 @@ def count_rates(Ahr, lamhr, solhr,
         return None
 
     # Set Quantum Efficiency
-    q = set_quantum_efficiency(lam, qe, NIR=NIR)
+    q = set_quantum_efficiency(lam, qe, NIR=NIR, vod=vod)
 
     # Set Dark current and Read noise
     De = set_dark_current(lam, De, lammax, Tdet, NIR=NIR)

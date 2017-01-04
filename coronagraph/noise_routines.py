@@ -604,7 +604,7 @@ def construct_lam(lammin, lammax, Res):
     return lam, dlam
 
 @jit
-def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9):
+def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
     """
     Set instrumental quantum efficiency
 
@@ -618,6 +618,8 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9):
         Use near-IR detector proporties
     q_nir : float, optional
         NIR quantum efficiency
+    vod : bool, optional
+        "Valley of Death" red QE parameterization from Robinson et al. (2016)
 
     Returns
     -------
@@ -627,7 +629,7 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9):
     Nlam = len(lam)
     q = np.zeros(Nlam)
     for j in range(Nlam):
-        if (lam[j] <= 0.7):
+        if (lam[j] <= 0.7) or not vod:
             q[j] = qe
         else:
             q[j] = qe*(1.0 - (lam[j]-0.7)/(1.0-0.7))
