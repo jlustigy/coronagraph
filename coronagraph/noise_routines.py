@@ -558,10 +558,10 @@ def lambertPhaseFunction(alpha):
     alpha = alpha * np.pi / 180.
     return (np.sin(alpha) + (np.pi - alpha) * np.cos(alpha)) / np.pi
 
-@jit
-def construct_lam(lammin, lammax, Res):
+def construct_lam(lammin, lammax, Res=None, dlam=None):
     """
-    Construct wavelength grid
+    Construct a wavelength grid by specifying either a resolving power (`Res`)
+    or a bandwidth (`dlam`)
 
     Parameters
     ----------
@@ -569,8 +569,10 @@ def construct_lam(lammin, lammax, Res):
         Minimum wavelength [microns]
     lammax : float
         Maximum wavelength [microns]
-    Res : float
+    Res : float, optional
         Resolving power (lambda / delta-lambda)
+    dlam : float, optional
+        Spectral element width for evenly spaced grid [microns]
 
     Returns
     -------
@@ -580,26 +582,52 @@ def construct_lam(lammin, lammax, Res):
         Spectral element width [um]
     """
 
-    # Set wavelength grid
-    lam  = lammin #in [um]
-    Nlam = 1
-    while (lam < lammax):
-        lam  = lam + lam/Res
-        Nlam = Nlam +1
-    lam    = np.zeros(Nlam)
-    lam[0] = lammin
-    for j in range(1,Nlam):
-        lam[j] = lam[j-1] + lam[j-1]/Res
-    Nlam = len(lam)
-    dlam = np.zeros(Nlam) #grid widths (um)
+    # Keyword catching logic
+    goR = False
+    goL = False
+    if ((Res is None) and (dlam is None)) or (Res is not None) and (dlam is not None):
+        print("Error in construct_lam: Must specify either Res or dlam, but not both")
+    elif Res is not None:
+        goR = True
+    elif dlam is not None:
+        goL = True
+    else:
+        print("Error in construct_lam: Should not enter this else statment! :)")
+        return None, None
 
-    # Set wavelength widths
-    for j in range(1,Nlam-1):
-        dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
+    # If Res is provided, generate equal resolving power wavelength grid
+    if goR:
 
-    #Set edges to be same as neighbor
-    dlam[0] = dlam[1]
-    dlam[Nlam-1] = dlam[Nlam-2]
+        # Set wavelength grid
+        dlam0 = lammin/Res
+        dlam1 = lammax/Res
+        lam  = lammin #in [um]
+        Nlam = 1
+        while (lam < lammax + dlam1):
+            lam  = lam + lam/Res
+            Nlam = Nlam +1
+        lam    = np.zeros(Nlam)
+        lam[0] = lammin
+        for j in range(1,Nlam):
+            lam[j] = lam[j-1] + lam[j-1]/Res
+        Nlam = len(lam)
+        dlam = np.zeros(Nlam) #grid widths (um)
+
+        # Set wavelength widths
+        for j in range(1,Nlam-1):
+            dlam[j] = 0.5*(lam[j+1]+lam[j]) - 0.5*(lam[j-1]+lam[j])
+
+        #Set edges to be same as neighbor
+        dlam[0] = dlam0#dlam[1]
+        dlam[Nlam-1] = dlam1#dlam[Nlam-2]
+
+        lam = lam[:-1]
+        dlam = dlam[:-1]
+
+    # If dlam is provided, generate evenly spaced grid
+    if goL:
+        lam = np.arange(lammin, lammax+dlam, dlam)
+        dlam = dlam + np.zeros_like(lam)
 
     return lam, dlam
 
