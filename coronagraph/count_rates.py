@@ -38,7 +38,7 @@ def count_rates(Ahr, lamhr, solhr,
                 MezV   = 22.0,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = True, THERMAL = False, GROUND = False,
-                vod=False):
+                vod=False, set_fpa=None):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -128,6 +128,9 @@ def count_rates(Ahr, lamhr, solhr,
         Set to simulate ground-based observations through atmosphere
     vod : bool, optional
         "Valley of Death" red QE parameterization from Robinson et al. (2016)
+    set_fpa : float, optional
+        Specify the fraction of planetary signal in Airy pattern, default will
+        calculate it from the photometric aperture size `X`
 
     Returns
     -------
@@ -182,7 +185,10 @@ def count_rates(Ahr, lamhr, solhr,
         sys.exit()
 
     # fraction of planetary signal in Airy pattern
-    fpa = f_airy(X)
+    if set_fpa is None:
+        fpa = f_airy(X)
+    else:
+        fpa = set_fpa * f_airy(X)
 
     # Set wavelength grid
     if COMPUTE_LAM:

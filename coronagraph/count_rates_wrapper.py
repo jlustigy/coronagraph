@@ -9,8 +9,9 @@ __all__ = ['count_rates_wrapper']
 
 def count_rates_wrapper(Ahr, lamhr, solhr,
                    telescope, planet, star,
-                   wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
-                   SILENT = False, NIR = True, THERMAL = False):
+                   wantsnr=10.0, FIX_OWA=False, COMPUTE_LAM=False,
+                   SILENT=False, NIR=True, THERMAL=False, GROUND=False,
+                   vod=False, otype=1):
     """
 
     Parameters
@@ -35,6 +36,12 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
         re-adjusts pixel size in NIR, as would occur if a second instrument was designed to handle the NIR
     THERMAL : bool
         set to compute thermal photon counts due to telescope temperature
+    GROUND : bool, optional
+        Set to simulate ground-based observations through atmosphere
+    vod : bool, optional
+        "Valley of Death" red QE parameterization from Robinson et al. (2016)
+    otype : int, optional
+        Set to 1 to return output object, 2 to return arrays
     """
 
     # Planet Parameters
@@ -102,12 +109,20 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
                     MzV    = MzV,
                     MezV   = MezV,
                     wantsnr=wantsnr, FIX_OWA=FIX_OWA, COMPUTE_LAM=COMPUTE_LAM,
-                    SILENT=SILENT, NIR=NIR, THERMAL=THERMAL)
+                    SILENT=SILENT, NIR=NIR, THERMAL=THERMAL, GROUND=GROUND,
+                    vod=vod)
 
-    # Cram all the coronagraph output arrays into an Output object
-    output = Output(lam=lam, dlam=dlam, A=A, q=q, Cratio=Cratio,
-                    cp=cp, csp=csp, cz=cz, cez=cez, cD=cD, cR=cR,
-                    cth=cth, DtSNR=DtSNR)
+    if otype == 1:
 
-    # Return output object
-    return output
+        # Cram all the coronagraph output arrays into an Output object
+        output = Output(lam=lam, dlam=dlam, A=A, q=q, Cratio=Cratio,
+                        cp=cp, csp=csp, cz=cz, cez=cez, cD=cD, cR=cR,
+                        cth=cth, DtSNR=DtSNR)
+
+        # Return output object
+        return output
+
+    else:
+
+        # Return arrays
+        return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR
