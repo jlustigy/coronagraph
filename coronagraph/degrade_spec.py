@@ -138,12 +138,13 @@ def downbin_spec(specHR, lamHR, lamLR, dlam=None):
         ValueError("Please supply dlam in downbin_spec()")
 
     # Reverse ordering if wl vector is decreasing with index
-    if lamHR[0] > lamHR[1]:
-        lamHI = np.array(lamHR[::-1])
-        spec = np.array(specHR[::-1])
-    if lamLR[0] > lamLR[1]:
-        lamLO = np.array(lamLR[::-1])
-        dlamLO = np.array(dlam[::-1])
+    if len(lamLR) > 1:
+        if lamHR[0] > lamHR[1]:
+            lamHI = np.array(lamHR[::-1])
+            spec = np.array(specHR[::-1])
+        if lamLR[0] > lamLR[1]:
+            lamLO = np.array(lamLR[::-1])
+            dlamLO = np.array(dlam[::-1])
 
     # Calculate bin edges
     LRedges = np.hstack([lamLR - 0.5*dlam, lamLR[-1]+0.5*dlam[-1]])
