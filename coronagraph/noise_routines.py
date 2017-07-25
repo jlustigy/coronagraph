@@ -1,7 +1,6 @@
 import numpy as np
 import scipy as sp
 from scipy import special
-from numba import jit
 import os
 
 __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdark",
@@ -631,7 +630,6 @@ def construct_lam(lammin, lammax, Res=None, dlam=None):
 
     return lam, dlam
 
-@jit
 def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
     """
     Set instrumental quantum efficiency
