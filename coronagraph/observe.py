@@ -10,7 +10,9 @@ mpl.rcParams['font.size'] = 20.0
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
-__all__ = ['generate_observation', 'smart_observation', 'planetzoo_observation', 'process_noise', 'exptime_band', 'interp_cont_over_band']
+__all__ = ['generate_observation', 'smart_observation', 'planetzoo_observation',
+           'process_noise', 'exptime_band', 'interp_cont_over_band',
+           'plot_interactive_band']
 
 planetdir = "planets/"
 relpath = os.path.join(os.path.dirname(__file__), planetdir)
@@ -635,6 +637,183 @@ def exptime_band(cp, ccont, cb, iband, SNR=5.0):
     denominator = np.power(np.sum(np.fabs(ccont - cp[iband])),2)
 
     return np.power(SNR, 2) * numerator / denominator / 3600.0
+
+def SNR_band(cp, ccont, cb, iband, itime=10.):
+    """
+    Calc the exposure time necessary to get a given S/N on a molecular band
+    following Eqn 7 from Robinson et al. 2016.
+
+
+    Parameters
+    ----------
+    cp :
+        Planet count rate
+    ccont :
+        Continuum count rate
+    cb :
+        Background count rate
+    iband :
+        Indicies of molecular band
+    itime :
+        Integration time [hours]
+
+    Returns
+    -------
+    SNR to detect band given exposure time
+    """
+
+    denominator = np.power(np.sum(cp[iband] + 2.*cb[iband]), 0.5)
+    numerator = np.sum(np.fabs(ccont - cp[iband]))
+
+    return np.power(itime*3600., 0.5) * numerator / denominator
+
+click = 0
+icont = []
+iband = []
+def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
+    """
+    """
+
+    # Turn off interactive plotting shortcut keys
+    plt.rcParams['keymap.back'] = ''
+
+    verbose = False
+    OGC = "black"
+    CC = "orange"
+    BC = "green"
+
+    def onpick(event):
+        """
+        Funtion to handle picked points in interactive plot window
+        """
+        ind = event.ind
+
+        global icont
+        global iband
+
+        # Picked continuum value
+        if click == 1:
+            # Check if picked value is in either list
+            if ind[0] in icont:
+                # remove from continuum list
+                icont.remove(ind[0])
+                # reset point to original color
+                ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=OGC, alpha=1.0, zorder=100)
+            elif ind[0] in iband:
+                # remove from band list
+                iband.remove(ind[0])
+                # add to continuum list
+                icont.append(ind[0])
+                # plot point in new color
+                ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=CC, alpha=1.0, zorder=100)
+            else:
+                # add to continuum list
+                icont.append(ind[0])
+                # plot point in new color
+                ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=CC, alpha=1.0, zorder=100)
+            if verbose: print "icont:", icont
+            ax.figure.canvas.draw()
+
+        # Picked band value
+        elif click == 2:
+            # Check if picked value is in either list
+            if ind[0] in iband:
+                # remove from band list
+                iband.remove(ind[0])
+                # reset point to original color
+                ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=OGC, alpha=1.0, zorder=100)
+            elif ind[0] in icont:
+                # remove from continuum list
+                icont.remove(ind[0])
+                # add to band list
+                iband.append(ind[0])
+                # plot point in new color
+                ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=BC, alpha=1.0, zorder=100)
+            else:
+                # add to band list
+                iband.append(ind[0])
+                # plot point in new color
+                ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=BC, alpha=1.0, zorder=100)
+            if verbose: print "iband:", iband
+            ax.figure.canvas.draw()
+
+    def on_key(event):
+        """
+        Function to handle key presses in interactive plot window
+        """
+        global click
+        global iband
+        global icont
+        print('you pressed', event.key)
+        if event.key == "c":
+            click = 1
+        if event.key == "b":
+            click = 2
+        if event.key == "d":
+            click = 0
+            if (len(icont) < 2) or (len(iband) < 1):
+                print "Must select at least two continuum points and one band point."
+            elif (min(iband) < min(icont)) or (max(iband) > max(icont)):
+                print "Must select at least one point on either side of the band of interest"
+            else:
+                # interpolate continuum planet counts to band wavelengths
+                ccont = interp_cont_over_band(lam, cp, icont, iband)
+                ccrat = interp_cont_over_band(lam, Cratio, icont, iband)
+                #"""
+                # plot new interpolated points
+                ax.scatter(lam[iband], ccrat*1e9, s=40.0, color=BC, alpha=1.0, zorder=100)
+                ax.figure.canvas.draw()
+                #"""
+                # Calculate the exposure time and SNR
+                if SNR is not None:
+                    etime = exptime_band(cp, ccont, cb, iband, SNR=SNR)
+                    print "Exposure Time = %.5f hours to get SNR = %.5f" %(etime, SNR)
+                if itime is not None:
+                    eSNR = SNR_band(cp, ccont, cb, iband, itime=itime)
+                    print "SNR = %.5f in a %.5f hour exposure" %(eSNR, itime)
+
+    # Create figure
+    fig, ax = plt.subplots(figsize=(12,6))
+
+    # Set string for plot text
+    """
+    if itime > 2.0:
+        timestr = "{:.0f}".format(itime)+' hours'
+    else:
+        timestr = "{:.0f}".format(itime*60)+' mins'
+    """
+    #plot_text = r'Distance = '+"{:.1f}".format(planet.distance)+' pc'+\
+    #'\n Integration time = '+timestr
+
+    #if ref_lam:
+    #    ireflam = find_nearest(wl,ref_lam)
+    #    ref_SNR = SNR[ireflam]
+    #    plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
+    #        ' at '+"{:.2f}".format(wl[ireflam])+r' $\mu$m'
+
+    ax.plot(lam, Cratio*1e9, "-", lw=2.0, color=OGC, alpha=0.7, ls="steps-mid")
+    ax.scatter(lam, Cratio*1e9, s=40.0, color=OGC, alpha=1.0, picker=True)
+    #ax.errorbar(lam, spec*1e9, yerr=sig*1e9, fmt='o', color='k', ms=5.0)
+
+    ax.set_ylabel(r"F$_p$/F$_s$ ($\times 10^9$)")
+    ax.set_xlabel(r"Wavelength [$\mu$m]")
+    #ax.set_title("")
+    #ax.text(0.99, 0.99, plot_text,\
+    #     verticalalignment='top', horizontalalignment='right',\
+    #     transform=ax.transAxes,\
+    #     color='black', fontsize=20)
+
+        #fig, ax = plt.subplots()
+        #col = ax.scatter(x, y, 100*s, c, picker=True)
+        ##fig.savefig('pscoll.eps')
+
+    fig.canvas.mpl_connect('pick_event', onpick)
+    fig.canvas.mpl_connect('key_press_event', on_key)
+
+    plt.show()
+
+    return
+
 
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
