@@ -2,12 +2,15 @@ import numpy as np
 import scipy as sp
 from scipy import special
 import os
+import astropy.units as u
+from astropy.io import fits
 
 __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdark",
            "cread", "ccic", "f_airy", "f_airy_int", "ctherm", "ctherm_earth",
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
            "set_read_noise", "let", "set_throughput", "set_atmos_throughput",
-           "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction"]
+           "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction",
+           "get_sky_flux"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
     """
@@ -887,6 +890,26 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
     # Compute intensity
     Itherm  = Ftherm / np.pi
     return Itherm
+
+def get_sky_flux():
+    """
+    """
+    hc    = 1.986446e-25 # h*c (kg*m**3/s**2)
+
+    # Use ESO SKYCALC
+    fn = os.path.join(os.path.dirname(__file__), "ground/skytable_no_zodi_moon.fits")
+    df = fits.open(fn)
+    lam_sky = df[1].data["lam"]
+    flux_sky = df[1].data["flux"]
+    trans_sky = df[1].data["trans"]
+
+    # Convert sky flux to W/m^2/um to match existing function
+    flux_sky = flux_sky * (np.pi * u.steradian)
+    flux_sky = flux_sky * (u.radian.in_units(u.arcsec))**2 * (u.arcsec**2 / u.steradian)
+    flux_sky = flux_sky / (lam_sky * 1e-6) * hc / (u.photon / u.watt / u.second)
+    flux_sky = flux_sky.value / np.pi
+
+    return lam_sky, flux_sky
 
 def exptime_element(lam, cp, cn, wantsnr):
     """

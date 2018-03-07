@@ -21,7 +21,7 @@ Dt = 20.0
 
 # Planet params
 alpha = 90.     # phase angle at quadrature
-Phi   = 1.      # phase function at quadrature (already included in SMART run)
+Phi   = cg.teleplanstar.lambertPhaseFunction(alpha)      # phase function at quadrature (already included in SMART run)
 Rp    = 1.0     # Earth radii
 r     = 1.0     # semi-major axis (AU)
 
@@ -37,7 +37,7 @@ Nez  = 1.      # number of exo-zodis
 plot = True
 ref_lam = 0.55
 title = ""
-ylim =  [-0.1, 0.8]
+ylim =  [-0.1, 0.3]
 xlim =  None
 tag = ""
 
@@ -67,7 +67,7 @@ Ahr   = np.pi*(np.pi*radhr/solhr)
 # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
 lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
     cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
-                   )
+                   lammax=1.6)
 
 # Calculate background photon count rates
 cb = (cz + cez + csp + cD + cR + cth)

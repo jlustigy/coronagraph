@@ -7,7 +7,7 @@ from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
     set_quantum_efficiency, set_read_noise, set_dark_current, set_lenslet, \
     set_throughput, set_atmos_throughput, get_thermal_ground_intensity, \
-    exptime_element
+    exptime_element, get_sky_flux
 import pdb
 import os
 
@@ -216,6 +216,11 @@ def count_rates(Ahr, lamhr, solhr,
 
     # Modify throughput by atmospheric transmission if GROUND-based
     if GROUND:
+        #if GROUND == "ESO":
+            # Use ESO SKYCALC
+        #    pass
+        #else:
+        # Use SMART calc
         Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
         # Multiply telescope throughput by atmospheric throughput
         T = T * Tatmos
@@ -251,22 +256,27 @@ def count_rates(Ahr, lamhr, solhr,
         cth = np.zeros_like(cp)
     # Add earth thermal photons if GROUND
     if GROUND:
-        # Compute ground intensity due to sky background
-        Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
+        if GROUND == "ESO":
+            # Use ESO SKCALC
+            wl_sky, Isky = get_sky_flux()
+            # Convolve to instrument resolution
+            Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+        else:
+            # Get SMART computed surface intensity due to sky background
+            Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
         # Compute Earth thermal photon count rate
         cthe = ctherm_earth(q, X, lam, dlam, diam, Itherm)
         # Add earth thermal photon counts to telescope thermal counts
         cth = cth + cthe
         if False:
-            import matplotlib.pyplot as plt; from matplotlib import gridspec
-            fig2 = plt.figure(figsize=(8,6))
-            gs = gridspec.GridSpec(1,1)
-            ax1 = plt.subplot(gs[0])
+            import matplotlib.pyplot as plt;
+            fig2, ax1 = plt.subplots(figsize=(8,6))
             ax1.plot(lam, cthe, c="blue", ls="steps-mid", label="Earth Thermal")
             ax1.plot(lam, cth, c="red", ls="steps-mid", label="Telescope Thermal")
             ax1.plot(lam, cp, c="k", ls="steps-mid", label="Planet")
             ax1.set_ylabel("Photon Count Rate [1/s]")
             ax1.set_xlabel("Wavelength [um]")
+            ax1.legend()
             plt.show()
 
     cb = (cz + cez + csp + cD + cR + cth)
