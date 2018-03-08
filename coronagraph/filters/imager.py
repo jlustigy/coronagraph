@@ -5,7 +5,7 @@ import os
 
 class Filter(object):
     """Filter for telescope imaging mode.
-    
+
     Parameters
     ----------
     name : string
@@ -21,7 +21,7 @@ class Filter(object):
     notes : string
         Notes of filter, e.g. 'Johnson-Cousins'
     """
-    
+
     def __init__(self, name=None, bandcenter=None, FWHM=None, wl=None, response=None, notes=''):
         self.name=name
         self.bandcenter=bandcenter
@@ -29,7 +29,7 @@ class Filter(object):
         self.wl=wl
         self.response=response
         self.notes=notes
-        
+
     def __str__(self):
         string = 'Filter: \n------------\n'+\
             '- Name : '+"%s" % (self.name)+'\n'+\
@@ -40,15 +40,15 @@ class Filter(object):
             '- Notes  : '+"%s" % (self.notes)+'\n'
         return string
 
-class Wheel(object): 
+class Wheel(object):
     """Filter Wheel. Contains different filters as attributes.
     """
     def __init__(self):
         pass
-    
+
     def add_new_filter(self, filt, name='new_filter'):
         """Adds new filter to wheel
-        
+
         Parameters
         ----------
         filt : Filter
@@ -57,12 +57,12 @@ class Wheel(object):
             Name to give new filter attribute
         """
         setattr(self, name, filt)
-     
+
     def plot(self, ax=None):
-        
+
         if ax == None:
             fig = plt.figure(figsize=(14,10))
-            gs = gridspec.GridSpec(1,1) 
+            gs = gridspec.GridSpec(1,1)
             ax1 = plt.subplot(gs[0])
             ax1.set_ylabel(r"Filter Response")
             ax1.set_xlabel(r"Wavelength [$\mu$m]")
@@ -70,10 +70,10 @@ class Wheel(object):
         else:
             ax1 = ax.twinx()
             #ax1.set_ylim([0.0,10.0])
-            ax1.axes.get_yaxis().set_visible(False)          
+            ax1.axes.get_yaxis().set_visible(False)
 
-        Nfilt = len(self.__dict__)   
-        #colors,scalarMap,cNorm = scalarmap(np.arange(Nfilt),cmap='Dark2')     
+        Nfilt = len(self.__dict__)
+        #colors,scalarMap,cNorm = scalarmap(np.arange(Nfilt),cmap='Dark2')
         i = 0
         fmax = 1.0
         for attr, value in self.__dict__.iteritems():
@@ -83,17 +83,17 @@ class Wheel(object):
             ax1.fill_between(wl,response, color='purple', alpha=0.3)
             i += 1
         ax1.set_ylim([0.0,fmax*10.])
-        
+
         if ax==None:
             return ax1
-        
+
     def __str__(self):
         string = []
         tdict = sorted(self.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
         for attr, value in tdict:
             string.append(attr)
-        print string 
-        return ''#str(string)    
+        print(string) 
+        return ''#str(string)
 
 
 def read_jc():
@@ -117,18 +117,18 @@ def read_jc():
     return filters, filter_names, bandcenters, FWHM
 
 class johnson_cousins(Wheel):
-    
+
     def __init__(self):
-        
+
         filters, filter_names, bandcenters, FWHM = read_jc()
-        
+
         self.U=Filter(name='U', bandcenter=bandcenters[0], FWHM=FWHM[0], wl=filters[0][:,0], response=filters[0][:,1], notes='Johnson-Cousins')
         self.B=Filter(name='B', bandcenter=bandcenters[1], FWHM=FWHM[1], wl=filters[1][:,0], response=filters[1][:,1], notes='Johnson-Cousins')
         self.V=Filter(name='V', bandcenter=bandcenters[2], FWHM=FWHM[2], wl=filters[2][:,0], response=filters[2][:,1], notes='Johnson-Cousins')
         self.R=Filter(name='R', bandcenter=bandcenters[3], FWHM=FWHM[3], wl=filters[3][:,0], response=filters[3][:,1], notes='Johnson-Cousins')
         self.I=Filter(name='I', bandcenter=bandcenters[4], FWHM=FWHM[4], wl=filters[4][:,0], response=filters[4][:,1], notes='Johnson-Cousins')
 
-        
+
 def read_landsat():
     path = 'LANDSAT/'
     # set file path relative to this file
@@ -151,11 +151,11 @@ def read_landsat():
     return wl, response, LANDSAT_names, FWHM, bandcenters
 
 class landsat(Wheel):
-    
+
     def __init__(self):
-        
+
         wl, response, LANDSAT_names, FWHM, bandcenters = read_landsat()
-        
+
         self.CA=Filter(name=LANDSAT_names[0], bandcenter=bandcenters[0], FWHM=FWHM[0], wl=wl[0], response=response[0], notes='LANDSAT')
         self.B=Filter(name=LANDSAT_names[1], bandcenter=bandcenters[1], FWHM=FWHM[1], wl=wl[1], response=response[1], notes='LANDSAT')
         self.G=Filter(name=LANDSAT_names[2], bandcenter=bandcenters[2], FWHM=FWHM[2], wl=wl[2], response=response[2], notes='LANDSAT')
@@ -165,8 +165,8 @@ class landsat(Wheel):
         self.SWIR2=Filter(name=LANDSAT_names[6], bandcenter=bandcenters[6], FWHM=FWHM[6], wl=wl[6], response=response[6], notes='LANDSAT')
         self.Pan=Filter(name=LANDSAT_names[7], bandcenter=bandcenters[7], FWHM=FWHM[7], wl=wl[7], response=response[7], notes='LANDSAT')
         self.Cirrus=Filter(name=LANDSAT_names[8], bandcenter=bandcenters[8], FWHM=FWHM[8], wl=wl[8], response=response[8], notes='LANDSAT')
-        
-        
+
+
 def read_jc2():
     path = 'UBVRI2/'
     # set file path relative to this file
@@ -188,11 +188,11 @@ def read_jc2():
     return filters, filter_names, bandcenters, FWHM
 
 class johnson_cousins2(Wheel):
-    
+
     def __init__(self):
-        
+
         filters, filter_names, bandcenters, FWHM = read_jc2()
-        
+
         self.U=Filter(name='U', bandcenter=bandcenters[0], FWHM=FWHM[0], wl=filters[0][:,0], response=filters[0][:,1], notes='Johnson-Cousins')
         self.B=Filter(name='B', bandcenter=bandcenters[1], FWHM=FWHM[1], wl=filters[1][:,0], response=filters[1][:,1], notes='Johnson-Cousins')
         self.V=Filter(name='V', bandcenter=bandcenters[2], FWHM=FWHM[2], wl=filters[2][:,0], response=filters[2][:,1], notes='Johnson-Cousins')

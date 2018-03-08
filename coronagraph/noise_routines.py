@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 import numpy as np
 import scipy as sp
 from scipy import special
@@ -809,18 +812,18 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
     if (True if True in iIWA else False):
         T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
         if ~SILENT:
-            print 'WARNING: portions of spectrum inside IWA'
+            print('WARNING: portions of spectrum inside IWA')
     if FIX_OWA:
         if ( sep > OWA*lammin/diam/1.e6 ):
             T[:] = 0. #planet outside OWA, where there is no throughput
             if ~SILENT:
-                print 'WARNING: planet outside fixed OWA'
+                print('WARNING: planet outside fixed OWA')
     else:
         iOWA = ( sep > OWA*lam/diam/1.e6 )
         if (True if True in iOWA else False):
             T[iOWA] = 0. #points outside OWA have no throughput
             if ~SILENT:
-                print 'WARNING: portions of spectrum outside OWA'
+                print('WARNING: portions of spectrum outside OWA')
     return T
 
 def set_atmos_throughput(lam, dlam, convolve, plot=False):

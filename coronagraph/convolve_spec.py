@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 import numpy as np
 import scipy as sp
 from .degrade_spec import degrade_spec
@@ -52,7 +55,7 @@ def convolve_filter_response(wlh, fh, wlf, response, degrade=False):
             F = degrade_spec(fhr, wlhr, wlf)
             R = response
         except ValueError:
-            print 'Error in degrade_spec, switching to numpy interpolation.'
+            print('Error in degrade_spec, switching to numpy interpolation.')
             if Nspec > Nfilt:
                 # Interpolate filter response to hi-res spectral grid
                 R = np.interp(wlhr, wlf, response)
@@ -78,7 +81,7 @@ def convolve_filter_response(wlh, fh, wlf, response, degrade=False):
     Fc = np.sum(F)
 
     if Fc < 0.0:
-        print Fc, wlf, degrade
+        print(Fc, wlf, degrade)
 
     return Fc
 

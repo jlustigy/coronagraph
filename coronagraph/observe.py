@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -67,7 +70,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     try:
         l = os.listdir(planetdir)
     except OSError:
-        print "Error in planetzoo_observation(): planetdir does not exist in current location. \nSet planetdir='location/of/planets/'"
+        print("Error in planetzoo_observation(): planetdir does not exist in current location. \nSet planetdir='location/of/planets/'")
         return None
 
     whichplanet = name
@@ -238,7 +241,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
         data_tag = 'observed_'+tag+'.txt'
         y_sav = np.array([lam,spec,sig])
         np.savetxt(data_tag, y_sav.T)
-        print 'Saved: '+data_tag
+        print('Saved: '+data_tag)
 
     # Return Synthetic data and high-res spec
     return lam, spec, sig
@@ -318,7 +321,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
         data_tag = 'observed_'+tag+'.txt'
         y_sav = np.array([lam,spec,sig])
         np.savetxt(data_tag, y_sav.T)
-        print 'Saved: '+data_tag
+        print('Saved: '+data_tag)
 
     # Return Synthetic data and high-res spec
 
@@ -374,9 +377,9 @@ def smart_observation(radfile, itime, telescope, planet, star,
     try:
         import readsmart as rs
     except ImportError:
-        print "Module 'readsmart' not found. Please install on your local machine \
+        print("Module 'readsmart' not found. Please install on your local machine \
         to proceed with this function. The source can be found at: \
-        https://github.com/jlustigy/readsmart"
+        https://github.com/jlustigy/readsmart")
         return None, None, None, None, None
 
     # Read-in .rad file
@@ -412,7 +415,7 @@ def smart_observation(radfile, itime, telescope, planet, star,
         data_tag = 'observed_smart_'+tag+'.txt'
         y_sav = np.array([lam,spec,sig])
         np.savetxt(data_tag, y_sav.T)
-        print 'Saved: '+data_tag
+        print('Saved: '+data_tag)
 
     # Return Synthetic data and high-res spec
 
@@ -471,7 +474,7 @@ def plot_spec():
     # Save plot if saveplot==True
     if saveplot:
         fig.savefig(plot_tag)
-        print 'Saved: '+plot_tag
+        print('Saved: '+plot_tag)
     fig.show()
 
 def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
@@ -711,7 +714,7 @@ def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
                 icont.append(ind[0])
                 # plot point in new color
                 ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=CC, alpha=1.0, zorder=100)
-            if verbose: print "icont:", icont
+            if verbose: print("icont:", icont)
             ax.figure.canvas.draw()
 
         # Picked band value
@@ -734,7 +737,7 @@ def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
                 iband.append(ind[0])
                 # plot point in new color
                 ax.scatter(lam[ind], Cratio[ind]*1e9, s=40.0, color=BC, alpha=1.0, zorder=100)
-            if verbose: print "iband:", iband
+            if verbose: print("iband:", iband)
             ax.figure.canvas.draw()
 
     def on_key(event):
@@ -752,9 +755,9 @@ def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
         if event.key == "d":
             click = 0
             if (len(icont) < 2) or (len(iband) < 1):
-                print "Must select at least two continuum points and one band point."
+                print("Must select at least two continuum points and one band point.")
             elif (min(iband) < min(icont)) or (max(iband) > max(icont)):
-                print "Must select at least one point on either side of the band of interest"
+                print("Must select at least one point on either side of the band of interest")
             else:
                 # interpolate continuum planet counts to band wavelengths
                 ccont = interp_cont_over_band(lam, cp, icont, iband)
@@ -767,10 +770,10 @@ def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
                 # Calculate the exposure time and SNR
                 if SNR is not None:
                     etime = exptime_band(cp, ccont, cb, iband, SNR=SNR)
-                    print "Exposure Time = %.5f hours to get SNR = %.5f" %(etime, SNR)
+                    print("Exposure Time = %.5f hours to get SNR = %.5f" %(etime, SNR))
                 if itime is not None:
                     eSNR = SNR_band(cp, ccont, cb, iband, itime=itime)
-                    print "SNR = %.5f in a %.5f hour exposure" %(eSNR, itime)
+                    print("SNR = %.5f in a %.5f hour exposure" %(eSNR, itime))
 
     # Create figure
     fig, ax = plt.subplots(figsize=(12,6))

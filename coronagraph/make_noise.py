@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 # Import dependent modules
 import numpy as np
 from .degrade_spec import degrade_spec
@@ -110,7 +113,7 @@ def make_noise(Ahr, lamhr, solhr, telescope, planet, star, wantsnr=10.0, FIX_OWA
         pass
     else:
         # Throw error
-        print "Error in make_noise: Not computing wavelength grid or providing filters!"
+        print("Error in make_noise: Not computing wavelength grid or providing filters!")
         return None
 
     # Set Quantum Efficiency
@@ -145,18 +148,18 @@ def make_noise(Ahr, lamhr, solhr, telescope, planet, star, wantsnr=10.0, FIX_OWA
     if (True if True in iIWA else False):
         T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
         if ~SILENT:
-            print 'WARNING: portions of spectrum inside IWA'
+            print('WARNING: portions of spectrum inside IWA')
     if FIX_OWA:
         if ( sep > OWA*lammin/diam/1.e6 ):
             T[:] = 0. #planet outside OWA, where there is no throughput
             if ~SILENT:
-                print 'WARNING: planet outside fixed OWA'
+                print('WARNING: planet outside fixed OWA')
     else:
         iOWA = ( sep > OWA*lam/diam/1.e6 )
         if (True if True in iOWA else False):
             T[iOWA] = 0. #points outside OWA have no throughput
             if ~SILENT:
-                print 'WARNING: portions of spectrum outside OWA'
+                print('WARNING: portions of spectrum outside OWA')
 
 
     # Degrade albedo and stellar spectrum

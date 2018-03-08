@@ -1,6 +1,8 @@
 """
 Telescope, Planet, and Star classes.
 """
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
 
 import numpy as np
 from .utils import Input, Loadin
@@ -122,7 +124,7 @@ class Telescope(object):
 
     @classmethod
     def default_habex(cls):
-        print "These HabEx parameters are not confirmed yet!"
+        print("These HabEx parameters are not confirmed yet!")
         # Return new class instance
         return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
                    Tput=0.05, D=6., Tsys=150., Tdet=50., IWA=3.0,
@@ -132,7 +134,7 @@ class Telescope(object):
 
     @classmethod
     def default_wfirst(cls):
-        print "These WFIRST parameters are not confirmed yet!"
+        print("These WFIRST parameters are not confirmed yet!")
         # Return new class instance
         return cls(mode="IFS", lammin=0.6, lammax=1.0, R=70.,
                    Tput=0.05, D=2.4, Tsys=150., Tdet=50., IWA=3.0,
@@ -162,7 +164,7 @@ class Telescope(object):
         if (value.__class__.__name__ == 'Wheel') or (value.__class__.__base__.__name__ == 'Wheel'):
             self._filter_wheel = value
         else:
-            print "Error in Telescope: Specified filter wheel is not of type 'Wheel'"
+            print("Error in Telescope: Specified filter wheel is not of type 'Wheel'")
             self._filter_wheel = None
 
     def __str__(self):

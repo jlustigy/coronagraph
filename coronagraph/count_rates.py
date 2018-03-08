@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 # Import dependent modules
 import numpy as np
 import sys
@@ -181,7 +184,7 @@ def count_rates(Ahr, lamhr, solhr,
         IMAGE = False
         COMPUTE_LAM = True
     else:
-        print "Invalid telescope observing mode. Select 'IFS', or 'Imaging'."
+        print("Invalid telescope observing mode. Select 'IFS', or 'Imaging'.")
         sys.exit()
 
     # fraction of planetary signal in Airy pattern
@@ -197,7 +200,7 @@ def count_rates(Ahr, lamhr, solhr,
         pass
     else:
         # Throw error
-        print "Error in make_noise: Not computing wavelength grid or providing filters!"
+        print("Error in make_noise: Not computing wavelength grid or providing filters!")
         return None
 
     # Set Quantum Efficiency

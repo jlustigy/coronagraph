@@ -132,7 +132,7 @@ if plot:
     if saveplot:
         plot_tag = "luvoir_demo_"+title+tag+".png"
         fig.savefig(plot_tag)
-        print 'Saved: ' + plot_tag
+        print('Saved: ' + plot_tag)
     else:
         plt.show()
 
@@ -145,6 +145,6 @@ if savefile:
     data_tag = 'luvoir_demo_'+tag+'.txt'
     y_sav = np.array([lam,spec,sig])
     np.savetxt(data_tag, y_sav.T)
-    print 'Saved: ' + data_tag
+    print('Saved: ' + data_tag)
 
 sys.exit()

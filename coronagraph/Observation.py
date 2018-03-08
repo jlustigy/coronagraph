@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -6,7 +9,7 @@ from matplotlib import rc
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 mpl.rcParams['font.size'] = 20.0
 
-import readsmart
+#import readsmart
 from .make_noise import make_noise
 from .teleplanstar import Telescope, Planet, Star
 
@@ -25,6 +28,7 @@ class Observe(object):
         self.planet = planet
         self.star = star
 
+    """
     @classmethod
     def load_from_smart(cls, radpath, name=None):
         # Read-in .rad file
@@ -34,6 +38,7 @@ class Observe(object):
         Ahr = (TOA_flux / solar_spec) #* np.pi / planet.Phi
 
         # Possibly convolve with gaussian?
+    """
 
 
 def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0, planetdir = 'planets/', plot=True, savedata=False, saveplot=False, ref_lam=0.55):
@@ -477,6 +482,8 @@ def smart_observation(radfile, itime, telescope, planet, star,
     If saveplot=True then plot will be saved
     If savedata=True then data will be saved
     """
+
+    import readsmart
 
     # Read-in .rad file
     wlhr, wno, solar_spec, TOA_flux, rad_streams = readsmart.rad(radfile,getdata=True)

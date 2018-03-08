@@ -1,3 +1,6 @@
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
+
 # ----------------------------------------------------------------------------
 from ._astropy_init import *
 # ----------------------------------------------------------------------------
@@ -7,12 +10,12 @@ if not _ASTROPY_SETUP_:
     from .teleplanstar import *
     from .call_noise import *
     from .make_noise import *
-    import observe
+    from . import observe
     from .observe import *
     from .utils import *
     from .degrade_spec import *
-    import filters
+    from . import filters
     from .convolve_spec import *
     from .count_rates import *
     from .count_rates_wrapper import *
-    import noise_routines
+    from . import noise_routines

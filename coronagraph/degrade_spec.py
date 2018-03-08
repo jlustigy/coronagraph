@@ -4,6 +4,8 @@ Created on Mon Jul  6 11:00:41 2015
 
 @author: jlustigy
 """
+from __future__ import (division as _, print_function as _,
+                absolute_import as _, unicode_literals as _)
 
 import numpy as np
 import scipy as sp
@@ -92,7 +94,7 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
         # spectrum over the low-res element, distributing the integrated
         # energey into the low-res element
         if len(lamHI[iss]) == 0:
-            print "No HiRes elements in Low Res bin!"
+            print("No HiRes elements in Low Res bin!")
             import sys; sys.exit()
         elif len(lamHI[iss]) == 1:
             specs = spec[iss]
