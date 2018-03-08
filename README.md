@@ -2,9 +2,7 @@
 
 A Python noise model for directly imaging exoplanets with a space based coronagraph.  
 
-<!---
 [![Build Status](https://travis-ci.org/jlustigy/coronagraph.svg?branch=master)](https://travis-ci.org/jlustigy/coronagraph)
--->
 [![Docs Status](https://readthedocs.org/projects/coronagraph/badge/?version=latest)](http://coronagraph.readthedocs.io/en/latest/)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jlustigy/coronagraph/blob/master/LICENSE)
 
