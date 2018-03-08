@@ -35,4 +35,4 @@ install:
 
 script:
   - mkdir -p $TEST_DIR
-  - cd $TEST_DIR && python -m pytest --pyargs coronagraph --doctest-modules
+  - cd $TEST_DIR && python -m pytest --pyargs coronagraph
