@@ -1,12 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
-# ----------------------------------------------------------------------------
-from ._astropy_init import *
-# ----------------------------------------------------------------------------
+# Version number
+__version__ = "0.0.2"
 
-# For egg_info test builds to pass, put package imports here.
-if not _ASTROPY_SETUP_:
+# Was coronagraph imported from setup.py?
+try:
+    __CORONAGRAPH_SETUP__
+except NameError:
+    __CORONAGRAPH_SETUP__ = False
+
+if not __CORONAGRAPH_SETUP__:
+    # This is a regular coronagraph run
     from .teleplanstar import *
     from .call_noise import *
     from .make_noise import *
