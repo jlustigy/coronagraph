@@ -8,9 +8,12 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib import rc
 import pdb
-import sys
+import sys, os
 mpl.rc('font', family='Times New Roman')
 mpl.rcParams['font.size'] = 25.0
+
+# The location to *this* file
+RELPATH = os.path.dirname(__file__)
 
 # Import coronagraph model
 import coronagraph as cg
@@ -76,7 +79,7 @@ saveplot = False
 ################################
 
 # Read-in spectrum file
-fn = '../coronagraph/planets/earth_quadrature_radiance_refl.dat'
+fn = os.path.join(RELPATH, '../coronagraph/planets/earth_quadrature_radiance_refl.dat')
 model = np.loadtxt(fn, skiprows=8)
 lamhr = model[:,0]
 radhr = model[:,1]
@@ -192,5 +195,3 @@ if savefile:
     y_sav = np.array([lam,spec,sig])
     np.savetxt(data_tag, y_sav.T)
     print('Saved: ' + data_tag)
-
-sys.exit()
