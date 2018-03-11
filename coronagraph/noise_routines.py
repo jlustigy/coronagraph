@@ -13,7 +13,7 @@ __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdar
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
            "set_read_noise", "let", "set_throughput", "set_atmos_throughput",
            "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction",
-           "get_sky_flux"]
+           "get_sky_flux", "planck"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
     """
@@ -940,3 +940,25 @@ def exptime_element(lam, cp, cn, wantsnr):
     DtSNR[i] = (wantsnr**2.*cn[i])/cp[i]**2./3600. # (hr)
     DtSNR[j] = np.inf
     return DtSNR
+
+def planck(temp, wav):
+    """
+    Planck blackbody function
+
+    Parameters
+    ----------
+    temp : float or array-like
+        Temperature [K]
+    wav : float or array-like
+        Wavelength [microns]
+
+    Returns
+    -------
+    B_lambda [W/m^2/um/sr]
+    """
+    h = 6.62607e-34       # Planck constant (J * s)
+    c = 2.998e8           # Speed of light (m / s)
+    k = 1.3807e-23        # Boltzmann constant (J / K)
+    wav = wav * 1e-6
+    # Returns B_lambda [W/m^2/um/sr]
+    return 1e-6 * (2. * h * c**2) / (wav**5) / (np.exp(h * c / (wav * k * temp)) - 1.0)

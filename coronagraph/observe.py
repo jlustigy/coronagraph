@@ -11,6 +11,7 @@ rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 mpl.rcParams['font.size'] = 20.0
 
 from .make_noise import make_noise
+from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
 
 __all__ = ['generate_observation', 'smart_observation', 'planetzoo_observation',
@@ -89,6 +90,8 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
         Ahr   = np.pi*(np.pi*radhr/solhr) # hi-resolution reflectivity
         planet.Rp    = 1.0     # Earth radii
         planet.r     = 1.0     # semi-major axis (AU)
+        lamhr0 = lamhr
+        solhr0 = solhr
 
         if whichplanet == 'venus':
             fn = 'Venus_geo_albedo.txt'
@@ -154,23 +157,6 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
             planet.Rp    = 3.97     #Earth radii
             planet.r     = 19.19     #semi-major axis (AU)
 
-
-        if whichplanet == 'warmuranus':
-            fn = 'Uranus_geo_albedo.txt'
-            model = np.loadtxt(os.path.join(planetdir,fn))
-            lamhr = model[:,0]
-            Ahr   = model[:,1]
-            planet.Rp    = 3.97     #Earth radii
-            planet.r     = 5.20     #semi-major axis (AU)
-
-        if whichplanet == 'warmneptune':
-            fn = 'Neptune_geo_albedo.txt'
-            model = np.loadtxt(os.path.join(planetdir,fn))
-            lamhr = model[:,0]
-            Ahr   = model[:,1]
-            planet.Rp    = 3.97     #Earth radii
-            planet.r     = 5.20     #semi-major axis (AU)
-
         if whichplanet == 'neptune':
             fn = 'Neptune_geo_albedo.txt'
             model = np.loadtxt(os.path.join(planetdir,fn))
@@ -215,10 +201,14 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
     star = Star(Teff=Teff, Rs=Rs)
 
-    # Shawn: "I don't like noise.  It makes me sad."
+    # interpolate stellar flux to planet wavelength grid
+    solhr = np.interp(lamhr, lamhr0, solhr0)
+
+    mask = (Ahr > 0.0) & np.isfinite(Ahr)
 
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
-        = make_noise(Ahr, lamhr, solhr, telescope, planet, star, COMPUTE_LAM=True, THERMAL=THERMAL)
+        = count_rates_wrapper(Ahr[mask], lamhr[mask], solhr[mask], telescope, planet, star,
+                              COMPUTE_LAM=True, THERMAL=THERMAL, otype=2)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
@@ -294,9 +284,10 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
     If savedata=True then data will be saved
     """
 
-    # Skip call_noise and just call: noise
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        make_noise(Ahr, wlhr, solhr, telescope, planet, star, wantsnr=wantsnr, COMPUTE_LAM=True, THERMAL=THERMAL)
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
+        = count_rates_wrapper(Ahr, wlhr, solhr, telescope, planet, star,
+                              COMPUTE_LAM=True, THERMAL=THERMAL, otype=2,
+                              wantsnr=wantsnr)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
