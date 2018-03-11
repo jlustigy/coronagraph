@@ -19,7 +19,7 @@ MANIFEST
 .pytest_cache/
 
 # Sphinx
-docs/api
+#docs/api
 docs/_build
 
 # Eclipse editor project files

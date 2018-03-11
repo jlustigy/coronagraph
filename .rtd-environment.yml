@@ -1,11 +1,9 @@
 name: coronagraph
 
-channels:
-    - astropy
-
 dependencies:
-    - astropy
-    - matplotlib
-    - numpy
-    - scipy
-    - numba
+  - python=3.5
+  - astropy
+  - matplotlib
+  - numpy
+  - scipy
+  - numba

@@ -37,7 +37,7 @@ python luvoir_demo.py
 ```
 You'll get an output file that looks like this:
 
-<img src="https://github.com/jlustigy/coronagraph/blob/master/examples/plots/luvoir_demo_.png" width="60%" height="60%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/scripts/plots/luvoir_demo_.png" width="60%" height="60%" align="middle" />
 
 Now you can create your own scripts like this to play with all the tunable parameters!
 
@@ -66,7 +66,7 @@ lam, dlam, Cratio, spec, sig, SNR = \
       cg.generate_observation(lam, refl, solhr, integration_time, telescope, planet, star)
 
 ```
-<img src="https://github.com/jlustigy/coronagraph/blob/master/examples/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/scripts/plots/earth_quad_R70.png" width="100%" height="100%" align="middle" />
 
 #### Simulate observation with the Imaging camera
 
@@ -84,7 +84,7 @@ telescope.filter_wheel = jc
 # Observe!
 lam, spec, sig = cg.generate_observation(lam, refl, integration_time, telescope, planet, star)
 ```
-<img src="https://github.com/jlustigy/coronagraph/blob/master/examples/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
+<img src="https://github.com/jlustigy/coronagraph/blob/master/scripts/plots/earth_quad_jc.png" width="100%" height="100%" align="middle" />
 
 ## Notes
 
