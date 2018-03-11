@@ -139,3 +139,25 @@ def test_observe():
                              savedata=False, THERMAL=True, wantsnr=10)
 
     return
+
+def test_convolution_functions():
+    """
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    # Create hi-res wavelength grid
+    lamhr = np.linspace(0.2, 2.5, 1e4)
+
+    # Create fake hi-resolution reflectivity
+    Ahr   = 0.1 + 0.1 * lamhr * np.sin(np.pi * lamhr / 5.)
+
+    lam, dlam = cg.noise_routines.construct_lam(0.3, 1.0, dlam = 0.05)
+
+    A1 = cg.degrade_spec(Ahr,lamhr,lam,dlam=dlam)
+
+    A2 = cg.downbin_spec(Ahr,lamhr,lam,dlam=dlam)
+
+    return
