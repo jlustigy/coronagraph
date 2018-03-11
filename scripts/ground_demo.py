@@ -37,6 +37,7 @@ RELPATH = os.path.dirname(__file__)
 
 # Import coronagraph model
 import coronagraph as cg
+from coronagraph import plot_setup
 
 def _test():
     '''
@@ -58,7 +59,7 @@ def run():
 
     # Planet params
     alpha = 90.     # phase angle at quadrature
-    Phi   = 1.      # phase function at quadrature (already included in SMART run)
+    Phi   = cg.teleplanstar.lambertPhaseFunction(alpha)      # phase function at quadrature (already included in SMART run)
     Rp    = 1.074     # Earth radii
     r     = 0.0485     # semi-major axis (AU)
 
@@ -169,6 +170,8 @@ def run():
     ################################
 
     if plot:
+
+        plot_setup.setup()
 
         # Create figure
         fig = plt.figure(figsize=(10,8))

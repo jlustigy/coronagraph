@@ -7,11 +7,11 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib import rc
 import os
-rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
-mpl.rcParams['font.size'] = 20.0
 
 from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
+from . import plot_setup
+plot_setup.setup()
 
 __all__ = ['generate_observation', 'planetzoo_observation',
            'process_noise', 'exptime_band', 'interp_cont_over_band',
@@ -419,8 +419,8 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
                               save=False, tag=""):
 
     # Set matplotlib params
-    mpl.rc('font', family='Times New Roman')
-    mpl.rcParams['font.size'] = 25.0
+    #mpl.rc('font', family='Times New Roman')
+    #mpl.rcParams['font.size'] = 25.0
 
     # Create figure
     fig = plt.figure(figsize=(12,10))

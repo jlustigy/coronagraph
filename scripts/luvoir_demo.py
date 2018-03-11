@@ -37,6 +37,7 @@ RELPATH = os.path.dirname(__file__)
 
 # Import coronagraph model
 import coronagraph as cg
+from coronagraph import plot_setup
 
 def _test():
     '''
@@ -126,6 +127,8 @@ def run():
     ################################
 
     if plot:
+
+        plot_setup.setup()
 
         # Create figure
         fig = plt.figure(figsize=(10,8))
