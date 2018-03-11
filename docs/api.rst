@@ -12,3 +12,4 @@ Detailed documentation of the Python code.
    Noise Routines <api/noise_routines>
    Degrade Spectra <api/degrade_spec>
    Filter Photometry <api/imager>
+   Simulating Transmission Spectra <api/transits>
