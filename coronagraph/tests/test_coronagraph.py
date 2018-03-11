@@ -69,6 +69,11 @@ def test_count_rates():
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6)
 
+    # Run coronagraph with all kwargs turned on
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+        cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
+                       lammax=1.6, THERMAL = True, GROUND = True, vod=True)
+
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
 
