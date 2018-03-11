@@ -169,7 +169,7 @@ def test_convolution_functions():
 
     A2 = cg.downbin_spec(Ahr,lamhr,lam,dlam=dlam)
 
-    filters = cg.filters.johnson_cousins()
+    filters = cg.imager.johnson_cousins()
     A3 = cg.convolve_spec(Ahr, lamhr, filters)
     A4 = cg.convolve_spec(Ahr, lamhr, filters, forceTopHat=True)
 
@@ -185,9 +185,9 @@ def test_imager():
     """
 
     # Read all filters
-    jc = cg.filters.johnson_cousins()
-    jc2 = cg.filters.johnson_cousins2()
-    ls = cg.filters.landsat()
+    jc = cg.imager.johnson_cousins()
+    jc2 = cg.imager.johnson_cousins2()
+    ls = cg.imager.landsat()
 
     ax = ls.plot()
 

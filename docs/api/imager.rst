@@ -1,6 +1,6 @@
 Filter Photometry
 =================
 
-.. automodule:: coronagraph.filters.imager
+.. automodule:: coronagraph.imager
    :members:
    :undoc-members:

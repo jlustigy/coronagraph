@@ -97,7 +97,7 @@ class Wheel(object):
 
 
 def read_jc():
-    path = 'UBVRI/'
+    path = 'filters/UBVRI/'
     # set file path relative to this file
     path = os.path.join(os.path.dirname(__file__), path)
     U = np.genfromtxt(path+'bess-u.pass')
@@ -130,7 +130,7 @@ class johnson_cousins(Wheel):
 
 
 def read_landsat():
-    path = 'LANDSAT/'
+    path = 'filters/LANDSAT/'
     # set file path relative to this file
     path    = os.path.join(os.path.dirname(__file__), path)
     blue    = np.loadtxt(os.path.join(path,'Blue.txt'), skiprows=1)
@@ -170,7 +170,7 @@ class landsat(Wheel):
 
 
 def read_jc2():
-    path = 'UBVRI2/'
+    path = 'filters/UBVRI2/'
     # set file path relative to this file
     path = os.path.join(os.path.dirname(__file__), path)
     U = np.genfromtxt(path+'Bessel_U-1.txt', skip_header=1)

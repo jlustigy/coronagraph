@@ -19,7 +19,7 @@ if not __CORONAGRAPH_SETUP__:
     from . import observe
     from .observe import *
     from .degrade_spec import *
-    from . import filters
+    from . import imager
     from .convolve_spec import *
     from .count_rates import *
     from .count_rates_wrapper import *
