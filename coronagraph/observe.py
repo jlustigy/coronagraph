@@ -13,7 +13,7 @@ mpl.rcParams['font.size'] = 20.0
 from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
 
-__all__ = ['generate_observation', 'smart_observation', 'planetzoo_observation',
+__all__ = ['generate_observation', 'planetzoo_observation',
            'process_noise', 'exptime_band', 'interp_cont_over_band',
            'plot_interactive_band']
 
@@ -317,7 +317,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
     return lam, dlam, Cratio, spec, sig, SNR
 
-
+'''
 def smart_observation(radfile, itime, telescope, planet, star,
                          ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
                          THERMAL=False, wantsnr=10.):
@@ -410,6 +410,7 @@ def smart_observation(radfile, itime, telescope, planet, star,
     # Return Synthetic data and high-res spec
 
     return lam, spec, sig, wlhr, Ahr
+'''
 
 def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
                               truth=None,

@@ -9,7 +9,7 @@ from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
     set_quantum_efficiency, set_read_noise, set_dark_current, set_lenslet, \
-    set_throughput, set_atmos_throughput, get_thermal_ground_intensity, \
+    set_throughput, set_atmos_throughput, \
     exptime_element, get_sky_flux
 import pdb
 import os
@@ -257,21 +257,19 @@ def count_rates(Ahr, lamhr, solhr,
         cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)                      # internal thermal count rate
     else:
         cth = np.zeros_like(cp)
+
     # Add earth thermal photons if GROUND
     if GROUND:
-        if GROUND == "ESO":
-            # Use ESO SKCALC
-            wl_sky, Isky = get_sky_flux()
-            # Convolve to instrument resolution
-            Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
-        else:
-            # Get SMART computed surface intensity due to sky background
-            Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
+        # Use ESO SKCALC
+        wl_sky, Isky = get_sky_flux()
+        # Convolve to instrument resolution
+        Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
         # Compute Earth thermal photon count rate
         cthe = ctherm_earth(q, X, lam, dlam, diam, Itherm)
         # Add earth thermal photon counts to telescope thermal counts
         cth = cth + cthe
-        if False:
+        '''
+        if True:
             import matplotlib.pyplot as plt;
             fig2, ax1 = plt.subplots(figsize=(8,6))
             ax1.plot(lam, cthe, c="blue", ls="steps-mid", label="Earth Thermal")
@@ -281,6 +279,7 @@ def count_rates(Ahr, lamhr, solhr,
             ax1.set_xlabel("Wavelength [um]")
             ax1.legend()
             plt.show()
+        '''
 
     cb = (cz + cez + csp + cD + cR + cth)
     cnoise =  cp + 2*cb                # assumes background subtraction

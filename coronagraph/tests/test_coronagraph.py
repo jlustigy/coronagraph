@@ -85,6 +85,11 @@ def test_count_rates():
     time = 3600.
     spec, sig, SNR = cg.process_noise(time, Cratio, cp, cb)
 
+    # Test calc_snr
+    snr = cg.observe.calc_SNR(time, cp, cb, poisson=2.)
+
+    # Test draw_noisy_spec
+    spec_noise, sigma = cg.observe.draw_noisy_spec(Cratio, snr, apparent=False)
 
     assert np.all(np.isfinite(spec))
     assert np.all(np.isfinite(sig))
@@ -135,7 +140,7 @@ def test_observe():
     Bstar = cg.noise_routines.planck(5700., lamhr)
     solhr = Bstar * np.pi * (6.957e5/1.496e8)**2.
 
-
+    # Call generate_observation
     lam, dlam, Cratio, spec, sig, SNR = cg.observe.generate_observation(
                              lamhr, Ahr, solhr, 10.0, cg.Telescope(),
                              cg.Planet(), cg.Star(),
@@ -163,6 +168,10 @@ def test_convolution_functions():
     A1 = cg.degrade_spec(Ahr,lamhr,lam,dlam=dlam)
 
     A2 = cg.downbin_spec(Ahr,lamhr,lam,dlam=dlam)
+
+    filters = cg.filters.johnson_cousins()
+    A3 = cg.convolve_spec(Ahr, lamhr, filters)
+    A4 = cg.convolve_spec(Ahr, lamhr, filters, forceTopHat=True)
 
     return
 
@@ -215,4 +224,14 @@ def test_imager():
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6, filter_wheel = ls, mode = "Imaging")
 
+    return
+
+def test_extras():
+    """
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
     return

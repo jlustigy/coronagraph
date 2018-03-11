@@ -9,10 +9,10 @@ import astropy.units as u
 from astropy.io import fits
 
 __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdark",
-           "cread", "ccic", "f_airy", "f_airy_int", "ctherm", "ctherm_earth",
+           "cread", "ccic", "f_airy", "ctherm", "ctherm_earth",
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
            "set_read_noise", "let", "set_throughput", "set_atmos_throughput",
-           "get_thermal_ground_intensity", "exptime_element", "lambertPhaseFunction",
+           "exptime_element", "lambertPhaseFunction",
            "get_sky_flux", "planck"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
@@ -432,7 +432,8 @@ def f_airy(X, CIRC=False):
         fpa = np.interp(X, X_grid, fpa_grid)
     return fpa
 
-def f_airy_int(X):
+'''
+def f_airy_int(X, N = 1000):
     """
     Numerical integration to determine fraction of Airy power
     contained square aperture (SLOW!)
@@ -446,8 +447,9 @@ def f_airy_int(X):
     -------
     f_airy : float
         Fraction of planetary light that falls within photometric aperture X*lambda/D
+    N : int
+        Sets horizontal and vertical grid resolution
     """
-    N = 1000      # sets horizontal and vertical grid resolution
     E0 = 1.27324  # total power contained in Airy pattern
     xg = X * np.arange(N) / (N-1)   # horizontal grid
     yg = X * np.arange(N) / (N-1)   # vertical grid
@@ -467,6 +469,7 @@ def f_airy_int(X):
             E = E + Iairy[i,j]*dA
     E = 4.*E # factor of 4 as integral only over one quadrant
     fpa   = E/E0
+'''
 
 def ctherm(q, X, lam, dlam, D, Tsys, emis, CIRC=False):
     """
@@ -863,6 +866,7 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
         plt.show()
     return Tatmos
 
+'''
 def get_thermal_ground_intensity(lam, dlam, convolve):
     """
     Get the intensity at the ground in each spectral element due to the sky
@@ -893,6 +897,7 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
     # Compute intensity
     Itherm  = Ftherm / np.pi
     return Itherm
+'''
 
 def get_sky_flux():
     """
