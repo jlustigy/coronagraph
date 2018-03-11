@@ -5,7 +5,6 @@ from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
 import numpy as np
-from .utils import Input, Loadin
 
 __all__ = ['Telescope', 'Planet', 'Star']
 
@@ -59,8 +58,6 @@ class Telescope(object):
 
     Methods
     -------
-    from_file(path)
-        Initialize telescope object using telescope parameters in the Input file
     default_luvoir()
         Initialize telescope object using current LUVOIR parameters (Not decided!)
     default_habex()
@@ -99,19 +96,6 @@ class Telescope(object):
         if self._mode == 'Imaging':
             from filters.imager import johnson_cousins
             self._filter_wheel = johnson_cousins()
-
-    @classmethod
-    def from_file(cls, path):
-
-        # Read-in Telescope params using Loadin class
-        L = Loadin(path)
-
-        # Return new class instance
-        return cls(mode=L.mode, lammin=L.lammin, lammax=L.lammax, R=L.resolution,
-                   Tput=L.throughput, D=L.diameter, Tsys=L.Tsys, Tdet=L.Tdet, IWA=L.IWA,
-                   OWA=L.OWA, emis=L.emissivity, C=L.contrast, De=L.darkcurrent,
-                   DNHpix=L.DNHpix, Re=L.readnoise, Dtmax=L.Dtmax, X=L.X,
-                   q=L.qe, filter_wheel=L.filter_wheel)
 
     @classmethod
     def default_luvoir(cls):
@@ -264,16 +248,6 @@ class Planet(object):
         else:
             raise Exception("Error in Planet Phase Function (Phi)")
 
-    @classmethod
-    def from_file(cls, path):
-
-        # Read-in Telescope params using Loadin class
-        L = Loadin(path)
-
-        # Return new class instance
-        return cls(name=L.name, star=L.star, d=L.distance, Nez=L.Nez,
-                   Rp=L.Rp, a=L.a, alpha=L.alpha, MzV=L.MzV, MezV=L.MezV)
-
     @property
     def alpha(self):
         return self._alpha
@@ -324,15 +298,6 @@ class Star(object):
     def __init__(self, Teff=5780.0, Rs=1.0):
         self.Teff=Teff
         self.Rs=Rs
-
-    @classmethod
-    def from_file(cls, path):
-
-        # Read-in Telescope params using Loadin class
-        L = Loadin(path)
-
-        # Return new class instance
-        return cls(Teff=L.Teff, Rs=L.Rs)
 
     def __str__(self):
         string = 'Star: \n-----\n'+\

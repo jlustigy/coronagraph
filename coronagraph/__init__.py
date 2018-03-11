@@ -20,7 +20,6 @@ if not __CORONAGRAPH_SETUP__:
     from .make_noise import *
     from . import observe
     from .observe import *
-    from .utils import *
     from .degrade_spec import *
     from . import filters
     from .convolve_spec import *

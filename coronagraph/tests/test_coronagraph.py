@@ -132,4 +132,5 @@ def test_observe():
                              cg.Planet(), cg.Star(),
                              ref_lam=0.55, tag='', plot=False, saveplot=False,
                              savedata=False, THERMAL=True, wantsnr=10)
+
     return
