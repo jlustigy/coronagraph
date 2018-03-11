@@ -10,8 +10,8 @@ import os
 
 from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
-from . import plot_setup
-plot_setup.setup()
+from .plot_setup import setup
+setup()
 
 __all__ = ['generate_observation', 'planetzoo_observation',
            'process_noise', 'exptime_band', 'interp_cont_over_band',

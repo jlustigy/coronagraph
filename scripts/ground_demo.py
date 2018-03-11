@@ -29,8 +29,6 @@ from matplotlib import gridspec
 from matplotlib import rc
 import pdb
 import sys, os
-mpl.rc('font', family='Times New Roman')
-mpl.rcParams['font.size'] = 25.0
 
 # The location to *this* file
 RELPATH = os.path.dirname(__file__)
