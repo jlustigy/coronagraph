@@ -10,7 +10,6 @@ import os
 rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
 mpl.rcParams['font.size'] = 20.0
 
-from .make_noise import make_noise
 from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
 
@@ -379,11 +378,11 @@ def smart_observation(radfile, itime, telescope, planet, star,
     # Calculate Hi-res reflectivity spectrum
     Ahr = (TOA_flux / solar_spec) #* np.pi / planet.Phi
 
-    # Possibly convolve with gaussian?
-
-    # Skip call_noise and just call: noise
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        make_noise(Ahr, wlhr, solar_spec, telescope, planet, star, wantsnr=wantsnr, COMPUTE_LAM=True, THERMAL=THERMAL)
+    # Calculate photon count rates
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
+        = count_rates_wrapper(Ahr, wlhr, solhr, telescope, planet, star,
+                              COMPUTE_LAM=True, THERMAL=THERMAL, otype=2,
+                              wantsnr=wantsnr)
 
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
