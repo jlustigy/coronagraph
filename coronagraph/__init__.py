@@ -16,7 +16,6 @@ except NameError:
 if not __CORONAGRAPH_SETUP__:
     # This is a regular coronagraph run
     from .teleplanstar import *
-    from .call_noise import *
     from .make_noise import *
     from . import observe
     from .observe import *
