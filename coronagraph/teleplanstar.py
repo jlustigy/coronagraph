@@ -5,6 +5,7 @@ from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
 import numpy as np
+from .noise_routines import lambertPhaseFunction
 
 __all__ = ['Telescope', 'Planet', 'Star']
 
@@ -176,23 +177,6 @@ class Telescope(object):
 ################################################################################
 # PLANET
 ################################################################################
-
-def lambertPhaseFunction(alpha):
-    """
-    Calculate the Lambertian Phase Function from the phase angle.
-
-    Parameters
-    ----------
-    alpha: float
-        Planet phase angle (degrees)
-
-    Returns
-    -------
-    Phi : float
-        Lambertian phase function
-    """
-    alpha = alpha * np.pi / 180.
-    return (np.sin(alpha) + (np.pi - alpha) * np.cos(alpha)) / np.pi
 
 class Planet(object):
     """

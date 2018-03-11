@@ -74,6 +74,10 @@ def test_count_rates():
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6, THERMAL = True, GROUND = True, vod=True)
 
+    # Run wrapper
+    out = cg.count_rates_wrapper(Ahr, lamhr, solhr, cg.Telescope(), cg.Planet(),
+                                 cg.Star())
+
     # Calculate background photon count rate
     cb = (cz + cez + csp + cD + cR + cth)
 

@@ -411,62 +411,6 @@ def smart_observation(radfile, itime, telescope, planet, star,
 
     return lam, spec, sig, wlhr, Ahr
 
-def plot_spec():
-    """
-    Plots noised-up spectrum.
-    """
-
-    # Set string for plot text
-    if itime > 2.0:
-        timestr = "{:.0f}".format(itime)+' hours'
-    else:
-        timestr = "{:.0f}".format(itime*60)+' mins'
-    plot_text = r'Distance = '+"{:.1f}".format(planet.distance)+' pc'+\
-    '\n Integration time = '+timestr
-
-    # If a reference wavelength is specified then return the SNR at that wl
-    # corresponding to the integration time given
-    if ref_lam:
-        ireflam = find_nearest(lam,ref_lam)
-        ref_SNR = SNR[ireflam]
-        plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
-            ' at '+"{:.2f}".format(lam[ireflam])+r' $\mu$m'
-
-    # Plot observed spectrum; save pdf if saveplot=True
-    lammin,lammax = np.min(lam)-0.1, np.max(lam)+0.1
-    Amin, Amax = np.min(A)-np.max(sig)*1.1, np.max(A)+np.max(sig)*1.1
-    tmin = np.min(Ahr[(wlhr > lammin) & (wlhr < lammax)])
-    tmax = np.max(Ahr[(wlhr > lammin) & (wlhr < lammax)])
-    if tmin < Amin: Amin = tmin
-    if tmax > Amax: Amax = tmax
-    #ymin,ymax = np.min(A), np.max(A)
-    plot_tag = 'observed_smart_'+tag+'.pdf'
-    fig = plt.figure(figsize=(15,10))
-    gs = gridspec.GridSpec(1, 1)
-    ax0 = plt.subplot(gs[0])
-    ax0.plot(wlhr, Ahr, alpha=0.5, c='k')
-    if telescope.mode != 'Imaging':
-        ax0.plot(lam, A, alpha=0.7, color='orange', drawstyle='steps-mid', lw=2.0)
-    else:
-        ax0.plot(lam, A, 'o', alpha=0.7, color='orange', ms = 10.0)
-        telescope.filter_wheel.plot(ax=ax0)
-    ax0.errorbar(lam, spec, yerr=sig, fmt='o', color='k', ms=10.0)
-    ax0.set_ylabel('Fp/Fs')
-    ax0.set_xlabel('Wavelength [$\mu$m]')
-    ax0.set_xlim([lammin,lammax])
-    ax0.set_ylim([Amin, Amax])
-    #ax0.set_ylim([-0.01,ymax+0.1])
-    #ax0.set_ylim([-0.01,1.01])
-    ax0.text(0.99, 0.99, plot_text,\
-         verticalalignment='top', horizontalalignment='right',\
-         transform=ax0.transAxes,\
-         color='black', fontsize=20)
-    # Save plot if saveplot==True
-    if saveplot:
-        fig.savefig(plot_tag)
-        print('Saved: '+plot_tag)
-    fig.show()
-
 def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
                               truth=None,
                               xlim=None, ylim=None,
