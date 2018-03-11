@@ -226,6 +226,65 @@ def test_imager():
 
     return
 
+def test_transits():
+    """
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+
+    Rp = 6.371e3
+    Rs = 6.957e5
+    Teff = 5700
+
+    # Create model arrays
+    lamhr = np.linspace(0.2, 2.5, 1e4)
+    tdhr = np.ones_like(lamhr) * (Rp / Rs)**2
+
+    # Create fake stellar flux
+    Bstar = cg.noise_routines.planck(Teff, lamhr)
+    Fshr = Bstar * np.pi * (6.957e5/1.496e8)**2.
+
+    # Instantiate transit noise model
+    tn = cg.TransitNoise(tdur = 8.0 * 60 * 60,
+                         d = 10.,
+                         r = 1.0,
+                         Rp = 1.0,
+                         Rs = 1.0,
+                         ntran = 10.0,
+                         Tput = 0.5,
+                         Res = 70,
+                         nout = 2)
+
+    # Calculate count rates
+    tn.run_count_rates(lamhr, tdhr, Fshr)
+
+    tn.ntran = 100
+    tn.make_fake_data()
+    fig, ax = tn.plot_spectrum()
+
+    fig, ax = tn.plot_SNRn()
+
+    fig, ax = tn.plot_ntran_to_wantsnr()
+
+    # This is the SNR we want on the max difference in planet radius
+    wantvsnr = 3
+
+    # Calculate the SNR we want for the transit depths to get the right
+    #   SNR on the radius difference
+    wantsnr = wantvsnr * np.mean(tn.RpRs2) / (np.max(tn.RpRs2) - np.min(tn.RpRs2))
+
+    tn.recalc_wantsnr(wantsnr = wantsnr)
+
+    fig, ax = tn.plot_ntran_to_wantsnr()
+
+    fig, ax = tn.plot_count_rates()
+
+    return
+
+
 def test_extras():
     """
     Parameters

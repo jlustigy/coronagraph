@@ -15,7 +15,7 @@ setup()
 
 __all__ = ['generate_observation', 'planetzoo_observation',
            'process_noise', 'exptime_band', 'interp_cont_over_band',
-           'plot_interactive_band']
+           'plot_interactive_band', 'random_draw']
 
 planetdir = "planets/"
 relpath = os.path.join(os.path.dirname(__file__), planetdir)
@@ -521,6 +521,15 @@ def draw_noisy_spec(spectrum, SNR, apparent=False):
     spec_noise = np.random.randn(len(spectrum))*sigma + scale*spectrum
 
     return spec_noise, sigma
+
+def random_draw(val, sig):
+    """
+    Draw fake data points from model ``val`` with errors ``sig``
+    """
+    if type(val) is np.ndarray:
+        return val + np.random.randn(len(val))*sig
+    elif (type(val) is float) or (type(val) is int) or (type(val) is np.float64):
+        return val + np.random.randn(1)[0]*sig
 
 def interp_cont_over_band(lam, cp, icont, iband):
     """

@@ -9,9 +9,9 @@ import astropy.units as u
 from astropy.io import fits
 
 __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdark",
-           "cread", "ccic", "f_airy", "ctherm", "ctherm_earth",
+           "cread", "ccic", "f_airy", "ctherm", "ctherm_earth", "cstar",
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
-           "set_read_noise", "let", "set_throughput", "set_atmos_throughput",
+           "set_read_noise", "set_lenslet", "set_throughput", "set_atmos_throughput",
            "exptime_element", "lambertPhaseFunction",
            "get_sky_flux", "planck"]
 
@@ -101,6 +101,35 @@ def FpFs(A, Phi, Rp, r):
     Re = 6.371e6         # radius of Earth (m)
     ds = 1.495979e11       # AU (m)
     return A*Phi*(Rp*Re/r/ds)**2.
+
+def cstar(q, fpa, T, lam, dlam, Fstar, D):
+    """
+    Stellar photon count rate (not used with coronagraph)
+
+    Parameters
+    ----------
+    q : float or array-like
+        Quantum efficiency
+    fpa : float
+        Fraction of planetary light that falls within photometric aperture
+    T : float
+        Telescope and system throughput
+    lam : float or array-like
+        Wavelength [um]
+    dlam : float or array-like
+        Spectral element width [um]
+    Fplan : float or array-like
+        Planetary flux [W/m**2/um]
+    D : float
+        Telescope diameter [m]
+
+    Returns
+    -------
+    cs : float or array-like
+        Stellar photon count rate [1/s]
+    """
+    hc  = 1.986446e-25 # h*c (kg*m**3/s**2)
+    return np.pi*q*fpa*T*(lam*1.e-6/hc)*dlam*Fstar*(D/2.)**2.
 
 def cplan(q, fpa, T, lam, dlam, Fplan, D):
     """
