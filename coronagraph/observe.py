@@ -223,7 +223,7 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     spec, sig, SNR = process_noise(time, Cratio, cp, cb)
 
     if plot:
-        plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+        fig, ax = plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -304,7 +304,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
 
     if plot:
-        plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+        fig, ax = plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -398,7 +398,7 @@ def smart_observation(radfile, itime, telescope, planet, star,
     spec, sig, SNR = process_noise(time, Cratio, cp, cb)
 
     if plot:
-        plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+        fig, ax = plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -459,8 +459,9 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
 
     if save:
         fig.savefig(title+tag+".pdf")
+        return
     else:
-        plt.show()
+        return fig, ax
 
 def process_noise(Dt, Cratio, cp, cb):
     """

@@ -76,7 +76,7 @@ class Wheel(object):
         #colors,scalarMap,cNorm = scalarmap(np.arange(Nfilt),cmap='Dark2')
         i = 0
         fmax = 1.0
-        for attr, value in self.__dict__.iteritems():
+        for attr, value in self.__dict__.items():
             if np.max(value.response) > fmax: fmax = np.max(value.response)
             wl, response = value.wl, value.response
             #ax1.plot(wl,response, lw=3.0, label=value.name, c=colors[i])
@@ -89,10 +89,10 @@ class Wheel(object):
 
     def __str__(self):
         string = []
-        tdict = sorted(self.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
+        tdict = sorted(self.__dict__.items(), key=lambda x: x[1].bandcenter)
         for attr, value in tdict:
             string.append(attr)
-        print(string) 
+        print(string)
         return ''#str(string)
 
 
@@ -132,18 +132,20 @@ class johnson_cousins(Wheel):
 def read_landsat():
     path = 'LANDSAT/'
     # set file path relative to this file
-    path = os.path.join(os.path.dirname(__file__), path)
-    blue = np.genfromtxt(path+'Blue.txt', skip_header=1)
-    green = np.genfromtxt(path+'Green.txt', skip_header=1)
-    red = np.genfromtxt(path+'Red.txt', skip_header=1)
-    coastal = np.genfromtxt(path+'CostalAerosol.txt', skip_header=1)
-    cirrus = np.genfromtxt(path+'Cirrus.txt', skip_header=1)
-    nir = np.genfromtxt(path+'NIR.txt', skip_header=1)
-    pan = np.genfromtxt(path+'Pan.txt', skip_header=1)
-    swir1 = np.genfromtxt(path+'SWIR1.txt', skip_header=1)
-    swir2 = np.genfromtxt(path+'SWIR2.txt', skip_header=1)
-    LANDSAT_names = ['Coastal Aerosols','Blue','Green','Red','NIR','SWIR1','SWIR2','Pan','Cirrus']
-    titles = ['wl','response','std','bandwidth','FWHM_low','FWHM_high','bandcenter']
+    path    = os.path.join(os.path.dirname(__file__), path)
+    blue    = np.loadtxt(os.path.join(path,'Blue.txt'), skiprows=1)
+    green   = np.loadtxt(os.path.join(path,'Green.txt'), skiprows=1)
+    red     = np.loadtxt(os.path.join(path,'Red.txt'), skiprows=1)
+    coastal = np.loadtxt(os.path.join(path,'CostalAerosol.txt'), skiprows=1)
+    cirrus  = np.loadtxt(os.path.join(path,'Cirrus.txt'), skiprows=1)
+    nir     = np.loadtxt(os.path.join(path,'NIR.txt'), skiprows=1)
+    pan     = np.loadtxt(os.path.join(path,'Pan.txt'), skiprows=1)
+    swir1   = np.loadtxt(os.path.join(path,'SWIR1.txt'), skiprows=1)
+    swir2   = np.loadtxt(os.path.join(path,'SWIR2.txt'), skiprows=1)
+    LANDSAT_names = ['Coastal Aerosols','Blue','Green','Red',
+                     'NIR','SWIR1','SWIR2','Pan','Cirrus']
+    titles = ['wl','response','std','bandwidth',
+              'FWHM_low','FWHM_high','bandcenter']
     wl = [coastal[:,0]/1e3, blue[:,0]/1e3, green[:,0]/1e3, red[:,0]/1e3, nir[:,0]/1e3, swir1[:,0]/1e3, swir2[:,0]/1e3, pan[:,0]/1e3, cirrus[:,0]/1e3]
     response = [coastal[:,1], blue[:,1], green[:,1], red[:,1], nir[:,1], swir1[:,1], swir2[:,1], pan[:,1], cirrus[:,1]]
     FWHM = np.array([15.98, 60.04, 57.33, 37.47, 28.25, 84.72, 186.66, 172.40, 20.39]) / 1e3

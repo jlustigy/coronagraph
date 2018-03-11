@@ -19,10 +19,10 @@ def convolve_spec(Ahr, lamhr, filters, forceTopHat=False):
         Ahr=Ahr[::-1]
 
     # Sort filters by wavelength
-    tdict = sorted(filters.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
+    tdict = sorted(filters.__dict__.items(), key=lambda x: x[1].bandcenter)
     F = []
     for x in tdict:
-        if (x[1].wl == None) or (x[1].response == None) or forceTopHat:
+        if (x[1].wl is None) or (x[1].response is None) or forceTopHat:
             # Use FWHM with tophat convolution
             Fi = tophat_instrument(Ahr, lamhr, x[1].bandcenter, FWHM=x[1].FWHM)
         else:
@@ -72,7 +72,6 @@ def convolve_filter_response(wlh, fh, wlf, response, degrade=False):
         # Interpolate spectrum to hi-res filter grid
         F = np.interp(wlf, wlhr, fhr)
         R = response
-
 
     # Convolve with normalized filter response function
     F = F * (R / np.sum(R))

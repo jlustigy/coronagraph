@@ -139,7 +139,7 @@ def test_observe():
     lam, dlam, Cratio, spec, sig, SNR = cg.observe.generate_observation(
                              lamhr, Ahr, solhr, 10.0, cg.Telescope(),
                              cg.Planet(), cg.Star(),
-                             ref_lam=0.55, tag='', plot=False, saveplot=False,
+                             ref_lam=0.55, tag='', plot=True, saveplot=False,
                              savedata=False, THERMAL=True, wantsnr=10)
 
     return
@@ -163,5 +163,56 @@ def test_convolution_functions():
     A1 = cg.degrade_spec(Ahr,lamhr,lam,dlam=dlam)
 
     A2 = cg.downbin_spec(Ahr,lamhr,lam,dlam=dlam)
+
+    return
+
+def test_imager():
+    """
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+
+    # Read all filters
+    jc = cg.filters.johnson_cousins()
+    jc2 = cg.filters.johnson_cousins2()
+    ls = cg.filters.landsat()
+
+    ax = ls.plot()
+
+    # Planet params
+    alpha = 90.     # phase angle at quadrature
+    Phi   = cg.noise_routines.lambertPhaseFunction(alpha)  # phase function
+    Rp    = 1.0     # Earth radii
+    r     = 1.0     # semi-major axis (AU)
+
+    # Stellar params
+    Teff  = 5780.   # Sun-like Teff (K)
+    Rs    = 1.      # star radius in solar radii
+
+    # Planetary system params
+    d    = 10.     # distance to system (pc)
+    Nez  = 1.      # number of exo-zodis
+
+    # Create hi-res wavelength grid
+    lamhr = np.linspace(0.2, 2.5, 1e4)
+
+    # Create fake hi-resolution reflectivity
+    Ahr   = 0.1 + 0.1 * lamhr * np.sin(np.pi * lamhr / 5.)
+
+    # Create fake stellar flux
+    Bstar = cg.noise_routines.planck(Teff, lamhr)
+    solhr = Bstar * np.pi * (6.957e5/1.496e8)**2.
+
+    ################################
+    # RUN CORONAGRAPH MODEL
+    ################################
+
+    # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+        cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
+                       lammax=1.6, filter_wheel = ls, mode = "Imaging")
 
     return

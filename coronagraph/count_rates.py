@@ -174,7 +174,7 @@ def count_rates(Ahr, lamhr, solhr,
         IMAGE = True
         COMPUTE_LAM = False
         # sorted filter dict by bandcenters
-        tdict = sorted(filters.__dict__.iteritems(), key=lambda x: x[1].bandcenter)
+        tdict = sorted(filters.__dict__.items(), key=lambda x: x[1].bandcenter)
         # Construct array of wavelengths
         lam = np.array([x[1].bandcenter for x in tdict])
         # Construct array of wavelength bin widths (FWHM)
