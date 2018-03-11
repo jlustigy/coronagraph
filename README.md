@@ -2,10 +2,10 @@
 
 A Python noise model for directly imaging exoplanets with a space based coronagraph.  
 
-[![Build Status](https://travis-ci.org/jlustigy/coronagraph.svg?branch=master)](https://travis-ci.org/jlustigy/coronagraph)
+[![Build Status](http://img.shields.io/travis/jlustigy/coronagraph/master.svg?style=flat)](https://travis-ci.org/jlustigy/coronagraph)
 [![Docs Status](https://readthedocs.org/projects/coronagraph/badge/?version=latest)](http://coronagraph.readthedocs.io/en/latest/)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jlustigy/coronagraph/blob/master/LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/jlustigy/coronagraph/badge.svg?branch=master&style=flat&v=2)](https://coveralls.io/github/jlustigy/coronagraph?branch=master)
+[![MIT licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/jlustigy/coronagraph/blob/master/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/jlustigy/coronagraph/badge.svg?branch=master&style=flat)](https://coveralls.io/github/jlustigy/coronagraph?branch=master)
 
 If you use this model in your own research please cite [Robinson et al (2016)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/".
 
