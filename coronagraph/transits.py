@@ -14,6 +14,7 @@ from __future__ import (division as _, print_function as _,
 import numpy as np
 import astropy.units as u
 import matplotlib.pyplot as plt
+import sys, os
 
 from .noise_routines import *
 from .degrade_spec import *
@@ -21,7 +22,7 @@ from .observe import random_draw
 from .plot_setup import setup
 setup()
 
-__all__ = ["TransitNoise"]
+__all__ = ["TransitNoise", "get_earth_spectrum"]
 
 h = 6.62607004e-34
 c = 2.998e8
@@ -167,7 +168,7 @@ class TransitNoise(object):
 
         return
 
-    def run_count_rates(self, lamhr, tdhr, Fshr):
+    def run_count_rates(self, lamhr = None, tdhr = None, Fshr = None):
         """
         Calculate the photon count rates and signal to noise on an observation
 
@@ -520,6 +521,42 @@ class TransitNoise(object):
         else:
             return
 
+    def plot_time_to_wantsnr(self, ax0 = None, plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+        """
+        Plot the time to get a SNR on the transit depth as
+        a function of wavelength.
+
+        Parameters
+        ----------
+        ax0 : `matplotlib.axes`
+            Optional axis to provide
+        plot_kws : dic
+            Keyword arguments for `plot`
+
+        Returns
+        -------
+        fig : `matplotlib.figure.Figure`
+            Returns a figure if `ax0` is `None`
+        ax : `matplotlib.axes`
+            Returns an axis if `ax0` is `None`
+        """
+
+        if ax0 is None:
+            # Create Plot
+            fig, ax = plt.subplots(figsize = (10,8))
+            ax.set_xlabel(r"Wavelength [$\mu$m]")
+            ax.set_ylabel("Time to S/N = %i on Transit Depth [s]" %self.wantsnr)
+            ax.set_yscale("log")
+        else:
+            ax = ax0
+
+        ax.plot(self.lam, self.tSNR, **plot_kws)
+
+        if ax0 is None:
+            return fig, ax
+        else:
+            return
+
     def plot_count_rates(self, ax0 = None):
         """
         Plot the photon count rate for all sources.
@@ -560,3 +597,35 @@ class TransitNoise(object):
             return fig, ax
         else:
             return
+
+def get_earth_spectrum():
+    '''
+    Get the transmission spectrum of the Earth around the Sun.
+
+    Returns
+    -------
+    lam : `numpy.ndarray`
+        Wavelength grid [um]
+    tdepth : `numpy.ndarray`
+        Transit depth (Rp/Rs)^2
+    fstar : `numpy.ndarray`
+        Stellar flux at planet [W/m^2/um]
+    '''
+
+    # Read in transit data
+    here = os.path.join(os.path.dirname(__file__))
+    plus = "planets/earth_avg_hitran2012_300_100000cm.trnst"
+    data = np.loadtxt(os.path.join(here, plus))
+
+    # Parse
+    lam = data[:,0]
+    tdepth = data[:,3]
+
+    # Read in flux data
+    plus = "planets/earth_avg_hitran2012_300_100000cm_toa.rad"
+    data = np.loadtxt(os.path.join(here, plus))
+
+    # Parse
+    fstar = data[:,2]
+
+    return lam, tdepth, fstar
