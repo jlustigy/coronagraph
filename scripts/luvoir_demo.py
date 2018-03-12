@@ -10,6 +10,8 @@ A demo simulation of Earth at 10 pc using a LUVOIR-like telescope setup.
     :align: center
 
     from scripts import luvoir_demo
+    from coronagraph import plot_setup
+    plot_setup.setup()
     luvoir_demo._test()
 
   .. role:: raw-html(raw)
@@ -36,6 +38,7 @@ RELPATH = os.path.dirname(__file__)
 # Import coronagraph model
 import coronagraph as cg
 from coronagraph import plot_setup
+plot_setup.setup()
 
 def _test():
     '''
@@ -129,9 +132,7 @@ def run():
         plot_setup.setup()
 
         # Create figure
-        fig = plt.figure(figsize=(10,8))
-        gs = gridspec.GridSpec(1,1)
-        ax = plt.subplot(gs[0])
+        fig, ax = plt.subplots(figsize = (10,8))
 
         # Set string for plot text
         if Dt > 2.0:
@@ -157,10 +158,11 @@ def run():
         ax.set_ylabel(r"F$_p$/F$_s$ ($\times 10^9$)", fontsize = 25)
         ax.set_xlabel("Wavelength [$\mu$m]", fontsize = 25)
         ax.set_title(title)
-        ax.text(0.99, 0.99, plot_text,\
+        ax.text(0.98, 0.98, plot_text,\
              verticalalignment='top', horizontalalignment='right',\
              transform=ax.transAxes,\
-             color='black', fontsize=20)
+             color='black', fontsize=20,
+             bbox=dict(boxstyle="square", fc="w", ec="k", alpha=0.9), zorder=101)
 
         # Adjust x,y limits
         if ylim is not None: ax.set_ylim(ylim)

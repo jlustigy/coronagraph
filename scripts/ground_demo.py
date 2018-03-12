@@ -10,6 +10,8 @@ A demo simulation of Earth at 10 pc using a 30-m ground-based telescope setup.
     :align: center
 
     from scripts import ground_demo
+    from coronagraph import plot_setup
+    plot_setup.setup()
     ground_demo._test()
 
   .. role:: raw-html(raw)
@@ -36,6 +38,7 @@ RELPATH = os.path.dirname(__file__)
 # Import coronagraph model
 import coronagraph as cg
 from coronagraph import plot_setup
+plot_setup.setup()
 
 def _test():
     '''
@@ -58,20 +61,20 @@ def run():
     # Planet params
     alpha = 90.     # phase angle at quadrature
     Phi   = cg.teleplanstar.lambertPhaseFunction(alpha)      # phase function at quadrature (already included in SMART run)
-    Rp    = 1.074     # Earth radii
-    r     = 0.0485     # semi-major axis (AU)
+    Rp    = 1.0     # Earth radii
+    r     = 1.0     # semi-major axis (AU)
 
     # Stellar params
-    Teff  = 3040.   # Sun-like Teff (K)
+    Teff  = 5780   # Sun-like Teff (K)
     Rs    = 1.      # star radius in solar radii
 
     # Planetary system params
-    d    = 1.302     # distance to system (pc)
+    d    = 10.0     # distance to system (pc)
     Nez  = 1.      # number of exo-zodis
 
     # Telescope parameters
     lammin = 0.3
-    lammax = 4.5
+    lammax = 2.5
     Res    = 70.0
     diam   = 30.0
     Tput   = 0.05
@@ -95,7 +98,7 @@ def run():
     plot = True
     ref_lam = 0.55
     title = ""
-    ylim =  [-100, 500]
+    ylim = [-0.1, 0.3]
     xlim =  None
     tag = "GroundIR_500hr_new"
 
@@ -172,9 +175,7 @@ def run():
         plot_setup.setup()
 
         # Create figure
-        fig = plt.figure(figsize=(10,8))
-        gs = gridspec.GridSpec(1,1)
-        ax = plt.subplot(gs[0])
+        fig, ax = plt.subplots(figsize = (10,8))
 
         # Set string for plot text
         if Dt > 2.0:
@@ -200,10 +201,11 @@ def run():
         ax.set_ylabel(r"F$_p$/F$_s$ ($\times 10^9$)", fontsize = 25)
         ax.set_xlabel("Wavelength [$\mu$m]", fontsize = 25)
         ax.set_title(title)
-        ax.text(0.99, 0.99, plot_text,\
+        ax.text(0.98, 0.98, plot_text,\
              verticalalignment='top', horizontalalignment='right',\
              transform=ax.transAxes,\
-             color='black', fontsize=20)
+             color='black', fontsize=20,
+             bbox=dict(boxstyle="square", fc="w", ec="k", alpha=0.9), zorder=101)
 
         # Adjust x,y limits
         if ylim is not None: ax.set_ylim(ylim)
