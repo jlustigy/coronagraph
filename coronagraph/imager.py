@@ -69,7 +69,7 @@ class Wheel(object):
 
         Returns
         -------
-        ax : matplotlib.axis
+        ax : ``matplotlib.axis``
             Axis with plot
 
         Note

@@ -181,6 +181,46 @@ class TransitNoise(object):
             Transit Depth $(Rp/Rs)^2$
         Fshr : numpy.ndarray
             Flux density incident at the planet's TOA [W/m$^2$/$\mu$]
+
+        Attributes
+        ----------
+        lamhr : array
+            Wavelength [$\mu$m]
+        tdhr : array
+            Transit Depth $(Rp/Rs)^2$
+        Fshr : array
+            Flux density incident at the planet's TOA [W/m$^2$/$\mu$]
+        cs : array
+            Stellar photon count rate [photons/s]
+        cback : array
+            Background photon count rate [photons/s]
+        cz : array
+            Zodi photon count rate [photons/s]
+        cez : array
+            Exo-zodi photon count rate [photons/s]
+        cth : array
+            Thermal photon count rate [photons/s]
+        cD : array
+            Dark current photon count rate [photons/s]
+        cR : array
+            Read noise photon count rate [photons/s]
+        cmiss : array
+            Occulted stellar photon count rate [photons/s]
+        SNR1 : array
+            S/N for one transit
+        SNRn : array
+            S/N for ``ntran`` transits
+        tSNR : array
+            Exposure time to ``wantsnr`` [s]
+        nSNR : array
+            Number of transits to ``wantsnr``
+        lam : array
+            Observed wavelength grid [$\mu$m]
+        dlam : array
+            Observed wavelength grid widths [$\mu$m]
+        RpRs2 : array
+            Low-res transit depth
+
         """
 
         self.lamhr = lamhr
@@ -342,6 +382,15 @@ class TransitNoise(object):
     def make_fake_data(self):
         """
         Make a fake dataset by sampling from a Gaussian.
+
+        Attributes
+        ----------
+        SNRn : array
+            S/N in ``ntran`` transits
+        obs : array
+            Observed transit depth with noise
+        sig : array
+            Observed uncertainties on transit depth
         """
 
         # Ensure that simulation has been run
@@ -358,6 +407,13 @@ class TransitNoise(object):
         """
         Recalculate the time and number of transits required to achieve a
         user specified SNR via `wantsnr`.
+
+        Attributes
+        ----------
+        tSNR : array
+            Exposure time to ``wantsnr`` [s]
+        nSNR : array
+            Number of transits to ``wantsnr``
         """
 
         assert self._computed
@@ -407,6 +463,10 @@ class TransitNoise(object):
             Returns a figure if `ax0` is `None`
         ax : `matplotlib.axes`
             Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
         """
 
         m = [self.SNRn > SNR_threshold]
@@ -468,6 +528,10 @@ class TransitNoise(object):
             Returns a figure if `ax0` is `None`
         ax : `matplotlib.axes`
             Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
         """
         if ax0 is None:
             # Create Plot
@@ -504,6 +568,10 @@ class TransitNoise(object):
             Returns a figure if `ax0` is `None`
         ax : `matplotlib.axes`
             Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
         """
 
         if ax0 is None:
@@ -540,6 +608,10 @@ class TransitNoise(object):
             Returns a figure if `ax0` is `None`
         ax : `matplotlib.axes`
             Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
         """
 
         if ax0 is None:
@@ -573,6 +645,10 @@ class TransitNoise(object):
             Returns a figure if `ax0` is `None`
         ax : `matplotlib.axes`
             Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
         """
 
         if ax0 is None:
