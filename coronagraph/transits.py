@@ -29,7 +29,8 @@ c = 2.998e8
 
 class TransitNoise(object):
     """
-    Attributes
+
+    Parameters
     ----------
     tdur : float
         Transit duration [s]

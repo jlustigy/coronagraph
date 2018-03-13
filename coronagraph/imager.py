@@ -59,6 +59,23 @@ class Wheel(object):
         setattr(self, name, filt)
 
     def plot(self, ax=None):
+        """
+        Plot the filter response functions
+
+        Parameters
+        ----------
+        ax : matplotlib.axis (optional)
+            Axis instance to plot on
+
+        Returns
+        -------
+        ax : matplotlib.axis
+            Axis with plot
+
+        Note
+        ----
+        Only returns an axis if an axis was not provided.
+        """
 
         if ax == None:
             fig = plt.figure(figsize=(14,10))

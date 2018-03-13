@@ -503,7 +503,9 @@ def f_airy_int(X, N = 1000):
 def ctherm(q, X, lam, dlam, D, Tsys, emis, CIRC=False):
     """
     Telescope thermal count rate
-    --------
+
+    Parameters
+    ----------
     q : float or array-like
         Quantum efficiency
     X : float, optional
