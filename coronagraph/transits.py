@@ -22,7 +22,7 @@ from .observe import random_draw
 from .plot_setup import setup
 setup()
 
-__all__ = ["TransitNoise", "get_earth_spectrum"]
+__all__ = ["TransitNoise", "get_earth_trans_spectrum"]
 
 h = 6.62607004e-34
 c = 2.998e8
@@ -598,7 +598,7 @@ class TransitNoise(object):
         else:
             return
 
-def get_earth_spectrum():
+def get_earth_trans_spectrum():
     '''
     Get the transmission spectrum of the Earth around the Sun.
 

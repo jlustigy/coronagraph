@@ -54,7 +54,7 @@ def earth_analog_transits(d = 10., ntran = 10, nout = 2):
     '''
 
     # Read-in high-res Earth model data
-    lam, tdepth, fstar = cg.get_earth_spectrum()
+    lam, tdepth, fstar = cg.get_earth_trans_spectrum()
 
     # Instantiate transit noise model
     tn = cg.TransitNoise(tdur = 8.0 * 60 * 60,

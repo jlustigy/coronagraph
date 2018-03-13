@@ -15,4 +15,4 @@ def setup():
     rcParams["font.size"] = 20
     rcParams["font.family"] = "sans-serif"
     rcParams["font.sans-serif"] = ["Computer Modern Sans"]
-    rcParams["text.usetex"] = False
+    rcParams["text.usetex"] = True

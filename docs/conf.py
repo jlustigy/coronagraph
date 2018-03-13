@@ -49,13 +49,16 @@ release = coronagraph.__version__
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
-    'matplotlib.sphinxext.plot_directive'
+    'matplotlib.sphinxext.plot_directive',
+    'nbsphinx'
 ]
 
-
+# Custom additions for exceptions
 plot_include_source = False
 plot_html_show_source_link = False
 plot_html_show_formats = False
+# Remove ipython notebook prompt numbers
+nbsphinx_prompt_width = 0
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -79,7 +82,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'

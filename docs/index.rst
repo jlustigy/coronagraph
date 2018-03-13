@@ -29,7 +29,8 @@ Documentation
 
    overview
    install
-   quickstart
+   Quickstart <notebooks/quickstart.ipynb>
+   notebooks
    scripts
    api
    Github <https://github.com/jlustigy/coronagraph>

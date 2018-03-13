@@ -15,10 +15,31 @@ setup()
 
 __all__ = ['generate_observation', 'planetzoo_observation',
            'process_noise', 'exptime_band', 'interp_cont_over_band',
-           'plot_interactive_band', 'random_draw']
+           'plot_interactive_band', 'random_draw', 'get_earth_reflect_spectrum']
 
 planetdir = "planets/"
 relpath = os.path.join(os.path.dirname(__file__), planetdir)
+
+def get_earth_reflect_spectrum():
+    """
+    Get the geometric albedo spectrum of the Earth around the Sun.
+
+    Returns
+    -------
+    lamhr : numpy.ndarray
+    Ahr : numpy.ndarray
+    fstar : numpy.ndarray
+    """
+
+    fn = 'earth_quadrature_radiance_refl.dat'
+    model = np.loadtxt(os.path.join(relpath,fn), skiprows=8)
+    lamhr = model[:,0]
+    radhr = model[:,1]
+    fstar = model[:,2]
+    reflhr = model[:,3]
+    Ahr   = np.pi*(np.pi*radhr/fstar) # hi-resolution reflectivity
+
+    return lamhr, Ahr, fstar
 
 def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0,
                             planetdir = relpath, plot=True, savedata=False, saveplot=False,
