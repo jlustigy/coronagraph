@@ -30,7 +30,7 @@ Documentation
    overview
    install
    Quickstart <notebooks/quickstart.ipynb>
-   notebooks
+   examples
    scripts
    api
    Github <https://github.com/jlustigy/coronagraph>

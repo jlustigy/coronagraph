@@ -1,5 +1,5 @@
-Notebooks
-=========
+Examples
+========
 
 A collection of Jupyter Notebooks that demonstrate how to use :py:obj:`coronagraph`.
 
