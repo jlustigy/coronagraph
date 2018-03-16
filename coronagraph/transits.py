@@ -19,8 +19,6 @@ import sys, os
 from .noise_routines import *
 from .degrade_spec import *
 from .observe import random_draw
-from .plot_setup import setup
-setup()
 
 __all__ = ["TransitNoise", "get_earth_trans_spectrum"]
 

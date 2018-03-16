@@ -11,7 +11,6 @@ import os
 from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
 from .plot_setup import setup
-setup()
 
 __all__ = ['generate_observation', 'planetzoo_observation',
            'process_noise', 'exptime_band', 'interp_cont_over_band',
@@ -23,6 +22,8 @@ relpath = os.path.join(os.path.dirname(__file__), planetdir)
 def get_earth_reflect_spectrum():
     """
     Get the geometric albedo spectrum of the Earth around the Sun.
+    This was produced by Tyler Robinson using the VPL Earth Model
+    (Robinson et al., 2011)
 
     Returns
     -------
@@ -44,12 +45,14 @@ def get_earth_reflect_spectrum():
 def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0,
                             planetdir = relpath, plot=True, savedata=False, saveplot=False,
                             ref_lam=0.55, THERMAL=False):
-    """Uses coronagraph model to observe planets located in planetdir
+    """Uses coronagraph model to observe Solar System planets
 
     Parameters
     ----------
     name : str (optional)
-        Name of the planet
+        Name of the planet (e.g. "venus", "earth", "archean", "mars",
+        "earlymars", "hazyarchean", "earlyvenus", "jupiter", "saturn", "uranus",
+        "neptune")
     telescope : Telescope (optional)
         Telescope object to be used for observation
     planet : Planet (optional)
@@ -76,16 +79,6 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     sig : array
         Observed 1-sigma error bars on spectrum
     """
-
-    '''
-    planet choices:
-        earth, venus, archean,
-        earlymars, hazyarchean, earlyvenus,
-        jupiter, saturn, uranus, neptune, mars,
-        fstarozone
-    star choices (for now):
-    sun, f2v
-    '''
 
     import os
     try:
@@ -260,6 +253,8 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
                          ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
                          THERMAL=False, wantsnr=10):
     """
+    Generic wrapper function for `count_rates`.
+
     Parameters
     ----------
     wlhr : float
@@ -286,22 +281,23 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
     Returns
     -------
     lam : array
-        Wavelength grid of observed spectrum
+        Wavelength grid for observed spectrum
     dlam: array
-
+        Wavelength grid widths for observed spectrum
     A : array
-
+        Low res albedo spectrum
     spec : array
-        Albedo grid of observed spectrum
+        Observed albedo spectrum
     sig : array
         One sigma errorbars on albedo spectrum
     SNR : array
+        SNR in each spectral element
 
 
-    Output
-    ------
-    If saveplot=True then plot will be saved
-    If savedata=True then data will be saved
+    Note
+    ----
+    If `saveplot=True` then plot will be saved
+    If `savedata=True` then data will be saved
     """
 
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
@@ -438,10 +434,34 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
                               xlim=None, ylim=None,
                               title="",
                               save=False, tag=""):
+    """
+    Plot synthetic data from the coronagraph model
 
-    # Set matplotlib params
-    #mpl.rc('font', family='Times New Roman')
-    #mpl.rcParams['font.size'] = 25.0
+    Parameters
+    ----------
+    wl : array
+    ofrat : array
+    sig : array
+    itime : array
+    d : array
+    ref_lam : array
+    SNR : array
+    truth : array (optional)
+    xlim : list (optional)
+    ylim : list (optional)
+    title : str (optional)
+    save : bool (optional)
+    tag : str (optional)
+
+    Returns
+    -------
+    fig : matplotlib.Figure
+    ax : matplotlib.Axis
+
+    Note
+    ----
+    Only returns ```fig, ax`` if ``save = False``
+    """
 
     # Create figure
     fig = plt.figure(figsize=(12,10))
@@ -583,7 +603,6 @@ def exptime_band(cp, ccont, cb, iband, SNR=5.0):
     Calc the exposure time necessary to get a given S/N on a molecular band
     following Eqn 7 from Robinson et al. 2016.
 
-
     Parameters
     ----------
     cp :
@@ -599,7 +618,8 @@ def exptime_band(cp, ccont, cb, iband, SNR=5.0):
 
     Returns
     -------
-    Telescope exposure time [hrs]
+    texp : float
+        Telescope exposure time [hrs]
     """
 
     numerator = np.sum(cp[iband] + 2.*cb[iband])
@@ -611,7 +631,6 @@ def SNR_band(cp, ccont, cb, iband, itime=10.):
     """
     Calc the exposure time necessary to get a given S/N on a molecular band
     following Eqn 7 from Robinson et al. 2016.
-
 
     Parameters
     ----------
@@ -628,7 +647,8 @@ def SNR_band(cp, ccont, cb, iband, itime=10.):
 
     Returns
     -------
-    SNR to detect band given exposure time
+    snr : float
+        SNR to detect band given exposure time
     """
 
     denominator = np.power(np.sum(cp[iband] + 2.*cb[iband]), 0.5)
@@ -641,6 +661,25 @@ icont = []
 iband = []
 def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
     """
+    Makes an interactive spectrum plot for the user to identify all observed
+    spectral points that make up a molecular band. Once the plot is active,
+    press 'c' then select neighboring points in the Continuum, press 'b' then
+    select all points in the Band, then press 'd' to perform the calculation.
+
+    Parameters
+    ----------
+    lam : array
+        Wavelength grid
+    Cratio : array
+        Planet-to-star flux contrast ratio
+    cp : array
+        Planetary photon count rate
+    cb : array
+        Background photon count rate
+    itime : float (optional)
+        Fiducial exposure time for which to calculate the SNR
+    SNR : float (optional)
+        Fiducial SNR for which to calculate the exposure time
     """
 
     # Turn off interactive plotting shortcut keys
@@ -782,7 +821,6 @@ def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
     plt.show()
 
     return
-
 
 def find_nearest(array,value):
     idx = (np.abs(array-value)).argmin()
