@@ -169,7 +169,8 @@ class TransitNoise(object):
 
     def run_count_rates(self, lamhr = None, tdhr = None, Fshr = None):
         """
-        Calculate the photon count rates and signal to noise on an observation
+        Calculate the photon count rates and signal to noise on a
+        transmission spectrum observation
 
         Parameters
         ----------

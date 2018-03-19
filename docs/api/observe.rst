@@ -1,5 +1,5 @@
-Observe
-=======
+Observational Routines
+======================
 
 .. automodule:: coronagraph.observe
    :members:

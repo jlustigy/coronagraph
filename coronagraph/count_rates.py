@@ -3,7 +3,9 @@ from __future__ import (division as _, print_function as _,
 
 # Import dependent modules
 import numpy as np
-import sys
+import sys, os
+import matplotlib.pyplot as plt
+
 from .degrade_spec import degrade_spec, downbin_spec
 from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
@@ -11,10 +13,424 @@ from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     set_quantum_efficiency, set_read_noise, set_dark_current, set_lenslet, \
     set_throughput, set_atmos_throughput, \
     exptime_element, get_sky_flux
-import pdb
-import os
+from .teleplanstar import Telescope, Planet, Star
 
-__all__ = ['count_rates']
+__all__ = ['count_rates', 'CoronagraphNoise']
+
+class CoronagraphNoise(object):
+    """
+    The primary interface for ``coronagraph`` noise modeling.
+
+    Parameters
+    ----------
+    telescope : Telescope
+        Initialized object containing ``Telescope`` parameters
+    planet : Planet
+        Initialized object containing ``Planet`` parameters
+    star : Star
+        Initialized object containing ``Star`` parameters
+    texp : float
+        Exposure time for which to generate synthetic data [hours]
+    wantsnr : float, optional
+        Desired signal-to-noise ratio in each pixel
+    FIX_OWA : bool, optional
+        Set to fix OWA at ``OWA*lammin/D``, as would occur if lenslet array is
+        limiting the OWA
+    COMPUTE_LAM : bool, optional
+        Set to compute lo-res wavelength grid, otherwise the grid input as
+        variable ``lam`` is used
+    SILENT : bool, optional
+        Set to suppress print statements
+    NIR : bool, optional
+        Re-adjusts pixel size in NIR, as would occur if a second instrument
+        was designed to handle the NIR
+    THERMAL : bool, optional
+        Set to compute thermal photon counts due to telescope temperature
+    GROUND : bool, optional
+        Set to simulate ground-based observations through atmosphere
+    vod : bool, optional
+        "Valley of Death" red QE parameterization from Robinson et al. (2016)
+    set_fpa : float, optional
+        Specify the fraction of planetary signal in Airy pattern, default will
+        calculate it from the photometric aperture size `X`
+    """
+    def __init__(self, telescope = Telescope(), planet = Planet(),
+                 star = Star(), texp = 10.0, wantsnr=10.0, FIX_OWA = False,
+                 COMPUTE_LAM = False, SILENT = False, NIR = True,
+                 THERMAL = False, GROUND = False, vod=False, set_fpa=None):
+        """
+        """
+        self.telescope = telescope
+        self.planet = planet
+        self.star = star
+        self.texp = texp
+        self.wantsnr = wantsnr
+        self.FIX_OWA = FIX_OWA
+        self.COMOUTE_LAM = COMPUTE_LAM
+        self.SILENT = SILENT
+        self.NIR = NIR
+        self.THERMAL = THERMAL
+        self.GROUND = GROUND
+        self.vod = vod
+        self.set_fpa = set_fpa
+
+        self._computed = False
+
+        return
+
+    def run_count_rates(self, Ahr, lamhr, solhr):
+        """
+        Calculate the photon count rates and signal to noise on a
+        coronagraph observation
+
+        Parameters
+        ----------
+        Ahr : array
+            High-res, wavelength-dependent planetary geometric albedo
+        lamhr : array
+            High-res wavelength grid  [um]
+        solhr : array
+            High-res TOA solar spectrum [W/m**2/um]
+
+
+        Calling ``run_count_rates()`` creates the following attributes for
+        the ``CoronagraphNoise`` instance:
+
+        Attributes
+        ----------
+        Ahr : array
+            High-res, wavelength-dependent planetary geometric albedo
+        lamhr : array
+            High-res wavelength grid  [um]
+        solhr : array
+            High-res TOA solar spectrum [W/m**2/um]
+        lam : array
+            Observed wavelength grid [$\mu$m]
+        dlam : array
+            Observed wavelength grid widths [$\mu$m]
+        A : array
+            Planetary geometric albedo at observed resolution
+        Cratio : array
+            Planet-to-star flux contrast ratio
+        cp : array
+            Planetary photon count rate [photons/s]
+        csp : array
+            Speckle count rate [photons/s]
+        cz : array
+            Zodi photon count rate [photons/s]
+        cez : array
+            Exo-zodi photon count rate [photons/s]
+        cth : array
+            Thermal photon count rate [photons/s]
+        cD : array
+            Dark current photon count rate [photons/s]
+        cR : array
+            Read noise photon count rate [photons/s]
+        cb : array
+            Total background photon noise count rate [photons/s]
+        DtSNR : array
+            Integration time to ``wantsnr`` [hours]
+        SNRt : array
+            S/N in a ``texp`` hour exposure
+        Aobs : array
+            Observed albedo with noise
+        Asig : array
+            Observed uncertainties on albedo
+        Cobs : array
+            Observed Fp/Fs with noise
+        Csig : array
+            Observed uncertainties on Fp/Fs
+        """
+
+        # Save input arrays
+        self.Ahr = Ahr
+        self.lamhr = lamhr
+        self.solhr = solhr
+
+
+        # Call count_rates
+        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+            count_rates(Ahr, lamhr, solhr,
+                        alpha = self.planet.alpha,
+                        Phi = self.planet.Phi,
+                        Rp = self.planet.Rp,
+                        Teff = self.star.Teff,
+                        Rs = self.star.Rs,
+                        r = self.planet.a,
+                        d = self.planet.distance,
+                        Nez = self.planet.Nez,
+                        mode = self.telescope.mode,
+                        filter_wheel = self.telescope.filter_wheel,
+                        lammin = self.telescope.lammin,
+                        lammax = self.telescope.lammax,
+                        Res    = self.telescope.resolution,
+                        diam   = self.telescope.diameter,
+                        Tput   = self.telescope.throughput,
+                        C      = self.telescope.contrast,
+                        IWA    = self.telescope.IWA,
+                        OWA    = self.telescope.OWA,
+                        Tsys   = self.telescope.Tsys,
+                        Tdet   = self.telescope.Tdet,
+                        emis   = self.telescope.emissivity,
+                        De     = self.telescope.darkcurrent,
+                        DNHpix = self.telescope.DNHpix,
+                        Re     = self.telescope.readnoise,
+                        Dtmax  = self.telescope.Dtmax,
+                        X      = self.telescope.X,
+                        qe     = self.telescope.qe,
+                        MzV    = self.planet.MzV,
+                        MezV   = self.planet.MezV,
+                    )
+
+        # Save output arrays
+        self.lam = lam
+        self.dlam = dlam
+        self.A = A
+        self.Cratio = Cratio
+        self.cp = cp
+        self.csp =csp
+        self.cz = cz
+        self.cez = cez
+        self.cD = cD
+        self.cR = cR
+        self.cth = cth
+        self.cb = cz + cez + csp + cD + cR + cth
+        self.DtSNR = DtSNR
+
+        # Flip the switch
+        self._computed = True
+
+        # Make an initial set of fake data
+        self.make_fake_data()
+
+        return
+
+    def make_fake_data(self, texp = None, roll = True):
+        """
+        Make a fake dataset by sampling from a Gaussian. This assumes an extra
+        factor of 2 hit to the background noise due to a telescope roll
+        maneuver needed to subtract out the background. The roll can be turned
+        off with ``roll = False``.
+
+        Parameters
+        ----------
+        texp : float, optional
+            Exposure time [hours]
+        roll : bool, optional
+            Set to execute background subtraction roll maneuver. See
+            Brown (2005) for more details.
+
+
+        Calling ``make_fake_data()`` creates the following attributes for
+        the ``CoronagraphNoise`` instance:
+
+        Attributes
+        ----------
+        SNRt : array
+            S/N in a ``texp`` hour exposure
+        Aobs : array
+            Observed albedo with noise
+        Asig : array
+            Observed uncertainties on albedo
+        Cobs : array
+            Observed Fp/Fs with noise
+        Csig : array
+            Observed uncertainties on Fp/Fs
+        """
+
+        # Ensure that simulation has been run
+        assert self._computed
+
+        # Allow new exposure time
+        if texp is not None:
+            self.texp = texp
+
+        # Convert exposure time to seconds
+        Dt = 3600. * self.texp
+
+        # Calculate signal-to-noise assuming background subtraction (the "2")
+        SNRt  = self.cp * Dt / np.sqrt((self.cp + 2.*self.cb) * Dt)
+
+        # Calculate 1-sigma errors on contrast ratio and albedo
+        Csig = self.Cratio/SNRt
+        Asig = self.A/SNRt
+
+        # Calculate Gaussian noise
+        gaus = np.random.randn(len(self.Cratio))
+
+        # Add gaussian noise to observed data
+        Cobs = self.Cratio + Csig * gaus
+        Aobs = self.A + Asig * gaus
+
+        # Save attributes
+        self.SNRt = SNRt
+        self.Asig = Asig
+        self.Aobs = Aobs
+        self.Csig = Csig
+        self.Cobs = Cobs
+
+        return
+
+    def plot_spectrum(self, SNR_threshold = 1.0, Nsig = 6.0, ax0 = None,
+                      err_kws = {"fmt" : ".", "c" : "k", "alpha" : 1},
+                      plot_kws = {"lw" : 1.0, "c" : "C4", "alpha" : 0.5},
+                      draw_box = True):
+        """
+        Plot noised direct-imaging spectrum.
+
+        Parameters
+        ----------
+        SNR_threshold : float
+            Threshold SNR below which do not plot
+        Nsig : float
+            Number of standard deviations about median observed points to set
+            yaxis limits
+        ax0 : `matplotlib.axes`
+            Optional axis to provide
+        err_kws : dic
+            Keyword arguments for `errorbar`
+        plot_kws : dic
+            Keyword arguments for `plot`
+        draw_box : bool
+            Draw important quantities in a box?
+
+        Returns
+        -------
+        fig : `matplotlib.figure.Figure`
+            Returns a figure if `ax0` is `None`
+        ax : `matplotlib.axes`
+            Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
+        """
+
+        m = [self.SNRt > SNR_threshold]
+
+        scale = 1
+
+        if ax0 is None:
+            # Create Plot
+            fig, ax = plt.subplots(figsize = (10,8))
+            ax.set_xlabel(r"Wavelength [$\mu$m]")
+            ax.set_ylabel("Geometic Albedo")
+        else:
+            ax = ax0
+
+        #ax.plot(lam, scale*RpRs2, alpha = 1.0, ls = "steps-mid")
+        ax.errorbar(self.lam[m], scale*self.Aobs[m], yerr=scale*self.Asig[m], zorder = 100, **err_kws)
+        #ax.set_yscale("log")
+
+        # Set ylim
+        mederr = scale*np.median(self.Asig)
+        medy = scale*np.median(self.Aobs)
+        ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
+
+        ylims = ax.get_ylim()
+        xlims = ax.get_xlim()
+
+        ax.plot(self.lamhr, scale*self.Ahr, **plot_kws)
+
+        ax.set_ylim(ylims)
+        ax.set_xlim(xlims)
+
+
+        if draw_box:
+            # Set string for plot text
+            if self.texp > 2.0:
+                timestr = "{:.0f}".format(self.texp)+' hours'
+            else:
+                timestr = "{:.0f}".format(self.texp*60)+' mins'
+            plot_text = r'Distance = '+"{:.1f}".format(self.planet.distance)+' pc'+\
+            '\n Integration time = '+timestr
+            ax.text(0.02, 0.975, plot_text, transform=ax.transAxes, ha = "left", va = "top",
+                    bbox=dict(boxstyle="square", fc="w", ec="k", alpha=0.9), zorder=101)
+
+        #ax.legend()
+
+        if ax0 is None:
+            return fig, ax
+        else:
+            return
+
+    def plot_SNR(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
+        """
+        Plot the S/N on the planet as a function of wavelength.
+
+        Parameters
+        ----------
+        ax0 : `matplotlib.axes`
+            Optional axis to provide
+        plot_kws : dic
+            Keyword arguments for `plot`
+
+        Returns
+        -------
+        fig : `matplotlib.figure.Figure`
+            Returns a figure if `ax0` is `None`
+        ax : `matplotlib.axes`
+            Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
+        """
+        if ax0 is None:
+            # Create Plot
+            fig, ax = plt.subplots(figsize = (10,8))
+        else:
+            ax = ax0
+
+        ax.plot(self.lam, self.SNRt, **plot_kws)
+        #ax.set_yscale("log")
+        ax.set_xlabel(r"Wavelength [$\mu$m]")
+        ax.set_ylabel("S/N on Planet Spectrum in %.1f hrs" %self.texp)
+        #ax.legend()
+
+        if ax0 is None:
+            return fig, ax
+        else:
+            return
+
+    def plot_time_to_wantsnr(self, ax0 = None, plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+        """
+        Plot the exposure time to get a SNR on the planet spectrum.
+
+        Parameters
+        ----------
+        ax0 : `matplotlib.axes`
+            Optional axis to provide
+        plot_kws : dic
+            Keyword arguments for `plot`
+
+        Returns
+        -------
+        fig : `matplotlib.figure.Figure`
+            Returns a figure if `ax0` is `None`
+        ax : `matplotlib.axes`
+            Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` is ``ax0 is None``
+        """
+
+        if ax0 is None:
+            # Create Plot
+            fig, ax = plt.subplots(figsize = (10,8))
+            ax.set_xlabel(r"Wavelength [$\mu$m]")
+            ax.set_ylabel("Hours to S/N = %i on Planet Spectrum" %self.wantsnr)
+            ax.set_yscale("log")
+        else:
+            ax = ax0
+
+        ax.plot(self.lam, self.DtSNR, **plot_kws)
+
+        if ax0 is None:
+            return fig, ax
+        else:
+            return
 
 def count_rates(Ahr, lamhr, solhr,
                 alpha, Phi, Rp, Teff, Rs, r, d, Nez,

@@ -284,6 +284,21 @@ def test_transits():
 
     return
 
+def test_coronagraphnoise():
+    """
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    noise = cg.CoronagraphNoise()
+    lamhr, Ahr, fstar = cg.get_earth_reflect_spectrum()
+    noise.run_count_rates(Ahr, lamhr, fstar)
+    fig, ax = noise.plot_spectrum()
+    fig, ax = noise.plot_SNR()
+    fig, ax = noise.plot_time_to_wantsnr()
+    return
 
 def test_extras():
     """

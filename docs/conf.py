@@ -61,6 +61,8 @@ plot_html_show_formats = False
 # Remove ipython notebook prompt numbers
 nbsphinx_prompt_width = 0
 napoleon_use_ivar = True
+# Make the order of the autodocs in the order they appear in the code
+autodoc_member_order = 'bysource'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
