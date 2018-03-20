@@ -308,4 +308,5 @@ def test_extras():
     Returns
     -------
     """
+    cg.plot_setup.setup()
     return
