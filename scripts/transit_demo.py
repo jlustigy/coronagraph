@@ -56,15 +56,25 @@ def earth_analog_transits(d = 10., ntran = 10, nout = 2):
     # Read-in high-res Earth model data
     lam, tdepth, fstar = cg.get_earth_trans_spectrum()
 
+    # Set telescope parameters
+    telescope = cg.Telescope(Tput = 0.5,
+                             D = 15.,
+                             Res = 70,
+                             lammin  = 0.5,
+                             lammax  = 2.0)
+
+    planet = cg.Planet(a = 1.0,
+                       d = d,
+                       Rp = 1.0)
+
+    star = cg.Star(Rs = 1.0, Teff = 5700.)
+
     # Instantiate transit noise model
     tn = cg.TransitNoise(tdur = 8.0 * 60 * 60,
-                         d = d,
-                         r = 1.0,
-                         Rp = 1.0,
-                         Rs = 1.0,
+                         telescope = telescope,
+                         planet = planet,
+                         star = star,
                          ntran = ntran,
-                         Tput = 0.5,
-                         Res = 70,
                          nout = nout)
 
     # Calculate count rates

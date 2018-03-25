@@ -19,17 +19,36 @@ import sys, os
 from .noise_routines import *
 from .degrade_spec import *
 from .observe import random_draw
+from .teleplanstar import *
 
 __all__ = ["TransitNoise", "get_earth_trans_spectrum"]
 
 h = 6.62607004e-34
 c = 2.998e8
 
+class EclipseNoise(object):
+    """
+    Simulate secondary eclipse emission spectroscopy with a next-generation
+    telescope.
+
+    Parameters
+    ----------
+
+
+    """
+
+
 class TransitNoise(object):
     """
 
     Parameters
     ----------
+    telescope : Telescope
+        Initialized object containing ``Telescope`` parameters
+    planet : Planet
+        Initialized object containing ``Planet`` parameters
+    star : Star
+        Initialized object containing ``Star`` parameters
     tdur : float
         Transit duration [s]
     r : float
@@ -100,6 +119,9 @@ class TransitNoise(object):
 
     """
     def __init__(self, tdur    = 3432.,  # TRAPPIST-1e
+                       telescope = Telescope(),
+                       planet = Planet(),
+                       star = Star(),
                        r       = 0.0281,
                        d       = 12.2,
                        Rp      = 0.918,
@@ -130,38 +152,40 @@ class TransitNoise(object):
                        GROUND  = False,
                        vod     = False,
                        IMAGE   = False):
-
-        self.tdur    = tdur
-        self.ntran   = ntran
-        self.nout    = nout
-        self.lammin  = lammin
-        self.lammax  = lammax
-        self.Res     = Res
-        self.r       = r
-        self.d       = d
-        self.Nez     = Nez
-        self.Rp      = Rp
-        self.Teff    = Teff
-        self.Rs      = Rs
-        self.diam    = diam
-        self.Tput    = Tput
-        self.Tsys    = Tsys
-        self.Tdet    = Tdet
-        self.emis    = emis
-        self.De      = De
-        self.DNHpix  = DNHpix
-        self.Re      = Re
-        self.Dtmax   = Dtmax
-        self.X       = X
-        self.qe      = qe
-        self.MzV     = MzV
-        self.MezV    = MezV
-        self.wantsnr = wantsnr
-        self.NIR     = NIR
-        self.THERMAL = THERMAL
-        self.GROUND  = GROUND
-        self.vod     = vod
-        self.IMAGE   = IMAGE
+        self.telescope = telescope
+        self.planet    = planet
+        self.star      = star
+        self.tdur      = tdur
+        self.ntran     = ntran
+        self.nout      = nout
+        self.lammin    = lammin
+        self.lammax    = lammax
+        self.Res       = Res
+        self.r         = r
+        self.d         = d
+        self.Nez       = Nez
+        self.Rp        = Rp
+        self.Teff      = Teff
+        self.Rs        = Rs
+        self.diam      = diam
+        self.Tput      = Tput
+        self.Tsys      = Tsys
+        self.Tdet      = Tdet
+        self.emis      = emis
+        self.De        = De
+        self.DNHpix    = DNHpix
+        self.Re        = Re
+        self.Dtmax     = Dtmax
+        self.X         = X
+        self.qe        = qe
+        self.MzV       = MzV
+        self.MezV      = MezV
+        self.wantsnr   = wantsnr
+        self.NIR       = NIR
+        self.THERMAL   = THERMAL
+        self.GROUND    = GROUND
+        self.vod       = vod
+        self.IMAGE     = IMAGE
 
         self._computed = False
 
@@ -180,6 +204,9 @@ class TransitNoise(object):
             Transit Depth $(Rp/Rs)^2$
         Fshr : numpy.ndarray
             Flux density incident at the planet's TOA [W/m$^2$/$\mu$]
+
+        Calling ``run_count_rates()`` creates the following attributes for
+        the ``TransitNoise`` instance:
 
         Attributes
         ----------
@@ -230,22 +257,37 @@ class TransitNoise(object):
         convolution_function = downbin_spec
 
         # Create wavelength grid
-        lam, dlam = construct_lam(self.lammin, self.lammax, self.Res)
+        lam, dlam = construct_lam(self.telescope.lammin,
+                                  self.telescope.lammax,
+                                  self.telescope.resolution)
 
         # Set Quantum Efficiency
-        q = set_quantum_efficiency(lam, self.qe, NIR=self.NIR, vod=self.vod)
+        q = set_quantum_efficiency(lam,
+                                   self.telescope.qe,
+                                   NIR=self.NIR,
+                                   vod=self.vod)
 
         # Set Dark current and Read noise
-        De = set_dark_current(lam, self.De, self.lammax, self.Tdet, NIR=self.NIR)
-        Re = set_read_noise(lam, self.Re, NIR=self.NIR)
+        De = set_dark_current(lam,
+                              self.telescope.darkcurrent,
+                              self.telescope.lammax,
+                              self.telescope.Tdet,
+                              NIR=self.NIR)
+        Re = set_read_noise(lam,
+                            self.telescope.readnoise,
+                            NIR=self.NIR)
 
         # Set Angular size of lenslet
-        theta = set_lenslet(lam, self.lammin, self.diam, self.X, NIR=self.NIR)
+        theta = set_lenslet(lam,
+                            self.telescope.lammin,
+                            self.telescope.diameter,
+                            self.telescope.X,
+                            NIR=self.NIR)
 
         # Set throughput
         #sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
         #T = set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
-        T = self.Tput * np.ones_like(lam)
+        T = self.telescope.throughput * np.ones_like(lam)
 
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
@@ -260,15 +302,18 @@ class TransitNoise(object):
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
             # Using a blackbody
-            Bstar = planck(self.Tstar, lam)
+            Bstar = planck(self.star.Tstar, lam)
         else:
             # Using provided TOA stellar flux
             Fslr = convolution_function(Fshr, lamhr, lam, dlam=dlam)
-            Bstar = Fslr / ( np.pi*(self.Rs*u.Rsun.in_units(u.km)/(self.r*u.AU.in_units(u.km)))**2. )
+            Bstar = Fslr / ( np.pi*(self.star.Rs*u.Rsun.in_units(u.km)/\
+                           (self.planet.a*u.AU.in_units(u.km)))**2. )
 
         # Solid angle in steradians
-        omega_star = np.pi*(self.Rs*u.Rsun.in_units(u.km)/(self.d*u.pc.in_units(u.km)))**2.
-        omega_planet = np.pi*(self.Rp*u.Rearth.in_units(u.km)/(self.d*u.pc.in_units(u.km)))**2.
+        omega_star = np.pi*(self.star.Rs*u.Rsun.in_units(u.km)/\
+                           (self.planet.distance*u.pc.in_units(u.km)))**2.
+        omega_planet = np.pi*(self.planet.Rp*u.Rearth.in_units(u.km)/\
+                             (self.planet.distance*u.pc.in_units(u.km)))**2.
 
         # Fluxes at earth [W/m^2/um]
         Fs = Bstar * omega_star
@@ -281,27 +326,37 @@ class TransitNoise(object):
         ########## Calculate Photon Count Rates ##########
 
         # Stellar photon count rate
-        cs = cstar(q, fpa, T, lam, dlam, Fs, self.diam)
+        cs = cstar(q, fpa, T, lam, dlam, Fs, self.telescope.diameter)
 
         # Missing photon count rate (is this a thing? it is now!)
-        cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*self.diam)**2)
+        cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*self.telescope.diameter)**2)
 
         # Solar System Zodi count rate
-        cz =  czodi(q, self.X, T, lam, dlam, self.diam, self.MzV)
+        cz =  czodi(q, self.telescope.X, T, lam, dlam,
+                    self.telescope.diameter, self.planet.MzV)
 
         # Exo-Zodi count rate
-        cez =  cezodi(q, self.X, T, lam, dlam, self.diam, self.r, \
-            Fstar(lam, self.Teff, self.Rs, 1., AU=True), self.Nez, self.MezV)
+        cez =  cezodi(q, self.telescope.X, T, lam, dlam, self.telescope.diameter,
+                      self.planet.a,
+                      Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
+                      self.planet.Nez, self.planet.MezV)
 
         # Dark current count rate
-        cD =  cdark(De, self.X, lam, self.diam, theta, self.DNHpix, IMAGE=self.IMAGE)
+        cD =  cdark(De, self.telescope.X, lam,
+                    self.telescope.diameter, theta,
+                    self.telescope.DNHpix, IMAGE=self.IMAGE)
 
         # Read noise count rate
-        cR =  cread(Re, self.X, lam, self.diam, theta, self.DNHpix, self.Dtmax, IMAGE=self.IMAGE)
+        cR =  cread(Re, self.telescope.X, lam, self.telescope.diameter,
+                    theta, self.telescope.DNHpix, self.telescope.Dtmax,
+                    IMAGE=self.IMAGE)
 
         # Thermal background count rate
         if self.THERMAL:
-            cth =  ctherm(q, self.X, lam, dlam, self.diam, self.Tsys, self.emis)                      # internal thermal count rate
+            # telescope internal thermal count rate
+            cth =  ctherm(q, self.telescope.X, lam, dlam,
+                          self.telescope.diameter, self.telescope.Tsys,
+                          self.telescope.emissivity)
         else:
             cth = np.zeros_like(cs)
 
@@ -318,7 +373,8 @@ class TransitNoise(object):
                 Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
 
             # Compute Earth thermal photon count rate
-            cthe = ctherm_earth(q, self.X, lam, dlam, self.diam, self.Itherm)
+            cthe = ctherm_earth(q, self.telescope.X, lam, dlam,
+                                self.telescope.diameter, Itherm)
 
             # Add earth thermal photon counts to telescope thermal counts
             cth = cth + cthe
@@ -499,7 +555,7 @@ class TransitNoise(object):
 
 
         if draw_box:
-            text = "%i transits \n %i m \n %i\%% throughput" %(self.ntran, self.diam, 100*self.Tput)
+            text = "%i transits \n %i m \n %i\%% throughput" %(self.ntran, self.telescope.diameter, 100*self.telescope.throughput)
             ax.text(0.02, 0.975, text, transform=ax.transAxes, ha = "left", va = "top",
                     bbox=dict(boxstyle="square", fc="w", ec="k", alpha=0.9), zorder=101)
 
@@ -549,7 +605,8 @@ class TransitNoise(object):
         else:
             return
 
-    def plot_ntran_to_wantsnr(self, ax0 = None, plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+    def plot_ntran_to_wantsnr(self, ax0 = None,
+                              plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
         """
         Plot the number of transits to get a SNR on the transit depth as
         a function of wavelength.
