@@ -51,52 +51,10 @@ class TransitNoise(object):
         Initialized object containing ``Star`` parameters
     tdur : float
         Transit duration [s]
-    r : float
-        Semi-major axis [AU]
-    d : float
-        Distance to system [pc]
-    Rp : float
-        Planet radius [Earth radii]
-    Rs : float
-        Stellar radius [Solar radii]
-    Teff : float
-        Stellar effective temperature [K]
     ntran : float
         Number of transits
     nout : float
         Number of out-of-transit transit durations to observe
-    lammin : float
-        Minimum wavelength [$\mu$m]
-    lammax : float
-        Maximum wavelength [$\mu$m]
-    Nez : float
-        Number of exo-zodi [Solar System Zodi]
-    diam : float
-        Telescope diameter [m]
-    Tput : float
-        Telescope throughput
-    Tsys  : float, optional
-        Telescope mirror temperature [K]
-    Tdet  : float, optional
-        Telescope detector temperature [K]
-    emis : float, optional
-        Effective emissivity for the observing system (of order unity)
-    De : float, optional
-        Dark current [counts/s]
-    DNHpix : float, optional
-        Number of horizontal/spatial pixels for dispersed spectrum
-    Re : float, optional
-        Read noise counts per pixel
-    Dtmax : float, optional
-        Detector maximum exposure time [hours]
-    X : float, optional
-        Width of photometric aperture (``lam / diam``)
-    qe : float, optional
-        Detector quantum efficiency
-    MzV : float, optional
-        V-band zodiacal light surface brightness [mag/arcsec**2]
-    MezV : float, optional
-        V-band exozodiacal light surface brightness [mag/arcsec**2]
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
@@ -122,30 +80,8 @@ class TransitNoise(object):
                        telescope = Telescope(),
                        planet = Planet(),
                        star = Star(),
-                       r       = 0.0281,
-                       d       = 12.2,
-                       Rp      = 0.918,
-                       Rs      = 1.0,
-                       Teff    = 2500.,
                        ntran   = 1,
                        nout    = 1,
-                       lammin  = 0.5,
-                       lammax  = 2.0,
-                       Res     = 70.0,
-                       Nez     = 1.0,
-                       diam    = 15.,
-                       Tput    = 0.2,
-                       Tsys    = 260.0,
-                       Tdet    = 50.0,
-                       emis    = 0.9,
-                       De      = 1e-4,
-                       DNHpix  = 3.0,
-                       Re      = 0.1,
-                       Dtmax   = 1.0,
-                       X       = 1.5,
-                       qe      = 0.9,
-                       MzV     = 23.0,
-                       MezV    = 22.0,
                        wantsnr = 1000.0,
                        NIR     = True,
                        THERMAL = True,
@@ -158,28 +94,6 @@ class TransitNoise(object):
         self.tdur      = tdur
         self.ntran     = ntran
         self.nout      = nout
-        self.lammin    = lammin
-        self.lammax    = lammax
-        self.Res       = Res
-        self.r         = r
-        self.d         = d
-        self.Nez       = Nez
-        self.Rp        = Rp
-        self.Teff      = Teff
-        self.Rs        = Rs
-        self.diam      = diam
-        self.Tput      = Tput
-        self.Tsys      = Tsys
-        self.Tdet      = Tdet
-        self.emis      = emis
-        self.De        = De
-        self.DNHpix    = DNHpix
-        self.Re        = Re
-        self.Dtmax     = Dtmax
-        self.X         = X
-        self.qe        = qe
-        self.MzV       = MzV
-        self.MezV      = MezV
         self.wantsnr   = wantsnr
         self.NIR       = NIR
         self.THERMAL   = THERMAL

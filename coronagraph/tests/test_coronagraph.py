@@ -247,16 +247,18 @@ def test_transits():
     Bstar = cg.noise_routines.planck(Teff, lamhr)
     Fshr = Bstar * np.pi * (6.957e5/1.496e8)**2.
 
+    # Define parameters
+    telescope = cg.Telescope()
+    planet = cg.Planet()
+    star = cg.Star(Teff = Teff)
+
     # Instantiate transit noise model
     tn = cg.TransitNoise(tdur = 8.0 * 60 * 60,
-                         d = 10.,
-                         r = 1.0,
-                         Rp = 1.0,
-                         Rs = 1.0,
                          ntran = 10.0,
-                         Tput = 0.5,
-                         Res = 70,
-                         nout = 2)
+                         nout = 2,
+                         telescope = telescope,
+                         planet = planet,
+                         star = star)
 
     # Calculate count rates
     tn.run_count_rates(lamhr, tdhr, Fshr)
