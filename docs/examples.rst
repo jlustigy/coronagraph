@@ -8,3 +8,4 @@ A collection of Jupyter Notebooks that demonstrate how to use :py:obj:`coronagra
 
    Using the Object-Oriented Interface  <notebooks/interface_example.ipynb>
    Degrading a Spectrum <notebooks/degrading_a_spectrum.ipynb>
+   Secondary Eclipse Spectroscopy <notebooks/eclipse_example.ipynb>

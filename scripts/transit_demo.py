@@ -54,12 +54,12 @@ def earth_analog_transits(d = 10., ntran = 10, nout = 2):
     '''
 
     # Read-in high-res Earth model data
-    lam, tdepth, fstar = cg.get_earth_trans_spectrum()
+    lam, tdepth, fplan, fstar = cg.get_earth_trans_spectrum()
 
     # Set telescope parameters
     telescope = cg.Telescope(Tput = 0.5,
                              D = 15.,
-                             Res = 70,
+                             R = 70,
                              lammin  = 0.5,
                              lammax  = 2.0)
 

@@ -239,18 +239,17 @@ def test_transits():
     Rs = 6.957e5
     Teff = 5700
 
-    # Create model arrays
-    lamhr = np.linspace(0.2, 2.5, 1e4)
-    tdhr = np.ones_like(lamhr) * (Rp / Rs)**2
-
-    # Create fake stellar flux
-    Bstar = cg.noise_routines.planck(Teff, lamhr)
-    Fshr = Bstar * np.pi * (6.957e5/1.496e8)**2.
+    # Load data
+    lamhr, tdhr, fplan, Fshr = cg.get_earth_trans_spectrum()
 
     # Define parameters
     telescope = cg.Telescope()
     planet = cg.Planet()
     star = cg.Star(Teff = Teff)
+
+    ###############
+    ### TRANSIT ###
+    ###############
 
     # Instantiate transit noise model
     tn = cg.TransitNoise(tdur = 8.0 * 60 * 60,
@@ -283,6 +282,25 @@ def test_transits():
     fig, ax = tn.plot_ntran_to_wantsnr()
 
     fig, ax = tn.plot_count_rates()
+
+    ###############
+    ### ECLIPSE ###
+    ###############
+
+    en = cg.EclipseNoise(tdur = 8.0 * 60 * 60,
+                         telescope = telescope,
+                         planet = planet,
+                         star = star,
+                         ntran = 100.,
+                         nout = 2.)
+
+    en.run_count_rates(lamhr, fplan, Fshr)
+
+    fig, ax = en.plot_spectrum(SNR_threshold=0.0, Nsig=None)
+    fig, ax = en.plot_SNRn()
+    fig, ax = en.plot_ntran_to_wantsnr()
+    fig, ax = en.plot_count_rates()
+    en.recalc_wantsnr(wantsnr = 20)
 
     return
 
