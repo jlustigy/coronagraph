@@ -51,7 +51,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.napoleon',
-    'nbsphinx'
+    'nbsphinx',
+    'IPython.sphinxext.ipython_console_highlighting'
 ]
 
 # Custom additions for exceptions
