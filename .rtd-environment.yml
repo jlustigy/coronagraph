@@ -9,5 +9,6 @@ dependencies:
   - numba
   - nbconvert
   - ipykernel
+  - ipython
   - pip:
     - nbsphinx
