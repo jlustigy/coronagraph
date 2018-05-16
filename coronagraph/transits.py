@@ -268,7 +268,7 @@ class EclipseNoise(object):
         # Thermal background count rate
         if self.THERMAL:
             # telescope internal thermal count rate
-            cth =  ctherm(q, self.telescope.X, lam, dlam,
+            cth =  ctherm(q, self.telescope.X, T, lam, dlam,
                           self.telescope.diameter, self.telescope.Tsys,
                           self.telescope.emissivity)
         else:
@@ -287,7 +287,7 @@ class EclipseNoise(object):
                 Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
 
             # Compute Earth thermal photon count rate
-            cthe = ctherm_earth(q, self.telescope.X, lam, dlam,
+            cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
                                 self.telescope.diameter, Itherm)
 
             # Add earth thermal photon counts to telescope thermal counts
@@ -883,7 +883,7 @@ class TransitNoise(object):
         # Thermal background count rate
         if self.THERMAL:
             # telescope internal thermal count rate
-            cth =  ctherm(q, self.telescope.X, lam, dlam,
+            cth =  ctherm(q, self.telescope.X, T, lam, dlam,
                           self.telescope.diameter, self.telescope.Tsys,
                           self.telescope.emissivity)
         else:
@@ -902,7 +902,7 @@ class TransitNoise(object):
                 Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
 
             # Compute Earth thermal photon count rate
-            cthe = ctherm_earth(q, self.telescope.X, lam, dlam,
+            cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
                                 self.telescope.diameter, Itherm)
 
             # Add earth thermal photon counts to telescope thermal counts

@@ -64,15 +64,15 @@ def test_count_rates():
     # RUN CORONAGRAPH MODEL
     ################################
 
+    # Run coronagraph with all kwargs turned on
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+        cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
+                       lammax=1.6, THERMAL = True, GROUND = True, vod=False)
+
     # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
     lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6)
-
-    # Run coronagraph with all kwargs turned on
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
-        cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
-                       lammax=1.6, THERMAL = True, GROUND = True, vod=True)
 
     # Run wrapper
     out = cg.count_rates_wrapper(Ahr, lamhr, solhr, cg.Telescope(), cg.Planet(),
@@ -90,7 +90,7 @@ def test_count_rates():
 
     # Test draw_noisy_spec
     spec_noise, sigma = cg.observe.draw_noisy_spec(Cratio, snr, apparent=False)
-
+    
     assert np.all(np.isfinite(spec))
     assert np.all(np.isfinite(sig))
     assert np.all(np.isfinite(SNR))
