@@ -500,7 +500,7 @@ def f_airy_int(X, N = 1000):
     fpa   = E/E0
 '''
 
-def ctherm(q, X, lam, dlam, D, Tsys, emis, CIRC=False):
+def ctherm(q, X, T, lam, dlam, D, Tsys, emis, CIRC=False):
     """
     Telescope thermal count rate
 
@@ -510,6 +510,8 @@ def ctherm(q, X, lam, dlam, D, Tsys, emis, CIRC=False):
         Quantum efficiency
     X : float, optional
         Width of photometric aperture ( * lambda / diam)
+    T : float
+        System throughput
     lam : float or array-like
         Wavelength [um]
     dlam : float or array-like
@@ -542,9 +544,9 @@ def ctherm(q, X, lam, dlam, D, Tsys, emis, CIRC=False):
         # square aperture diameter (arcsec**2)
         Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
     Omega = Omega/(206265.**2.) # aperture size (sr**2)
-    return np.pi*q*dlam*emis*Bsys*Omega*(lam*1.e-6/hc)*(D/2)**2.
+    return np.pi*q*T*dlam*emis*Bsys*Omega*(lam*1.e-6/hc)*(D/2)**2.
 
-def ctherm_earth(q, X, lam, dlam, D, Itherm, CIRC=False):
+def ctherm_earth(q, X, T, lam, dlam, D, Itherm, CIRC=False):
     """
     Earth atmosphere thermal count rate
 
@@ -554,6 +556,8 @@ def ctherm_earth(q, X, lam, dlam, D, Itherm, CIRC=False):
         Quantum efficiency
     X : float, optional
         Width of photometric aperture ( * lambda / diam)
+    T : float
+        System throughput
     lam : float or array-like
         Wavelength [um]
     dlam : float or array-like
@@ -578,7 +582,7 @@ def ctherm_earth(q, X, lam, dlam, D, Itherm, CIRC=False):
         # square aperture diameter (arcsec**2)
         Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
     Omega = Omega/(206265.**2.) # aperture size (sr**2)
-    return np.pi*q*dlam*Itherm*Omega*(lam*1.e-6/hc)*(D/2)**2.
+    return np.pi*q*T*dlam*Itherm*Omega*(lam*1.e-6/hc)*(D/2)**2.
 
 def lambertPhaseFunction(alpha):
     """
@@ -775,7 +779,7 @@ def set_read_noise(lam, Re, NIR=False, Re_nir=2.):
     return Re
 
 def set_lenslet(lam, lammin, diam, X,
-                NIR=False, lammin_nir=1.0):
+                NIR=True, lammin_nir=1.0):
     """
     Set the angular size of the lenslet
 
@@ -802,12 +806,13 @@ def set_lenslet(lam, lammin, diam, X,
     Nlam = len(lam)
     if NIR:
         theta = np.zeros(Nlam)
-        iVIS  = (lam <= 1.0)
-        iNIR  = (lam > 1.0)
+        iVIS  = (lam <= lammin_nir)
+        iNIR  = (lam > lammin_nir)
         theta[iVIS] = X*lammin/1e6/diam/2.*(180/np.pi*3600.)
         # If there are wavelength bins longer than 1um:
         theta[iNIR] = X*lammin_nir/1e6/diam/2.*(180/np.pi*3600.)
     else:
+        # Should there be in X multiplying below?
         theta = lammin/1.e6/diam/2.*(180/np.pi*3600.) # assumes sampled at ~lambda/2D (arcsec)
 
     return theta

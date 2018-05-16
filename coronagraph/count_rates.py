@@ -53,11 +53,17 @@ class CoronagraphNoise(object):
     set_fpa : float, optional
         Specify the fraction of planetary signal in Airy pattern, default will
         calculate it from the photometric aperture size `X`
+    roll_maneuver : bool, optional
+        This assumes an extra factor of 2 hit to the background noise due to a
+        telescope roll maneuver needed to subtract out the background. See
+        Brown (2005) for more details.
+
     """
     def __init__(self, telescope = Telescope(), planet = Planet(),
                  star = Star(), texp = 10.0, wantsnr=10.0, FIX_OWA = False,
-                 COMPUTE_LAM = False, SILENT = False, NIR = True,
-                 THERMAL = False, GROUND = False, vod=False, set_fpa=None):
+                 COMPUTE_LAM = False, SILENT = False, NIR = False,
+                 THERMAL = True, GROUND = False, vod=False, set_fpa=None,
+                 roll_maneuver = True):
         """
         """
         self.telescope = telescope
@@ -73,6 +79,7 @@ class CoronagraphNoise(object):
         self.GROUND = GROUND
         self.vod = vod
         self.set_fpa = set_fpa
+        self.roll_maneuver = roll_maneuver
 
         self._computed = False
 
@@ -147,6 +154,17 @@ class CoronagraphNoise(object):
         self.lamhr = lamhr
         self.solhr = solhr
 
+        # Aperture logic
+        accepted_circular = ["circular", "circ", "c"]
+        accepted_square = ["square", "s"]
+        if self.telescope.aperture.lower() in accepted_circular:
+            CIRC = True
+        elif self.telescope.aperture.lower() in accepted_square:
+            CIRC = False
+        else:
+            assert False, "telescope.aperture is invalid"
+
+
 
         # Call count_rates
         lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
@@ -180,6 +198,11 @@ class CoronagraphNoise(object):
                         qe     = self.telescope.qe,
                         MzV    = self.planet.MzV,
                         MezV   = self.planet.MezV,
+                        NIR    = self.NIR,
+                        GROUND = self.GROUND,
+                        THERMAL = self.THERMAL,
+                        CIRC = CIRC,
+                        roll_maneuver = self.roll_maneuver
                     )
 
         # Save output arrays
@@ -205,21 +228,14 @@ class CoronagraphNoise(object):
 
         return
 
-    def make_fake_data(self, texp = None, roll = True):
+    def make_fake_data(self, texp = None):
         """
-        Make a fake dataset by sampling from a Gaussian. This assumes an extra
-        factor of 2 hit to the background noise due to a telescope roll
-        maneuver needed to subtract out the background. The roll can be turned
-        off with ``roll = False``.
+        Make a fake dataset by sampling from a Gaussian.
 
         Parameters
         ----------
         texp : float, optional
             Exposure time [hours]
-        roll : bool, optional
-            Set to execute background subtraction roll maneuver. See
-            Brown (2005) for more details.
-
 
         Calling ``make_fake_data()`` creates the following attributes for
         the ``CoronagraphNoise`` instance:
@@ -248,8 +264,16 @@ class CoronagraphNoise(object):
         # Convert exposure time to seconds
         Dt = 3600. * self.texp
 
-        # Calculate signal-to-noise assuming background subtraction (the "2")
-        SNRt  = self.cp * Dt / np.sqrt((self.cp + 2.*self.cb) * Dt)
+        # Use telescope roll maneuver
+        if self.roll_maneuver:
+            # assuming background subtraction (the "2")
+            roll_factor = 2.0
+        else:
+            # standard background noise
+            roll_factor = 1.0
+
+        # Calculate signal-to-noise
+        SNRt  = self.cp * Dt / np.sqrt((self.cp + roll_factor*self.cb) * Dt)
 
         # Calculate 1-sigma errors on contrast ratio and albedo
         Csig = self.Cratio/SNRt
@@ -456,8 +480,8 @@ def count_rates(Ahr, lamhr, solhr,
                 MzV    = 23.0,
                 MezV   = 22.0,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
-                SILENT = False, NIR = True, THERMAL = False, GROUND = False,
-                vod=False, set_fpa=None):
+                SILENT = False, NIR = False, THERMAL = False, GROUND = False,
+                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -550,6 +574,12 @@ def count_rates(Ahr, lamhr, solhr,
     set_fpa : float, optional
         Specify the fraction of planetary signal in Airy pattern, default will
         calculate it from the photometric aperture size `X`
+    CIRC : bool, optional
+        Set to use a circular aperture
+    roll_maneuver : bool, optional
+        This assumes an extra factor of 2 hit to the background noise due to a
+        telescope roll maneuver needed to subtract out the background. See
+        Brown (2005) for more details.
 
     Returns
     -------
@@ -627,7 +657,7 @@ def count_rates(Ahr, lamhr, solhr,
     Re = set_read_noise(lam, Re, NIR=NIR)
 
     # Set Angular size of lenslet
-    theta = set_lenslet(lam, lammin, diam, X, NIR=NIR)
+    theta = set_lenslet(lam, lammin, diam, X, NIR=True)
 
     # Set throughput
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
@@ -670,7 +700,7 @@ def count_rates(Ahr, lamhr, solhr,
     cD     =  cdark(De, X, lam, diam, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
     cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
     if THERMAL:
-        cth    =  ctherm(q, X, lam, dlam, diam, Tsys, emis)                      # internal thermal count rate
+        cth    =  ctherm(q, X, T, lam, dlam, diam, Tsys, emis)                      # internal thermal count rate
     else:
         cth = np.zeros_like(cp)
 
@@ -681,7 +711,7 @@ def count_rates(Ahr, lamhr, solhr,
         # Convolve to instrument resolution
         Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
         # Compute Earth thermal photon count rate
-        cthe = ctherm_earth(q, X, lam, dlam, diam, Itherm)
+        cthe = ctherm_earth(q, X, T, lam, dlam, diam, Itherm)
         # Add earth thermal photon counts to telescope thermal counts
         cth = cth + cthe
         '''
@@ -697,8 +727,21 @@ def count_rates(Ahr, lamhr, solhr,
             plt.show()
         '''
 
+    # Calculate total background counts
     cb = (cz + cez + csp + cD + cR + cth)
-    cnoise =  cp + 2*cb                # assumes background subtraction
+
+    # Use telescope roll maneuver
+    if roll_maneuver:
+        # assuming background subtraction (the "2")
+        roll_factor = 2.0
+    else:
+        # standard background noise
+        roll_factor = 1.0
+
+    # Calculate total noise
+    cnoise =  cp + roll_factor*cb
+
+    # Calculate total counts
     ctot = cp + cz + cez + csp + cD + cR + cth
 
     '''
