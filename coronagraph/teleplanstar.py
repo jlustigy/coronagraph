@@ -70,9 +70,9 @@ class Telescope(object):
     """
 
     # Define a constructor
-    def __init__(self, mode='IFS', lammin=0.3,lammax=2.0,R=70.,Tput=0.2,\
-                 D=8.0,Tsys=260.,Tdet=50.,IWA=0.5, OWA=30000.,emis=0.9,\
-                 C=1e-10,De=1e-4,DNHpix=3.,Re=0.1,Dtmax=1.0,X=0.7,q=0.9,\
+    def __init__(self, mode='IFS', lammin=0.3, lammax=2.0, R=70., Tput=0.2,\
+                 D=8.0, Tsys=260., Tdet=50., IWA=0.5, OWA=30000., emis=0.9,\
+                 C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Dtmax=1.0, X=0.7, q=0.9,\
                  filter_wheel=None, aperture = "circular"):
         self._mode=mode
         self.lammin=lammin

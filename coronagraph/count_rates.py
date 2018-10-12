@@ -202,7 +202,8 @@ class CoronagraphNoise(object):
                         GROUND = self.GROUND,
                         THERMAL = self.THERMAL,
                         CIRC = CIRC,
-                        roll_maneuver = self.roll_maneuver
+                        roll_maneuver = self.roll_maneuver,
+                        SILENT = self.SILENT
                     )
 
         # Save output arrays
