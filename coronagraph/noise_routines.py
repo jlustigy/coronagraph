@@ -1,3 +1,34 @@
+'''
+Routines for simulating coronagraph noise. 
+
+Contents:
+
+* :class:`Fstar`
+* :class:`Fplan`
+* :class:`FpFs`
+* :class:`cplan`
+* :class:`czodi`
+* :class:`cezodi`
+* :class:`cspeck`
+* :class:`cdark`
+* :class:`cread`
+* :class:`ctherm`
+* :class:`ctherm_earth`
+* :class:`cstar`
+* :class:`f_airy`
+* :class:`construct_lam`
+* :class:`set_quantum_efficiency`
+* :class:`set_dark_current`
+* :class:`set_read_noise`
+* :class:`set_lenslet`
+* :class:`set_throughput`
+* :class:`set_atmos_throughput`
+* :class:`exptime_element`
+* :class:`lambertPhaseFunction`
+* :class:`get_sky_flux`
+* :class:`planck`
+'''
+
 from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 

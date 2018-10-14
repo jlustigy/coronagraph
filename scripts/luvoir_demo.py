@@ -6,14 +6,6 @@ luvoir_demo.py |github|
 
 A demo simulation of Earth at 10 pc using a LUVOIR-like telescope setup.
 
-  .. plot::
-    :align: center
-
-    from scripts import luvoir_demo
-    from coronagraph import plot_setup
-    plot_setup.setup()
-    luvoir_demo._test()
-
   .. role:: raw-html(raw)
      :format: html
 
@@ -48,6 +40,21 @@ def _test():
 
 def run():
     '''
+    Run an example :class:`coronagraph` spectrum assuming a space-based
+    observatory with LUVOIR-like specifications.
+
+    Example
+    -------
+    >>> import luvoir_demo
+    >>> luvoir_demo.run()
+
+      .. plot::
+        :align: center
+
+        from scripts import luvoir_demo
+        from coronagraph import plot_setup
+        plot_setup.setup()
+        luvoir_demo._test()
 
     '''
 

@@ -44,6 +44,11 @@ def earth_analog_transits(d = 10., ntran = 10, nout = 2):
     nout : int
         Number of out-of-transit transit durations to observe
 
+    Example
+    -------
+    >>> from transit_demo import earth_analog_transits
+    >>> earth_analog_transits()
+
       .. plot::
         :align: center
 

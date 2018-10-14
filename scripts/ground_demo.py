@@ -6,14 +6,6 @@ ground_demo.py |github|
 
 A demo simulation of Earth at 10 pc using a 30-m ground-based telescope setup.
 
-  .. plot::
-    :align: center
-
-    from scripts import ground_demo
-    from coronagraph import plot_setup
-    plot_setup.setup()
-    ground_demo._test()
-
   .. role:: raw-html(raw)
      :format: html
 
@@ -48,6 +40,21 @@ def _test():
 
 def run():
     '''
+    Run an example :class:`coronagraph` spectrum assuming a ground-based
+    observatory.
+
+    Example
+    -------
+    >>> import ground_demo
+    >>> ground_demo.run()
+
+      .. plot::
+        :align: center
+
+        from scripts import ground_demo
+        from coronagraph import plot_setup
+        plot_setup.setup()
+        ground_demo._test()
 
     '''
 
@@ -66,11 +73,11 @@ def run():
 
     # Stellar params
     Teff  = 5780   # Sun-like Teff (K)
-    Rs    = 1.      # star radius in solar radii
+    Rs    = 1.     # Star radius in solar radii
 
     # Planetary system params
-    d    = 10.0     # distance to system (pc)
-    Nez  = 1.      # number of exo-zodis
+    d    = 10.0    # Distance to system (pc)
+    Nez  = 1.      # Number of exo-zodis
 
     # Telescope parameters
     lammin = 0.3
