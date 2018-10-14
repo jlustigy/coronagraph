@@ -6,7 +6,7 @@ import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
 
-from .degrade_spec import degrade_spec, downbin_spec
+from .degrade_spec import downbin_spec
 from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
@@ -163,8 +163,6 @@ class CoronagraphNoise(object):
             CIRC = False
         else:
             assert False, "telescope.aperture is invalid"
-
-
 
         # Call count_rates
         lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \

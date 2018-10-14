@@ -12,7 +12,7 @@ from .count_rates_wrapper import count_rates_wrapper
 from .teleplanstar import Telescope, Planet, Star
 from .plot_setup import setup
 
-__all__ = ['generate_observation', 'planetzoo_observation',
+__all__ = ['generate_observation', 'planetzoo_observation', 'plot_coronagraph_spectrum',
            'process_noise', 'exptime_band', 'interp_cont_over_band',
            'plot_interactive_band', 'random_draw', 'get_earth_reflect_spectrum']
 
@@ -43,9 +43,11 @@ def get_earth_reflect_spectrum():
     return lamhr, Ahr, fstar
 
 def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), itime=10.0,
-                            planetdir = relpath, plot=True, savedata=False, saveplot=False,
+                            planetdir = relpath, plot=False, savedata=False, saveplot=False,
                             ref_lam=0.55, THERMAL=False):
-    """Uses coronagraph model to observe Solar System planets
+    """
+    Uses py:obj:`coronagraph` to observe Solar System planets as if they
+    were exoplanets.
 
     Parameters
     ----------
@@ -78,6 +80,40 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
         Observed reflectivity spectrum
     sig : array
         Observed 1-sigma error bars on spectrum
+
+    Example
+    -------
+    >>> from coronagraph.observe import planetzoo_observation
+    >>> lam, spec, sig = planetzoo_observation(name = "venus", plot = True)
+
+    .. plot::
+      :align: center
+
+      from coronagraph.observe import planetzoo_observation
+      from coronagraph import plot_setup
+      plot_setup.setup()
+      lam, spec, sig = planetzoo_observation(name = "venus", plot = True)
+
+    >>> lam, spec, sig = planetzoo_observation(name = "earth", plot = True)
+
+    .. plot::
+      :align: center
+
+      from coronagraph.observe import planetzoo_observation
+      from coronagraph import plot_setup
+      plot_setup.setup()
+      lam, spec, sig = planetzoo_observation(name = "earth", plot = True)
+
+    >>> lam, spec, sig = planetzoo_observation(name = "mars", plot = True)
+
+    .. plot::
+      :align: center
+
+      from coronagraph.observe import planetzoo_observation
+      from coronagraph import plot_setup
+      plot_setup.setup()
+      lam, spec, sig = planetzoo_observation(name = "mars", plot = True)
+
     """
 
     import os
@@ -237,7 +273,10 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
     spec, sig, SNR = process_noise(time, Cratio, cp, cb)
 
     if plot:
-        fig, ax = plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
+        fig, ax = plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance,
+                                            ref_lam, SNR, truth=Cratio,
+                                            title = whichplanet.capitalize())
+        plt.show()
 
     # Save Synthetic data file (wavelength, albedo, error) if savedata=True
     if savedata:
@@ -334,101 +373,6 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
 
     return lam, dlam, Cratio, spec, sig, SNR
 
-'''
-def smart_observation(radfile, itime, telescope, planet, star,
-                         ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
-                         THERMAL=False, wantsnr=10.):
-    """Uses coronagraph noise model to create an observation of high resolution SMART output.
-
-    Parameters
-    ----------
-    radfile : string
-        Location and name of file to be read in
-    itime : float
-        Integration time (hours)
-    telescope : Telescope
-        Telescope object
-    planet : Planet
-        Planet object
-    star : Star
-        Star object
-    tag : string
-        ID for output files
-    plot : boolean
-        Set to True to make plot
-    saveplot : boolean
-        Set to True to save the plot as a PDF
-    savedata : boolean
-        Set to True to save data file of observation
-
-    Returns
-    ----------
-    lam : array
-        Wavelength grid of observed spectrum
-    spec : array
-        Albedo grid of observed spectrum
-    sig : array
-        One sigma errorbars on albedo spectrum
-    rwl : array
-        Wavelength grid of SMART output
-    Ahr : array
-        Albedo grid of SMART output
-
-    Output
-    ---------
-    If saveplot=True then plot will be saved
-    If savedata=True then data will be saved
-    """
-
-    # try importing readsmart
-    try:
-        import readsmart as rs
-    except ImportError:
-        print("Module 'readsmart' not found. Please install on your local machine \
-        to proceed with this function. The source can be found at: \
-        https://github.com/jlustigy/readsmart")
-        return None, None, None, None, None
-
-    # Read-in .rad file
-    wlhr, wno, solar_spec, TOA_flux, rad_streams = rs.rad(radfile,getdata=True)
-
-    # Calculate Hi-res reflectivity spectrum
-    Ahr = (TOA_flux / solar_spec) #* np.pi / planet.Phi
-
-    # Calculate photon count rates
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
-        = count_rates_wrapper(Ahr, wlhr, solhr, telescope, planet, star,
-                              COMPUTE_LAM=True, THERMAL=THERMAL, otype=2,
-                              wantsnr=wantsnr)
-
-    # Calculate background photon count rate
-    cb = (cz + cez + csp + cD + cR + cth)
-
-    # Calculate the SNR of observation
-    time = itime * 3600. # Convert hours to seconds
-    #SNR = calc_SNR(time, cp, cb)
-
-    # Generate noisy spectrum by drawing data points from a normal distribution
-    #spec, sig = draw_noisy_spec(A, SNR)
-
-    # Calculate SNR, sigma, and noised-up spectrum
-    spec, sig, SNR = process_noise(time, Cratio, cp, cb)
-
-    if plot:
-        fig, ax = plot_coronagraph_spectrum(lam, spec, sig, itime, planet.distance, ref_lam, SNR, truth=Cratio)
-
-    # Save Synthetic data file (wavelength, albedo, error) if savedata=True
-    if savedata:
-        data_tag = 'observed_smart_'+tag+'.txt'
-        y_sav = np.array([lam,spec,sig])
-        np.savetxt(data_tag, y_sav.T)
-        print('Saved: '+data_tag)
-
-    # Return Synthetic data and high-res spec
-
-    return lam, spec, sig, wlhr, Ahr
-'''
-
 def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
                               truth=None,
                               xlim=None, ylim=None,
@@ -439,19 +383,32 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
 
     Parameters
     ----------
-    wl : array
-    ofrat : array
-    sig : array
-    itime : array
-    d : array
-    ref_lam : array
+    wl : array-like
+        Wavelength grid [microns]
+    ofrat : array-like
+        Observed contrast ratio (with noise applied)
+    sig : array-like
+        One-sigma errors on ``ofrat``
+    itime : float
+        Integration time for calculated observation [hours]
+    d : float
+        Distance to system [pc]
+    ref_lam : float
+        Reference wavelength [microns]
     SNR : array
-    truth : array (optional)
+        Signal-to-noise
+    truth : array-like (optional)
+        True contrast ratio
     xlim : list (optional)
+        Plot x-axis limits
     ylim : list (optional)
+        Plot y-axis limits
     title : str (optional)
+        Plot title and saved plot name
     save : bool (optional)
+        Set to save plot
     tag : str (optional)
+        String to append to saved file
 
     Returns
     -------
@@ -460,7 +417,7 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
 
     Note
     ----
-    Only returns ```fig, ax`` if ``save = False``
+    Only returns ``fig, ax`` if ``save = False``
     """
 
     # Create figure
@@ -495,6 +452,9 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
          verticalalignment='top', horizontalalignment='right',\
          transform=ax.transAxes,\
          color='black', fontsize=20)
+
+    ylim0 = ax.get_ylim()
+    if ylim0[0] < 0.0: ax.set_ylim(bottom = 0.00)
 
     if ylim is not None: ax.set_ylim(ylim)
     if xlim is not None: ax.set_xlim(xlim)

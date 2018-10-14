@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jul  6 11:00:41 2015
-
-@author: jlustigy
+Methods for degrading high-resolution spectra to lower resolution.
 """
 from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
@@ -12,11 +10,12 @@ import scipy as sp
 from scipy import interpolate
 from scipy.stats import binned_statistic
 
-__all__ = ['degrade_spec', 'downbin_spec']
+__all__ = ['downbin_spec', 'degrade_spec']
 
-def degrade_spec(specHR, lamHR, lamLR, dlam=None):
+def downbin_spec(specHR, lamHR, lamLR, dlam=None):
     """
-    Degrade high-resolution spectrum to lower resolution
+    Re-bin spectum to lower resolution using :py:obj:`scipy.binned_statistic`
+    with ``statistic = 'mean'``. This is a "top-hat" convolution.
 
     Parameters
     ----------
@@ -31,7 +30,54 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
 
     Returns
     -------
-    specLO : ndarray
+    specLR : :py:obj:`numpy.ndarray`
+        Low-res spectrum
+    """
+
+    if dlam is None:
+        ValueError("Please supply dlam in downbin_spec()")
+
+    # Reverse ordering if wl vector is decreasing with index
+    if len(lamLR) > 1:
+        if lamHR[0] > lamHR[1]:
+            lamHI = np.array(lamHR[::-1])
+            spec = np.array(specHR[::-1])
+        if lamLR[0] > lamLR[1]:
+            lamLO = np.array(lamLR[::-1])
+            dlamLO = np.array(dlam[::-1])
+
+    # Calculate bin edges
+    LRedges = np.hstack([lamLR - 0.5*dlam, lamLR[-1]+0.5*dlam[-1]])
+
+    # Call scipy.stats.binned_statistic()
+    specLR = binned_statistic(lamHR, specHR, statistic="mean", bins=LRedges)[0]
+
+    return specLR
+
+def degrade_spec(specHR, lamHR, lamLR, dlam=None):
+    """
+    Degrade high-resolution spectrum to lower resolution (DEPRECIATED)
+
+    Warning
+    -------
+    This method is known to return incorrect results at relatively high
+    spectral resolution and has been depreciated within the :py:obj:`coronagraph`
+    model. Please use :func:`downbin_spec` instead.
+
+    Parameters
+    ----------
+    specHR : array-like
+        Spectrum to be degraded
+    lamHR : array-like
+        High-res wavelength grid
+    lamLR : array-like
+        Low-res wavelength grid
+    dlam : array-like, optional
+        Low-res wavelength width grid
+
+    Returns
+    -------
+    specLO : :py:obj:`numpy.ndarray`
         Low-res spectrum
     """
 
@@ -114,44 +160,3 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
         specLO[i] = specs
 
     return specLO
-
-def downbin_spec(specHR, lamHR, lamLR, dlam=None):
-    """
-    Re-bin spectum to lower resolution using scipy.binned_statistic
-
-    Parameters
-    ----------
-    specHR : array-like
-        Spectrum to be degraded
-    lamHR : array-like
-        High-res wavelength grid
-    lamLR : array-like
-        Low-res wavelength grid
-    dlam : array-like, optional
-        Low-res wavelength width grid
-
-    Returns
-    -------
-    specLR : ndarray
-        Low-res spectrum
-    """
-
-    if dlam is None:
-        ValueError("Please supply dlam in downbin_spec()")
-
-    # Reverse ordering if wl vector is decreasing with index
-    if len(lamLR) > 1:
-        if lamHR[0] > lamHR[1]:
-            lamHI = np.array(lamHR[::-1])
-            spec = np.array(specHR[::-1])
-        if lamLR[0] > lamLR[1]:
-            lamLO = np.array(lamLR[::-1])
-            dlamLO = np.array(dlam[::-1])
-
-    # Calculate bin edges
-    LRedges = np.hstack([lamLR - 0.5*dlam, lamLR[-1]+0.5*dlam[-1]])
-
-    # Call scipy.stats.binned_statistic()
-    specLR = binned_statistic(lamHR, specHR, statistic="mean", bins=LRedges)[0]
-
-    return specLR
