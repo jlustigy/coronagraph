@@ -7,13 +7,13 @@ tags:
   - Telescopes
 authors:
   - name: Jacob Lustig-Yaeger
-    orcid:
+    orcid: 0000-0002-0746-1980
     affiliation: 1
   - name: Tyler Robinson
-    orcid:
+    orcid: 0000-0002-3196-414X
     affiliation: 2
   - name: Giada Arney
-    orcid:
+    orcid: 0000-0001-6285-267X
     affiliation: 3
 affiliations:
   - name: University of Washington
@@ -55,7 +55,7 @@ and is actively being used to motivate science cases for next-generation,
 space-based, direct-imaging mission concepts [@Mennesson2016; @Bolcar2016].
 
 The ``coronagraph`` package may also be used to simulate signal-to-noise ratios
-and synthetic spectra of transiting exoplanets in transmission and emission.
+and synthetic spectra for transiting exoplanets in transmission and emission.
 The transiting exoplanet modules extend the potential science applications of
 ``coronagraph`` to non-coronagraph-equipped telescopes, enabling studies
 relevant to a far-infrared surveyor mission concept [@Cooray2017].

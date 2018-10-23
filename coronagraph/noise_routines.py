@@ -1,5 +1,5 @@
 '''
-Routines for simulating coronagraph noise. 
+Routines for simulating coronagraph noise.
 
 Contents:
 
