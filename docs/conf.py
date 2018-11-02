@@ -52,7 +52,8 @@ extensions = [
     'matplotlib.sphinxext.plot_directive',
     'sphinx.ext.napoleon',
     'nbsphinx',
-    'IPython.sphinxext.ipython_console_highlighting'
+    'IPython.sphinxext.ipython_console_highlighting',
+    'm2r'
 ]
 
 # Custom additions for exceptions
@@ -71,8 +72,8 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+#source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'

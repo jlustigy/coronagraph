@@ -12,3 +12,4 @@ dependencies:
   - ipython
   - pip:
     - nbsphinx
+    - m2r
