@@ -96,7 +96,7 @@ class Telescope(object):
         self.Dtmax=Dtmax
         self.X=X
         self.qe=q
-        self.A_collect = self.A_collect
+        self.A_collect = A_collect
 
         self._filter_wheel=filter_wheel
 
@@ -156,7 +156,7 @@ class Telescope(object):
             self._filter_wheel = value
         else:
             print("Error in Telescope: Specified filter wheel is not of type 'Wheel'")
-            self._filter_wheel = None        
+            self._filter_wheel = None
 
     def __str__(self):
         string = 'Coronagraph: \n------------\n'+\
