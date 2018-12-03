@@ -58,6 +58,8 @@ class Telescope(object):
         Wheel object containing imaging filters
     aperture : str
         Aperture type ("circular" or "square")
+    A_collect : float
+        Mirror collecting area (m**2)
 
     Methods
     -------
@@ -73,7 +75,7 @@ class Telescope(object):
     def __init__(self, mode='IFS', lammin=0.3, lammax=2.0, R=70., Tput=0.2,\
                  D=8.0, Tsys=260., Tdet=50., IWA=0.5, OWA=30000., emis=0.9,\
                  C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Dtmax=1.0, X=0.7, q=0.9,\
-                 filter_wheel=None, aperture = "circular"):
+                 filter_wheel=None, aperture = "circular", A_collect = None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -94,6 +96,7 @@ class Telescope(object):
         self.Dtmax=Dtmax
         self.X=X
         self.qe=q
+        self.A_collect = self.A_collect
 
         self._filter_wheel=filter_wheel
 
@@ -153,7 +156,7 @@ class Telescope(object):
             self._filter_wheel = value
         else:
             print("Error in Telescope: Specified filter wheel is not of type 'Wheel'")
-            self._filter_wheel = None
+            self._filter_wheel = None        
 
     def __str__(self):
         string = 'Coronagraph: \n------------\n'+\

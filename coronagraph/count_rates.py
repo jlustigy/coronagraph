@@ -196,6 +196,7 @@ class CoronagraphNoise(object):
                         qe     = self.telescope.qe,
                         MzV    = self.planet.MzV,
                         MezV   = self.planet.MezV,
+                        A_collect = self.telescope.A_collect,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
                         THERMAL = self.THERMAL,
@@ -478,6 +479,7 @@ def count_rates(Ahr, lamhr, solhr,
                 qe     = 0.9,
                 MzV    = 23.0,
                 MezV   = 22.0,
+                A_collect = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
@@ -551,6 +553,8 @@ def count_rates(Ahr, lamhr, solhr,
         V-band zodiacal light surface brightness [mag/arcsec**2]
     MezV : float, optional
         V-band exozodiacal light surface brightness [mag/arcsec**2]
+    A_collect : float, optional
+        Mirror collecting area (m**2) (uses :math:`\pi(D/2)^2` by default)
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
@@ -613,6 +617,13 @@ def count_rates(Ahr, lamhr, solhr,
     convolution_function = downbin_spec
     #convolution_function = degrade_spec
 
+    # Define a diameter for IWA (inscribed area) and collecting area
+    diam_inscribed = diam
+    if A_collect is None:
+        diam_collect = diam
+    else:
+        diam_collect = 2. * (A_collect / np.pi)**0.5
+
     # Configure for different telescope observing modes
     if mode == 'Imaging':
         filters = filter_wheel
@@ -656,11 +667,12 @@ def count_rates(Ahr, lamhr, solhr,
     Re = set_read_noise(lam, Re, NIR=NIR)
 
     # Set Angular size of lenslet
-    theta = set_lenslet(lam, lammin, diam, X, NIR=True)
+    # TODO: Check diam below 12/3/18
+    theta = set_lenslet(lam, lammin, diam_collect, X, NIR=True)
 
-    # Set throughput
+    # Set throughput (for inner and outer working angle cutoffs)
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
-    T = set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
+    T = set_throughput(lam, Tput, diam_inscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
 
     # Modify throughput by atmospheric transmission if GROUND-based
     if GROUND:
@@ -691,15 +703,15 @@ def count_rates(Ahr, lamhr, solhr,
     Cratio = FpFs(A, Phi, Rp, r)
 
     ##### Compute count rates #####
-    cp     =  cplan(q, fpa, T, lam, dlam, Fp, diam)                            # planet count rate
-    cz     =  czodi(q, X, T, lam, dlam, diam, MzV)                           # solar system zodi count rate
-    cez    =  cezodi(q, X, T, lam, dlam, diam, r, \
-        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                            # exo-zodi count rate
-    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam)         # speckle count rate
-    cD     =  cdark(De, X, lam, diam, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
-    cR     =  cread(Re, X, lam, diam, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
+    cp     =  cplan(q, fpa, T, lam, dlam, Fp, diam_collect)                          # planet count rate
+    cz     =  czodi(q, X, T, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
+    cez    =  cezodi(q, X, T, lam, dlam, diam_collect, r, \
+        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                                    # exo-zodi count rate
+    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam_collect)         # speckle count rate
+    cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
+    cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
     if THERMAL:
-        cth    =  ctherm(q, X, T, lam, dlam, diam, Tsys, emis)                      # internal thermal count rate
+        cth    =  ctherm(q, X, T, lam, dlam, diam_collect, Tsys, emis)               # internal thermal count rate
     else:
         cth = np.zeros_like(cp)
 
@@ -710,7 +722,7 @@ def count_rates(Ahr, lamhr, solhr,
         # Convolve to instrument resolution
         Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
         # Compute Earth thermal photon count rate
-        cthe = ctherm_earth(q, X, T, lam, dlam, diam, Itherm)
+        cthe = ctherm_earth(q, X, T, lam, dlam, diam_collect, Itherm)
         # Add earth thermal photon counts to telescope thermal counts
         cth = cth + cthe
         '''

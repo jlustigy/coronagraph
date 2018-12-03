@@ -158,6 +158,11 @@ class EclipseNoise(object):
         self.Fphr = Fphr
         self.Fshr = Fshr
 
+        if self.telescope.A_collect is None:
+            diam_collect = self.telescope.diameter
+        else:
+            diam_collect = 2. * (self.telescope.A_collect / np.pi)**0.5
+
         # Set the convolution function
         convolution_function = downbin_spec
 
@@ -185,7 +190,7 @@ class EclipseNoise(object):
         # Set Angular size of lenslet
         theta = set_lenslet(lam,
                             self.telescope.lammin,
-                            self.telescope.diameter,
+                            diam_collect,
                             self.telescope.X,
                             NIR=self.NIR)
 
@@ -240,28 +245,28 @@ class EclipseNoise(object):
         ########## Calculate Photon Count Rates ##########
 
         # Planet photon count rate
-        cp = cplan(q, fpa, T, lam, dlam, Fplr, self.telescope.diameter)
+        cp = cplan(q, fpa, T, lam, dlam, Fplr, diam_collect)
 
         # Stellar photon count rate
-        cs = cstar(q, fpa, T, lam, dlam, Fslr, self.telescope.diameter)
+        cs = cstar(q, fpa, T, lam, dlam, Fslr, diam_collect)
 
         # Solar System Zodi count rate
         cz =  czodi(q, self.telescope.X, T, lam, dlam,
-                    self.telescope.diameter, self.planet.MzV)
+                    diam_collect, self.planet.MzV)
 
         # Exo-Zodi count rate
-        cez =  cezodi(q, self.telescope.X, T, lam, dlam, self.telescope.diameter,
+        cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
                       self.planet.a,
                       Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
                       self.planet.Nez, self.planet.MezV)
 
         # Dark current count rate
         cD =  cdark(De, self.telescope.X, lam,
-                    self.telescope.diameter, theta,
+                    diam_collect, theta,
                     self.telescope.DNHpix, IMAGE=self.IMAGE)
 
         # Read noise count rate
-        cR =  cread(Re, self.telescope.X, lam, self.telescope.diameter,
+        cR =  cread(Re, self.telescope.X, lam, diam_collect,
                     theta, self.telescope.DNHpix, self.telescope.Dtmax,
                     IMAGE=self.IMAGE)
 
@@ -269,7 +274,7 @@ class EclipseNoise(object):
         if self.THERMAL:
             # telescope internal thermal count rate
             cth =  ctherm(q, self.telescope.X, T, lam, dlam,
-                          self.telescope.diameter, self.telescope.Tsys,
+                          diam_collect, self.telescope.Tsys,
                           self.telescope.emissivity)
         else:
             cth = np.zeros_like(cs)
@@ -288,7 +293,7 @@ class EclipseNoise(object):
 
             # Compute Earth thermal photon count rate
             cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
-                                self.telescope.diameter, Itherm)
+                                diam_collect, Itherm)
 
             # Add earth thermal photon counts to telescope thermal counts
             cth = cth + cthe
@@ -782,6 +787,11 @@ class TransitNoise(object):
         self.tdhr = tdhr
         self.Fshr = Fshr
 
+        if self.telescope.A_collect is None:
+            diam_collect = self.telescope.diameter
+        else:
+            diam_collect = 2. * (self.telescope.A_collect / np.pi)**0.5
+
         # Set the convolution function
         convolution_function = downbin_spec
 
@@ -809,7 +819,7 @@ class TransitNoise(object):
         # Set Angular size of lenslet
         theta = set_lenslet(lam,
                             self.telescope.lammin,
-                            self.telescope.diameter,
+                            diam_collect,
                             self.telescope.X,
                             NIR=self.NIR)
 
@@ -855,28 +865,28 @@ class TransitNoise(object):
         ########## Calculate Photon Count Rates ##########
 
         # Stellar photon count rate
-        cs = cstar(q, fpa, T, lam, dlam, Fs, self.telescope.diameter)
+        cs = cstar(q, fpa, T, lam, dlam, Fs, diam_collect)
 
         # Missing photon count rate (is this a thing? it is now!)
-        cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*self.telescope.diameter)**2)
+        cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*diam_collect)**2)
 
         # Solar System Zodi count rate
         cz =  czodi(q, self.telescope.X, T, lam, dlam,
-                    self.telescope.diameter, self.planet.MzV)
+                    diam_collect, self.planet.MzV)
 
         # Exo-Zodi count rate
-        cez =  cezodi(q, self.telescope.X, T, lam, dlam, self.telescope.diameter,
+        cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
                       self.planet.a,
                       Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
                       self.planet.Nez, self.planet.MezV)
 
         # Dark current count rate
         cD =  cdark(De, self.telescope.X, lam,
-                    self.telescope.diameter, theta,
+                    diam_collect, theta,
                     self.telescope.DNHpix, IMAGE=self.IMAGE)
 
         # Read noise count rate
-        cR =  cread(Re, self.telescope.X, lam, self.telescope.diameter,
+        cR =  cread(Re, self.telescope.X, lam, diam_collect,
                     theta, self.telescope.DNHpix, self.telescope.Dtmax,
                     IMAGE=self.IMAGE)
 
@@ -884,7 +894,7 @@ class TransitNoise(object):
         if self.THERMAL:
             # telescope internal thermal count rate
             cth =  ctherm(q, self.telescope.X, T, lam, dlam,
-                          self.telescope.diameter, self.telescope.Tsys,
+                          diam_collect, self.telescope.Tsys,
                           self.telescope.emissivity)
         else:
             cth = np.zeros_like(cs)
@@ -903,7 +913,7 @@ class TransitNoise(object):
 
             # Compute Earth thermal photon count rate
             cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
-                                self.telescope.diameter, Itherm)
+                                diam_collect, Itherm)
 
             # Add earth thermal photon counts to telescope thermal counts
             cth = cth + cthe
