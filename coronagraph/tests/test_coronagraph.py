@@ -90,7 +90,7 @@ def test_count_rates():
 
     # Test draw_noisy_spec
     spec_noise, sigma = cg.observe.draw_noisy_spec(Cratio, snr, apparent=False)
-    
+
     assert np.all(np.isfinite(spec))
     assert np.all(np.isfinite(sig))
     assert np.all(np.isfinite(SNR))
@@ -313,6 +313,11 @@ def test_coronagraphnoise():
     -------
     """
     noise = cg.CoronagraphNoise()
+
+    # Test wavelength dependent additions
+    noise.telescope.Tput_lam = (np.linspace(0.1, 5.0), np.linspace(0.8, 1.0))
+    noise.telescope.qe_lam = (np.linspace(0.1, 5.0), np.linspace(0.8, 1.0)[::-1])
+
     lamhr, Ahr, fstar = cg.get_earth_reflect_spectrum()
     noise.run_count_rates(Ahr, lamhr, fstar)
     fig, ax = noise.plot_spectrum()

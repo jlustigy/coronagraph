@@ -60,6 +60,10 @@ class Telescope(object):
         Aperture type ("circular" or "square")
     A_collect : float
         Mirror collecting area (m**2)
+    Tput_lam : tuple of arrays
+        Wavelength-dependent throughput e.g. ``(wls, tputs)``
+    qe_lam : tuple of arrays
+        Wavelength-dependent throughput e.g. ``(wls, qe)``
 
     Methods
     -------
@@ -75,7 +79,8 @@ class Telescope(object):
     def __init__(self, mode='IFS', lammin=0.3, lammax=2.0, R=70., Tput=0.2,\
                  D=8.0, Tsys=260., Tdet=50., IWA=0.5, OWA=30000., emis=0.9,\
                  C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Dtmax=1.0, X=0.7, q=0.9,\
-                 filter_wheel=None, aperture = "circular", A_collect = None):
+                 filter_wheel=None, aperture = "circular", A_collect = None,
+                 Tput_lam = None, qe_lam = None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -97,6 +102,8 @@ class Telescope(object):
         self.X=X
         self.qe=q
         self.A_collect = A_collect
+        self.Tput_lam = Tput_lam
+        self.qe_lam = qe_lam
 
         self._filter_wheel=filter_wheel
 

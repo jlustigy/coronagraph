@@ -197,6 +197,8 @@ class CoronagraphNoise(object):
                         MzV    = self.planet.MzV,
                         MezV   = self.planet.MezV,
                         A_collect = self.telescope.A_collect,
+                        Tput_lam = self.telescope.Tput_lam,
+                        qe_lam = self.telescope.qe_lam,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
                         THERMAL = self.THERMAL,
@@ -480,6 +482,8 @@ def count_rates(Ahr, lamhr, solhr,
                 MzV    = 23.0,
                 MezV   = 22.0,
                 A_collect = None,
+                Tput_lam = None,
+                qe_lam = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
@@ -555,6 +559,10 @@ def count_rates(Ahr, lamhr, solhr,
         V-band exozodiacal light surface brightness [mag/arcsec**2]
     A_collect : float, optional
         Mirror collecting area (m**2) (uses :math:`\pi(D/2)^2` by default)
+    Tput_lam : tuple of arrays
+        Wavelength-dependent throughput e.g. ``(wls, tputs)``
+    qe_lam : tuple of arrays
+        Wavelength-dependent throughput e.g. ``(wls, qe)``
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
@@ -667,12 +675,25 @@ def count_rates(Ahr, lamhr, solhr,
     Re = set_read_noise(lam, Re, NIR=NIR)
 
     # Set Angular size of lenslet
-    # TODO: Check diam below 12/3/18
-    theta = set_lenslet(lam, lammin, diam_collect, X, NIR=True)
+    theta = set_lenslet(lam, lammin, diam_inscribed, X, NIR=True)
 
     # Set throughput (for inner and outer working angle cutoffs)
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
     T = set_throughput(lam, Tput, diam_inscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
+
+    # Apply wavelength-dependent throuput, if needed
+    if Tput_lam is not None:
+        # Bin input throughput curve to native res
+        Tlam = np.interp(lam, Tput_lam[0], Tput_lam[1])
+        # Multiply into regular throughput
+        T = T * Tlam
+
+    # Apply wavelength-dependent quantum efficiency, if needed
+    if qe_lam is not None:
+        # Bin input QE curve to native res
+        qlam = np.interp(lam, qe_lam[0], qe_lam[1])
+        # Multiply into regular QE
+        q = q * qlam
 
     # Modify throughput by atmospheric transmission if GROUND-based
     if GROUND:
