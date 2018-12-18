@@ -199,6 +199,7 @@ class CoronagraphNoise(object):
                         A_collect = self.telescope.A_collect,
                         Tput_lam = self.telescope.Tput_lam,
                         qe_lam = self.telescope.qe_lam,
+                        lammin_lenslet = self.telescope.lammin_lenslet,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
                         THERMAL = self.THERMAL,
