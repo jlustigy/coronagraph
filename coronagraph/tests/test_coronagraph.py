@@ -65,12 +65,12 @@ def test_count_rates():
     ################################
 
     # Run coronagraph with all kwargs turned on
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6, THERMAL = True, GROUND = True, vod=False)
 
     # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6)
 
@@ -79,7 +79,7 @@ def test_count_rates():
                                  cg.Star())
 
     # Calculate background photon count rate
-    cb = (cz + cez + csp + cD + cR + cth)
+    cb = (cz + cez + csp + cD + cR + cth + cc)
 
     # Calculate SNR, sigma, and noised-up spectrum
     time = 3600.
@@ -220,7 +220,7 @@ def test_imager():
     ################################
 
     # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6, filter_wheel = ls, mode = "Imaging")
 

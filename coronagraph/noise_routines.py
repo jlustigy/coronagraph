@@ -406,14 +406,16 @@ def cread(Re, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
         Npix = 2*DNhpix*Npix
     return Npix/(Dtmax*3600.)*Re
 
-def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
+def ccic(Rc, cscene, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
     """
-    Clock induced charge count rate (not currently in use)
+    Clock induced charge count rate
 
     Parameters
     ----------
     Rc : float or array-like
         Clock induced charge counts/pixel/photon
+    cscene : float or array-like
+        Photon count rate of brightest pixel in the scene [counts/s]
     X : float, optional
         Width of photometric aperture ( * lambda / diam)
     lam : float or array-like
@@ -431,9 +433,11 @@ def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
 
     Returns
     -------
-    cread :
-        Read noise count rate [1/s]
+    ccic :
+        Clock induced charge count rate [1/s]
     """
+    # Convert from counts/pixel/photon --> counts/pixel/s
+    Rcs = Rc * cscene
     if CIRC:
         # circular aperture diameter (arcsec**2)
         Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
@@ -444,7 +448,7 @@ def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
     # If not in imaging mode
     if ~IMAGE:
         Npix = 2*DNhpix*Npix
-    return Npix/(Dtmax*3600.)*Rc
+    return Npix/(Dtmax*3600.)*Rcs
 
 
 def f_airy(X, CIRC=False):

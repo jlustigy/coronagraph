@@ -255,12 +255,12 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
 
     mask = (Ahr > 0.0) & np.isfinite(Ahr)
 
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR \
         = count_rates_wrapper(Ahr[mask], lamhr[mask], solhr[mask], telescope, planet, star,
                               COMPUTE_LAM=True, THERMAL=THERMAL, otype=2)
 
     # Calculate background photon count rate
-    cb = (cz + cez + csp + cD + cR + cth)
+    cb = (cz + cez + csp + cD + cR + cth + cc)
 
     # Calculate the SNR of observation
     time = itime * 3600. # Convert hours to seconds
@@ -339,13 +339,13 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
     If `savedata=True` then data will be saved
     """
 
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR \
         = count_rates_wrapper(Ahr, wlhr, solhr, telescope, planet, star,
                               COMPUTE_LAM=True, THERMAL=THERMAL, otype=2,
                               wantsnr=wantsnr)
 
     # Calculate background photon count rate
-    cb = (cz + cez + csp + cD + cR + cth)
+    cb = (cz + cez + csp + cD + cR + cth + cc)
 
     # Calculate the SNR of observation
     time = itime * 3600. # Convert hours to seconds
