@@ -197,6 +197,7 @@ class CoronagraphNoise(object):
                         MzV    = self.planet.MzV,
                         MezV   = self.planet.MezV,
                         A_collect = self.telescope.A_collect,
+                        diam_circumscribed = self.telescope.diam_circumscribed,
                         Tput_lam = self.telescope.Tput_lam,
                         qe_lam = self.telescope.qe_lam,
                         lammin_lenslet = self.telescope.lammin_lenslet,
@@ -483,6 +484,7 @@ def count_rates(Ahr, lamhr, solhr,
                 MzV    = 23.0,
                 MezV   = 22.0,
                 A_collect = None,
+                diam_circumscribed = None,
                 Tput_lam = None,
                 qe_lam = None,
                 lammin_lenslet = None,
@@ -561,6 +563,9 @@ def count_rates(Ahr, lamhr, solhr,
         V-band exozodiacal light surface brightness [mag/arcsec**2]
     A_collect : float, optional
         Mirror collecting area (m**2) (uses :math:`\pi(D/2)^2` by default)
+    diam_circumscribed : float, optional
+        Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
+        if `None` provided)
     Tput_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
@@ -629,12 +634,18 @@ def count_rates(Ahr, lamhr, solhr,
     convolution_function = downbin_spec
     #convolution_function = degrade_spec
 
-    # Define a diameter for IWA (inscribed area) and collecting area
-    diam_inscribed = diam
+    # Define a diameter for IWA (circumscribed),
+    # collecting area, and lenslet (inscribed)
+    diam_inscribed = diam        # Defaults to diam
     if A_collect is None:
+        # Defaults to diam
         diam_collect = diam
     else:
+        # Calculated from provided collecting area
         diam_collect = 2. * (A_collect / np.pi)**0.5
+    if diam_circumscribed is None:
+        # Defaults to diam
+        diam_circumscribed = diam
 
     # Configure for different telescope observing modes
     if mode == 'Imaging':
@@ -684,7 +695,7 @@ def count_rates(Ahr, lamhr, solhr,
 
     # Set throughput (for inner and outer working angle cutoffs)
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
-    T = set_throughput(lam, Tput, diam_inscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
+    T = set_throughput(lam, Tput, diam_circumscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
 
     # Apply wavelength-dependent throuput, if needed
     if Tput_lam is not None:

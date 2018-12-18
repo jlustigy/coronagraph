@@ -60,6 +60,9 @@ class Telescope(object):
         Aperture type ("circular" or "square")
     A_collect : float
         Mirror collecting area (m**2)
+    diam_circumscribed : float, optional
+        Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
+        if `None` provided)
     Tput_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
@@ -82,7 +85,8 @@ class Telescope(object):
                  D=8.0, Tsys=260., Tdet=50., IWA=0.5, OWA=30000., emis=0.9,\
                  C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Dtmax=1.0, X=0.7, q=0.9,\
                  filter_wheel=None, aperture = "circular", A_collect = None,
-                 Tput_lam = None, qe_lam = None, lammin_lenslet = None):
+                 Tput_lam = None, qe_lam = None, lammin_lenslet = None,
+                 diam_circumscribed = None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -96,6 +100,7 @@ class Telescope(object):
         self.emissivity=emis
         self.contrast=C
         self.aperture = aperture
+        self.diam_circumscribed = diam_circumscribed
 
         self.darkcurrent=De
         self.DNHpix=DNHpix
