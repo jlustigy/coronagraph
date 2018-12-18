@@ -484,6 +484,7 @@ def count_rates(Ahr, lamhr, solhr,
                 A_collect = None,
                 Tput_lam = None,
                 qe_lam = None,
+                lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
@@ -563,6 +564,8 @@ def count_rates(Ahr, lamhr, solhr,
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, qe)``
+    lammin_lenslet : float, optional
+        Minimum wavelength to use for lenslet calculation (default is ``lammin``)
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
@@ -675,7 +678,8 @@ def count_rates(Ahr, lamhr, solhr,
     Re = set_read_noise(lam, Re, NIR=NIR)
 
     # Set Angular size of lenslet
-    theta = set_lenslet(lam, lammin, diam_inscribed, X, NIR=True)
+    if lammin_lenslet is None: lammin_lenslet = lammin
+    theta = set_lenslet(lam, lammin_lenslet, diam_inscribed, X, NIR=True)
 
     # Set throughput (for inner and outer working angle cutoffs)
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians

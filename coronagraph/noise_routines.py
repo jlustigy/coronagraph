@@ -413,7 +413,7 @@ def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
     Parameters
     ----------
     Rc : float or array-like
-        Clock induced charge counts per pixel per read
+        Clock induced charge counts/pixel/photon
     X : float, optional
         Width of photometric aperture ( * lambda / diam)
     lam : float or array-like
@@ -1010,7 +1010,7 @@ def exptime_element(lam, cp, cn, wantsnr):
     i = (cp > 0.)
     j = (cp <= 0.0)
     DtSNR[i] = (wantsnr**2.*cn[i])/cp[i]**2./3600. # (hr)
-    DtSNR[j] = np.inf
+    DtSNR[j] = np.nan
     return DtSNR
 
 def planck(temp, wav):
