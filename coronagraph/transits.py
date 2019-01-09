@@ -841,7 +841,7 @@ class TransitNoise(object):
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
             # Using a blackbody
-            Bstar = planck(self.star.Tstar, lam)
+            Bstar = planck(self.star.Teff, lam)
         else:
             # Using provided TOA stellar flux
             Fslr = convolution_function(Fshr, lamhr, lam, dlam=dlam)

@@ -12,6 +12,7 @@ Contents:
 * :class:`cspeck`
 * :class:`cdark`
 * :class:`cread`
+* :class:`ccic`
 * :class:`ctherm`
 * :class:`ctherm_earth`
 * :class:`cstar`
