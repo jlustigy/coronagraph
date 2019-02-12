@@ -65,12 +65,21 @@ class Telescope(object):
     diam_circumscribed : float, optional
         Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
         if `None` provided)
+    diam_inscribed : float, optional
+        Inscribed telescope diameter [m] used for lenslet calculations
+        (uses `diam` if `None` provided)
     Tput_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, qe)``
     lammin_lenslet : float, optional
         Minimum wavelength to use for lenslet calculation (default is ``lammin``)
+    lam : array-like, optional
+        Wavelength grid for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
+    dlam : array-like, optional
+        Wavelength grid `widths` for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
 
     Methods
     -------
@@ -88,7 +97,8 @@ class Telescope(object):
                  C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Rc=0.0, Dtmax=1.0, X=0.7, q=0.9,\
                  filter_wheel=None, aperture = "circular", A_collect = None,
                  Tput_lam = None, qe_lam = None, lammin_lenslet = None,
-                 diam_circumscribed = None):
+                 diam_circumscribed = None, diam_inscribed = None, lam = None,
+                 dlam = None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -103,6 +113,9 @@ class Telescope(object):
         self.contrast=C
         self.aperture = aperture
         self.diam_circumscribed = diam_circumscribed
+        self.diam_inscribed = diam_inscribed
+        self.lam = lam
+        self.dlam = dlam
 
         self.darkcurrent=De
         self.DNHpix=DNHpix

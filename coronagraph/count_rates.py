@@ -201,6 +201,9 @@ class CoronagraphNoise(object):
                         MezV   = self.planet.MezV,
                         A_collect = self.telescope.A_collect,
                         diam_circumscribed = self.telescope.diam_circumscribed,
+                        diam_inscribed = self.telescope.diam_inscribed,
+                        lam    = self.telescope.lam,
+                        dlam   = self.telescope.dlam,
                         Tput_lam = self.telescope.Tput_lam,
                         qe_lam = self.telescope.qe_lam,
                         lammin_lenslet = self.telescope.lammin_lenslet,
@@ -490,6 +493,9 @@ def count_rates(Ahr, lamhr, solhr,
                 MezV   = 22.0,
                 A_collect = None,
                 diam_circumscribed = None,
+                diam_inscribed = None,
+                lam    = None,
+                dlam   = None,
                 Tput_lam = None,
                 qe_lam = None,
                 lammin_lenslet = None,
@@ -573,6 +579,15 @@ def count_rates(Ahr, lamhr, solhr,
     diam_circumscribed : float, optional
         Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
         if `None` provided)
+    diam_inscribed : float, optional
+        Inscribed telescope diameter [m] used for lenslet calculations
+        (uses `diam` if `None` provided)
+    lam : array-like, optional
+        Wavelength grid for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
+    dlam : array-like, optional
+        Wavelength grid `widths` for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
     Tput_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
@@ -645,7 +660,9 @@ def count_rates(Ahr, lamhr, solhr,
 
     # Define a diameter for IWA (circumscribed),
     # collecting area, and lenslet (inscribed)
-    diam_inscribed = diam        # Defaults to diam
+    if diam_inscribed is None:
+        # Defaults to diam
+        diam_inscribed = diam
     if A_collect is None:
         # Defaults to diam
         diam_collect = diam
@@ -682,8 +699,10 @@ def count_rates(Ahr, lamhr, solhr,
         fpa = set_fpa * f_airy(X)
 
     # Set wavelength grid
+    # GENERALIZE THIS:
     if COMPUTE_LAM:
-        lam, dlam = construct_lam(lammin, lammax, Res)
+        if (lam is None) or (dlam is None):
+            lam, dlam = construct_lam(lammin, lammax, Res)
     elif IMAGE:
         pass
     else:

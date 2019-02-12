@@ -886,18 +886,18 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
     iIWA = ( sep < IWA*lam/diam/1.e6 )
     if (True if True in iIWA else False):
         T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
-        if ~SILENT:
+        if not SILENT:
             print('WARNING: portions of spectrum inside IWA')
     if FIX_OWA:
         if ( sep > OWA*lammin/diam/1.e6 ):
             T[:] = 0. #planet outside OWA, where there is no throughput
-            if ~SILENT:
+            if not SILENT:
                 print('WARNING: planet outside fixed OWA')
     else:
         iOWA = ( sep > OWA*lam/diam/1.e6 )
         if (True if True in iOWA else False):
             T[iOWA] = 0. #points outside OWA have no throughput
-            if ~SILENT:
+            if not SILENT:
                 print('WARNING: portions of spectrum outside OWA')
     return T
 
