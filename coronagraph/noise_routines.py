@@ -262,7 +262,9 @@ def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     D : float
         Telescope diameter [m]
     r : float
-        Planetary orbital semi-major axis [AU]    Fstar - host star spectrum *at 1 au* (W/m**2/um)
+        Planetary orbital semi-major axis [AU]
+    Fstar : array-like
+        Host star spectrum *at 1 au* (W/m**2/um)
     Nez : float
         Number of exozodis in exoplanetary disk
     MezV : float
