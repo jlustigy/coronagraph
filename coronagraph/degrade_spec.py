@@ -58,7 +58,7 @@ def downbin_spec_err(specHR, errHR, lamHR, lamLR, dlam=None):
     """
     Re-bin spectum and errors to lower resolution using :py:obj:`scipy.binned_statistic`.
     This function calculates the noise weighted mean of the points within a bin such that
-    :math:`\sqrt{\sum_i \mathcal{SNR}_i}` within each :math:`i` bin is preserved.
+    :math:`\sqrt{\sum_i \mathrm{SNR}_i}` within each :math:`i` bin is preserved.
 
     Parameters
     ----------

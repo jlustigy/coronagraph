@@ -69,9 +69,13 @@ class Telescope(object):
         Inscribed telescope diameter [m] used for lenslet calculations
         (uses `diam` if `None` provided)
     Tput_lam : tuple of arrays
-        Wavelength-dependent throughput e.g. ``(wls, tputs)``
+        Wavelength-dependent throughput e.g. ``(wls, tputs)``. Note that if
+        ``Tput_lam`` is used the end-to-end throughput will equal the
+        convolution of ``Tput_lam[1]`` with ``Tput``.
     qe_lam : tuple of arrays
-        Wavelength-dependent throughput e.g. ``(wls, qe)``
+        Wavelength-dependent throughput e.g. ``(wls, qe)``. Note that if
+        ``qe_lam`` is used the total quantum efficiency will equal the
+        convolution of ``qe_lam[1]`` with ``q``. 
     lammin_lenslet : float, optional
         Minimum wavelength to use for lenslet calculation (default is ``lammin``)
     lam : array-like, optional

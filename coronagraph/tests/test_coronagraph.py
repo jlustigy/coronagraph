@@ -247,6 +247,10 @@ def test_transits():
     planet = cg.Planet()
     star = cg.Star(Teff = Teff)
 
+    # Test wavelength dependent additions
+    telescope.Tput_lam = (np.linspace(0.1, 5.0), np.linspace(0.8, 1.0))
+    telescope.qe_lam = (np.linspace(0.1, 5.0), np.linspace(0.8, 1.0)[::-1])
+
     ###############
     ### TRANSIT ###
     ###############

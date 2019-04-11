@@ -7,10 +7,16 @@ coronagraph
 ===========
 
 A Python noise model for directly imaging exoplanets with a
-coronagraph-equipped telescope. Original IDL code was developed and published
-by Tyler Robinson (`Robinson, Stapelfeldt & Marley
-2016 <http://adsabs.harvard.edu/abs/2016PASP..128b5003R>`_) and can be found
-`here <https://github.com/tdrobinson/coronagraph_noise>`_.
+coronagraph-equipped telescope. The `original IDL
+code <https://github.com/tdrobinson/coronagraph_noise>`_ for this coronagraph
+model was developed and published by Tyler Robinson and collaborators
+(`Robinson, Stapelfeldt & Marley
+2016 <http://adsabs.harvard.edu/abs/2016PASP..128b5003R>`_). This open-source
+Python version has been expanded upon in a few key ways, most notably, the
+:class:`Telescope`, :class:`Planet`, and :class:`Star` objects used for
+reflected light coronagraph noise modeling can now be used for 
+transmission and emission spectroscopy noise modeling, making this model a
+general purpose exoplanet noise model for many different types of observations.
 
 .. image:: https://img.shields.io/badge/GitHub-jlustigy%2Fcoronagraph-blue.svg?style=flat
     :target: https://github.com/jlustigy/coronagraph
@@ -27,7 +33,7 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
-   overview
+   .. overview
    install
    Quickstart <notebooks/quickstart.ipynb>
    examples
