@@ -11,12 +11,10 @@
   <a href="https://coveralls.io/github/jlustigy/coronagraph?branch=master"><img src="https://coveralls.io/repos/github/jlustigy/coronagraph/badge.svg?branch=master&style=flat"/></a>
 </p>
 
-If you use this model in your own research please cite [Robinson et al (2016)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/".
-
 Documentation
 =============
 
-Please refer to the [code documentation](http://coronagraph.readthedocs.io/en/latest/). 
+Please refer to the [code documentation](http://coronagraph.readthedocs.io/en/latest/) on Read the Docs. 
 
 Installation
 ============
@@ -34,3 +32,7 @@ Users may also clone the repository on Github:
    cd coronagraph
    python setup.py
 ```
+
+Note
+====
+If you use this model in your own research please cite [Robinson et al (2016)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/".
