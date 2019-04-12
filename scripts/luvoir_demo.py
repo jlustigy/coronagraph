@@ -111,7 +111,7 @@ def run():
     ################################
 
     # Run coronagraph with default LUVOIR telescope (aka no keyword arguments)
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
         cg.count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,\
                        lammax=1.6)
 
