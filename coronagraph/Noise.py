@@ -7,7 +7,7 @@ class Output(object):
 
     def __init__(self, lam=None, dlam=None, A=None, q=None, Cratio=None,
                  cp=None, csp=None, cz=None, cez=None, cD=None, cR=None,
-                 cth=None, DtSNR=None):
+                 cth=None, cc=None, DtSNR=None):
 
          self.lam = lam
          self.dlam = dlam
@@ -21,4 +21,5 @@ class Output(object):
          self.cD = cD
          self.cR = cR
          self.cth = cth
+         self.cc = cc
          self.DtSNR = DtSNR

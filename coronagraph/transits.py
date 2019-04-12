@@ -166,10 +166,16 @@ class EclipseNoise(object):
         # Set the convolution function
         convolution_function = downbin_spec
 
-        # Create wavelength grid
-        lam, dlam = construct_lam(self.telescope.lammin,
-                                  self.telescope.lammax,
-                                  self.telescope.resolution)
+        # Does the telescope object already have a wavelength grid?
+        if (self.telescope.lam is None) or (self.telescope.dlam is None):
+            # Create wavelength grid
+            lam, dlam = construct_lam(self.telescope.lammin,
+                                      self.telescope.lammax,
+                                      self.telescope.resolution)
+        else:
+            # Use existing grids
+            lam = self.telescope.lam
+            dlam = self.telescope.dlam
 
         # Set Quantum Efficiency
         q = set_quantum_efficiency(lam,
@@ -198,6 +204,20 @@ class EclipseNoise(object):
         #sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
         #T = set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
         T = self.telescope.throughput * np.ones_like(lam)
+
+        # Apply wavelength-dependent throuput, if needed
+        if self.telescope.Tput_lam is not None:
+            # Bin input throughput curve to native res
+            Tlam = np.interp(lam, self.telescope.Tput_lam[0], self.telescope.Tput_lam[1])
+            # Multiply into regular throughput
+            T = T * Tlam
+
+        # Apply wavelength-dependent quantum efficiency, if needed
+        if self.telescope.qe_lam is not None:
+            # Bin input QE curve to native res
+            qlam = np.interp(lam, self.telescope.qe_lam[0], self.telescope.qe_lam[1])
+            # Multiply into regular QE
+            q = q * qlam
 
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
@@ -795,10 +815,16 @@ class TransitNoise(object):
         # Set the convolution function
         convolution_function = downbin_spec
 
-        # Create wavelength grid
-        lam, dlam = construct_lam(self.telescope.lammin,
-                                  self.telescope.lammax,
-                                  self.telescope.resolution)
+        # Does the telescope object already have a wavelength grid?
+        if (self.telescope.lam is None) or (self.telescope.dlam is None):
+            # Create wavelength grid
+            lam, dlam = construct_lam(self.telescope.lammin,
+                                      self.telescope.lammax,
+                                      self.telescope.resolution)
+        else:
+            # Use existing grids
+            lam = self.telescope.lam
+            dlam = self.telescope.dlam
 
         # Set Quantum Efficiency
         q = set_quantum_efficiency(lam,
@@ -828,6 +854,20 @@ class TransitNoise(object):
         #T = set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
         T = self.telescope.throughput * np.ones_like(lam)
 
+        # Apply wavelength-dependent throuput, if needed
+        if self.telescope.Tput_lam is not None:
+            # Bin input throughput curve to native res
+            Tlam = np.interp(lam, self.telescope.Tput_lam[0], self.telescope.Tput_lam[1])
+            # Multiply into regular throughput
+            T = T * Tlam
+
+        # Apply wavelength-dependent quantum efficiency, if needed
+        if self.telescope.qe_lam is not None:
+            # Bin input QE curve to native res
+            qlam = np.interp(lam, self.telescope.qe_lam[0], self.telescope.qe_lam[1])
+            # Multiply into regular QE
+            q = q * qlam
+
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
             # Use SMART calc
@@ -841,7 +881,7 @@ class TransitNoise(object):
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
             # Using a blackbody
-            Bstar = planck(self.star.Tstar, lam)
+            Bstar = planck(self.star.Teff, lam)
         else:
             # Using provided TOA stellar flux
             Fslr = convolution_function(Fshr, lamhr, lam, dlam=dlam)

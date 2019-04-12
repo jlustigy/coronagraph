@@ -12,6 +12,7 @@ Contents:
 * :class:`cspeck`
 * :class:`cdark`
 * :class:`cread`
+* :class:`ccic`
 * :class:`ctherm`
 * :class:`ctherm_earth`
 * :class:`cstar`
@@ -261,7 +262,9 @@ def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     D : float
         Telescope diameter [m]
     r : float
-        Planetary orbital semi-major axis [AU]    Fstar - host star spectrum *at 1 au* (W/m**2/um)
+        Planetary orbital semi-major axis [AU]
+    Fstar : array-like
+        Host star spectrum *at 1 au* (W/m**2/um)
     Nez : float
         Number of exozodis in exoplanetary disk
     MezV : float
@@ -406,14 +409,16 @@ def cread(Re, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
         Npix = 2*DNhpix*Npix
     return Npix/(Dtmax*3600.)*Re
 
-def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
+def ccic(Rc, cscene, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
     """
-    Clock induced charge count rate (not currently in use)
+    Clock induced charge count rate
 
     Parameters
     ----------
     Rc : float or array-like
-        Clock induced charge counts per pixel per read
+        Clock induced charge counts/pixel/photon
+    cscene : float or array-like
+        Photon count rate of brightest pixel in the scene [counts/s]
     X : float, optional
         Width of photometric aperture ( * lambda / diam)
     lam : float or array-like
@@ -431,9 +436,11 @@ def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
 
     Returns
     -------
-    cread :
-        Read noise count rate [1/s]
+    ccic :
+        Clock induced charge count rate [1/s]
     """
+    # Convert from counts/pixel/photon --> counts/pixel/s
+    Rcs = Rc * cscene
     if CIRC:
         # circular aperture diameter (arcsec**2)
         Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
@@ -444,7 +451,7 @@ def ccic(Rc, X, lam, D, theta, DNhpix, Dtmax, IMAGE=False, CIRC=False):
     # If not in imaging mode
     if ~IMAGE:
         Npix = 2*DNhpix*Npix
-    return Npix/(Dtmax*3600.)*Rc
+    return Npix/(Dtmax*3600.)*Rcs
 
 
 def f_airy(X, CIRC=False):
@@ -881,18 +888,18 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
     iIWA = ( sep < IWA*lam/diam/1.e6 )
     if (True if True in iIWA else False):
         T[iIWA] = 0. #zero transmission for points inside IWA have no throughput
-        if ~SILENT:
+        if not SILENT:
             print('WARNING: portions of spectrum inside IWA')
     if FIX_OWA:
         if ( sep > OWA*lammin/diam/1.e6 ):
             T[:] = 0. #planet outside OWA, where there is no throughput
-            if ~SILENT:
+            if not SILENT:
                 print('WARNING: planet outside fixed OWA')
     else:
         iOWA = ( sep > OWA*lam/diam/1.e6 )
         if (True if True in iOWA else False):
             T[iOWA] = 0. #points outside OWA have no throughput
-            if ~SILENT:
+            if not SILENT:
                 print('WARNING: portions of spectrum outside OWA')
     return T
 
@@ -1010,7 +1017,7 @@ def exptime_element(lam, cp, cn, wantsnr):
     i = (cp > 0.)
     j = (cp <= 0.0)
     DtSNR[i] = (wantsnr**2.*cn[i])/cp[i]**2./3600. # (hr)
-    DtSNR[j] = np.inf
+    DtSNR[j] = np.nan
     return DtSNR
 
 def planck(temp, wav):

@@ -78,6 +78,7 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
     De     = telescope.darkcurrent  # dark current (s**-1)
     DNHpix = telescope.DNHpix       # horizontal pixel spread of IFS spectrum
     Re     = telescope.readnoise    # read noise per pixel
+    Rc     = telescope.Rc           # clock induced charge per pixel/photon
     Dtmax  = telescope.Dtmax        # maximum exposure time (hr)
     X      = telescope.X            # size of photometric aperture (lambda/D)
     qe     = telescope.qe           # quantum efficiency
@@ -88,7 +89,7 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
 
 
     # Calculate count rates
-    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+    lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
         count_rates(Ahr, lamhr, solhr, alpha, Phi, Rp, Teff, Rs, r, d, Nez,
                     mode   = mode,
                     filter_wheel = filter_wheel,
@@ -106,6 +107,7 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
                     De     = De,
                     DNHpix = DNHpix,
                     Re     = Re,
+                    Rc     = Rc,
                     Dtmax  = Dtmax,
                     X      = X,
                     qe     = qe,
@@ -120,7 +122,7 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
         # Cram all the coronagraph output arrays into an Output object
         output = Output(lam=lam, dlam=dlam, A=A, q=q, Cratio=Cratio,
                         cp=cp, csp=csp, cz=cz, cez=cez, cD=cD, cR=cR,
-                        cth=cth, DtSNR=DtSNR)
+                        cth=cth, cc=cc, DtSNR=DtSNR)
 
         # Return output object
         return output
@@ -128,4 +130,4 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
     else:
 
         # Return arrays
-        return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR
+        return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR

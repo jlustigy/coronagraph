@@ -133,6 +133,8 @@ class CoronagraphNoise(object):
             Dark current photon count rate [photons/s]
         cR : array
             Read noise photon count rate [photons/s]
+        cc : array
+            Clock induced charge photon count rate [photons/s]
         cb : array
             Total background photon noise count rate [photons/s]
         DtSNR : array
@@ -165,7 +167,7 @@ class CoronagraphNoise(object):
             assert False, "telescope.aperture is invalid"
 
         # Call count_rates
-        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR = \
+        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
             count_rates(Ahr, lamhr, solhr,
                         alpha = self.planet.alpha,
                         Phi = self.planet.Phi,
@@ -191,14 +193,20 @@ class CoronagraphNoise(object):
                         De     = self.telescope.darkcurrent,
                         DNHpix = self.telescope.DNHpix,
                         Re     = self.telescope.readnoise,
+                        Rc     = self.telescope.Rc,
                         Dtmax  = self.telescope.Dtmax,
                         X      = self.telescope.X,
                         qe     = self.telescope.qe,
                         MzV    = self.planet.MzV,
                         MezV   = self.planet.MezV,
                         A_collect = self.telescope.A_collect,
+                        diam_circumscribed = self.telescope.diam_circumscribed,
+                        diam_inscribed = self.telescope.diam_inscribed,
+                        lam    = self.telescope.lam,
+                        dlam   = self.telescope.dlam,
                         Tput_lam = self.telescope.Tput_lam,
                         qe_lam = self.telescope.qe_lam,
+                        lammin_lenslet = self.telescope.lammin_lenslet,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
                         THERMAL = self.THERMAL,
@@ -208,19 +216,20 @@ class CoronagraphNoise(object):
                     )
 
         # Save output arrays
-        self.lam = lam
-        self.dlam = dlam
-        self.A = A
-        self.Cratio = Cratio
-        self.cp = cp
-        self.csp =csp
-        self.cz = cz
-        self.cez = cez
-        self.cD = cD
-        self.cR = cR
-        self.cth = cth
-        self.cb = cz + cez + csp + cD + cR + cth
-        self.DtSNR = DtSNR
+        self.lam     = lam
+        self.dlam    = dlam
+        self.A       = A
+        self.Cratio  = Cratio
+        self.cp      = cp
+        self.csp     = csp
+        self.cz      = cz
+        self.cez     = cez
+        self.cD      = cD
+        self.cR      = cR
+        self.cth     = cth
+        self.cc      = cc
+        self.cb      = cz + cez + csp + cD + cR + cth + cc
+        self.DtSNR   = DtSNR
 
         # Flip the switch
         self._computed = True
@@ -476,14 +485,20 @@ def count_rates(Ahr, lamhr, solhr,
                 De     = 1e-4,
                 DNHpix = 3.0,
                 Re     = 0.1,
+                Rc     = 0.0,
                 Dtmax  = 1.0,
                 X      = 1.5,
                 qe     = 0.9,
                 MzV    = 23.0,
                 MezV   = 22.0,
                 A_collect = None,
+                diam_circumscribed = None,
+                diam_inscribed = None,
+                lam    = None,
+                dlam   = None,
                 Tput_lam = None,
                 qe_lam = None,
+                lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
@@ -547,6 +562,8 @@ def count_rates(Ahr, lamhr, solhr,
         Number of horizontal/spatial pixels for dispersed spectrum
     Re : float, optional
         Read noise counts per pixel
+    Rc : float, optional
+        Clock induced charge [counts/pixel/photon]
     Dtmax : float, optional
         Detector maximum exposure time [hours]
     X : float, optional
@@ -559,10 +576,24 @@ def count_rates(Ahr, lamhr, solhr,
         V-band exozodiacal light surface brightness [mag/arcsec**2]
     A_collect : float, optional
         Mirror collecting area (m**2) (uses :math:`\pi(D/2)^2` by default)
+    diam_circumscribed : float, optional
+        Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
+        if `None` provided)
+    diam_inscribed : float, optional
+        Inscribed telescope diameter [m] used for lenslet calculations
+        (uses `diam` if `None` provided)
+    lam : array-like, optional
+        Wavelength grid for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
+    dlam : array-like, optional
+        Wavelength grid `widths` for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
     Tput_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, qe)``
+    lammin_lenslet : float, optional
+        Minimum wavelength to use for lenslet calculation (default is ``lammin``)
     wantsnr : float, optional
         Desired signal-to-noise ratio in each pixel
     FIX_OWA : bool, optional
@@ -605,19 +636,21 @@ def count_rates(Ahr, lamhr, solhr,
     Cratio : ndarray
         Planet-star contrast ratio
     cp : ndarray
-        Planetary photon count rate on detector
+        Planetary photon count rate on detector [1/s]
     csp : ndarray
-        Speckle photon count rate on detector
+        Speckle photon count rate on detector [1/s]
     cz : ndarray
-        Zodiacal photon count rate on detector
+        Zodiacal photon count rate on detector [1/s]
     cez : ndarray
-        Exozodiacal photon count rate on detector
+        Exozodiacal photon count rate on detector [1/s]
     cD : ndarray
-        Dark current photon count rate on detector
+        Dark current photon count rate on detector [1/s]
     cR : ndarray
-        Read noise photon count rate on detector
+        Read noise photon count rate on detector [1/s]
     cth : ndarray
-        Instrument thermal photon count rate on detector
+        Instrument thermal photon count rate on detector [1/s]
+    cc : ndarray
+        Clock induced charge photon count rate [1/s]
     DtSNR : ndarray
         Exposure time required to get desired S/N (wantsnr) [hours]
     """
@@ -625,12 +658,20 @@ def count_rates(Ahr, lamhr, solhr,
     convolution_function = downbin_spec
     #convolution_function = degrade_spec
 
-    # Define a diameter for IWA (inscribed area) and collecting area
-    diam_inscribed = diam
+    # Define a diameter for IWA (circumscribed),
+    # collecting area, and lenslet (inscribed)
+    if diam_inscribed is None:
+        # Defaults to diam
+        diam_inscribed = diam
     if A_collect is None:
+        # Defaults to diam
         diam_collect = diam
     else:
+        # Calculated from provided collecting area
         diam_collect = 2. * (A_collect / np.pi)**0.5
+    if diam_circumscribed is None:
+        # Defaults to diam
+        diam_circumscribed = diam
 
     # Configure for different telescope observing modes
     if mode == 'Imaging':
@@ -658,8 +699,10 @@ def count_rates(Ahr, lamhr, solhr,
         fpa = set_fpa * f_airy(X)
 
     # Set wavelength grid
+    # GENERALIZE THIS:
     if COMPUTE_LAM:
-        lam, dlam = construct_lam(lammin, lammax, Res)
+        if (lam is None) or (dlam is None):
+            lam, dlam = construct_lam(lammin, lammax, Res)
     elif IMAGE:
         pass
     else:
@@ -675,11 +718,12 @@ def count_rates(Ahr, lamhr, solhr,
     Re = set_read_noise(lam, Re, NIR=NIR)
 
     # Set Angular size of lenslet
-    theta = set_lenslet(lam, lammin, diam_inscribed, X, NIR=True)
+    if lammin_lenslet is None: lammin_lenslet = lammin
+    theta = set_lenslet(lam, lammin_lenslet, diam_inscribed, X, NIR=True)
 
     # Set throughput (for inner and outer working angle cutoffs)
     sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
-    T = set_throughput(lam, Tput, diam_inscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
+    T = set_throughput(lam, Tput, diam_circumscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
 
     # Apply wavelength-dependent throuput, if needed
     if Tput_lam is not None:
@@ -708,7 +752,7 @@ def count_rates(Ahr, lamhr, solhr,
 
     # Degrade albedo and stellar spectrum
     if COMPUTE_LAM:
-        A = convolution_function(Ahr,lamhr,lam,dlam=dlam)
+        A = convolution_function(Ahr, lamhr, lam, dlam=dlam)
         Fs = convolution_function(solhr, lamhr, lam, dlam=dlam)
     elif IMAGE:
         # Convolve with filter response
@@ -727,7 +771,7 @@ def count_rates(Ahr, lamhr, solhr,
     cp     =  cplan(q, fpa, T, lam, dlam, Fp, diam_collect)                          # planet count rate
     cz     =  czodi(q, X, T, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
     cez    =  cezodi(q, X, T, lam, dlam, diam_collect, r, \
-        Fstar(lam,Teff,Rs,1.,AU=True), Nez, MezV)                                    # exo-zodi count rate
+        Fstar(lam, Teff, Rs,1. , AU=True), Nez, MezV)                                    # exo-zodi count rate
     csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam_collect)         # speckle count rate
     cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
     cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
@@ -759,8 +803,15 @@ def count_rates(Ahr, lamhr, solhr,
             plt.show()
         '''
 
+    # Clock induced charge photon count rate
+    # Calculate photon count rate in the scene (everything except read noise)
+    cscene = cp + cz + cez + csp + cD + cth
+    # Calculate the clock induced charge photon count rate
+    cc = ccic(Rc, cscene, X, lam, diam_collect, theta, DNHpix, Dtmax,
+              IMAGE=IMAGE, CIRC=CIRC)
+
     # Calculate total background counts
-    cb = (cz + cez + csp + cD + cR + cth)
+    cb = (cz + cez + csp + cD + cR + cth + cc)
 
     # Use telescope roll maneuver
     if roll_maneuver:
@@ -774,7 +825,7 @@ def count_rates(Ahr, lamhr, solhr,
     cnoise =  cp + roll_factor*cb
 
     # Calculate total counts
-    ctot = cp + cz + cez + csp + cD + cR + cth
+    ctot = cp + cz + cez + csp + cD + cR + cth + cc
 
     '''
     Giada: where does the factor of 2 come from [above]?
@@ -796,4 +847,4 @@ def count_rates(Ahr, lamhr, solhr,
     # Exposure time to SNR
     DtSNR = exptime_element(lam, cp, cnoise, wantsnr)
 
-    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, DtSNR
+    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR

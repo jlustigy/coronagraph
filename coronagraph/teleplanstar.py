@@ -48,6 +48,8 @@ class Telescope(object):
         Horizontal pixel spread of IFS spectrum
     Re : float
         Read noise per pixel
+    Rc : float, optional
+        Clock induced charge [counts/pixel/photon]
     Dtmax : float
         Maximum exposure time (hr)
     X : float
@@ -60,10 +62,28 @@ class Telescope(object):
         Aperture type ("circular" or "square")
     A_collect : float
         Mirror collecting area (m**2)
+    diam_circumscribed : float, optional
+        Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
+        if `None` provided)
+    diam_inscribed : float, optional
+        Inscribed telescope diameter [m] used for lenslet calculations
+        (uses `diam` if `None` provided)
     Tput_lam : tuple of arrays
-        Wavelength-dependent throughput e.g. ``(wls, tputs)``
+        Wavelength-dependent throughput e.g. ``(wls, tputs)``. Note that if
+        ``Tput_lam`` is used the end-to-end throughput will equal the
+        convolution of ``Tput_lam[1]`` with ``Tput``.
     qe_lam : tuple of arrays
-        Wavelength-dependent throughput e.g. ``(wls, qe)``
+        Wavelength-dependent throughput e.g. ``(wls, qe)``. Note that if
+        ``qe_lam`` is used the total quantum efficiency will equal the
+        convolution of ``qe_lam[1]`` with ``q``. 
+    lammin_lenslet : float, optional
+        Minimum wavelength to use for lenslet calculation (default is ``lammin``)
+    lam : array-like, optional
+        Wavelength grid for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
+    dlam : array-like, optional
+        Wavelength grid `widths` for spectrograph [microns] (uses ``lammin``, ``lammax``,
+        and ``resolution`` to determine if ``None`` provided)
 
     Methods
     -------
@@ -78,9 +98,11 @@ class Telescope(object):
     # Define a constructor
     def __init__(self, mode='IFS', lammin=0.3, lammax=2.0, R=70., Tput=0.2,\
                  D=8.0, Tsys=260., Tdet=50., IWA=0.5, OWA=30000., emis=0.9,\
-                 C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Dtmax=1.0, X=0.7, q=0.9,\
+                 C=1e-10, De=1e-4, DNHpix=3., Re=0.1, Rc=0.0, Dtmax=1.0, X=0.7, q=0.9,\
                  filter_wheel=None, aperture = "circular", A_collect = None,
-                 Tput_lam = None, qe_lam = None):
+                 Tput_lam = None, qe_lam = None, lammin_lenslet = None,
+                 diam_circumscribed = None, diam_inscribed = None, lam = None,
+                 dlam = None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -94,16 +116,22 @@ class Telescope(object):
         self.emissivity=emis
         self.contrast=C
         self.aperture = aperture
+        self.diam_circumscribed = diam_circumscribed
+        self.diam_inscribed = diam_inscribed
+        self.lam = lam
+        self.dlam = dlam
 
         self.darkcurrent=De
         self.DNHpix=DNHpix
         self.readnoise=Re
+        self.Rc=Rc
         self.Dtmax=Dtmax
         self.X=X
         self.qe=q
         self.A_collect = A_collect
         self.Tput_lam = Tput_lam
         self.qe_lam = qe_lam
+        self.lammin_lenslet = lammin_lenslet
 
         self._filter_wheel=filter_wheel
 

@@ -10,7 +10,7 @@ import scipy as sp
 from scipy import interpolate
 from scipy.stats import binned_statistic
 
-__all__ = ['downbin_spec', 'degrade_spec']
+__all__ = ['downbin_spec', 'downbin_spec_err', 'degrade_spec']
 
 def downbin_spec(specHR, lamHR, lamLR, dlam=None):
     """
@@ -53,6 +53,62 @@ def downbin_spec(specHR, lamHR, lamLR, dlam=None):
     specLR = binned_statistic(lamHR, specHR, statistic="mean", bins=LRedges)[0]
 
     return specLR
+
+def downbin_spec_err(specHR, errHR, lamHR, lamLR, dlam=None):
+    """
+    Re-bin spectum and errors to lower resolution using :py:obj:`scipy.binned_statistic`.
+    This function calculates the noise weighted mean of the points within a bin such that
+    :math:`\sqrt{\sum_i \mathrm{SNR}_i}` within each :math:`i` bin is preserved.
+
+    Parameters
+    ----------
+    specHR : array-like
+        Spectrum to be degraded
+    errHR : array-like
+        One sigma errors of high-res spectrum
+    lamHR : array-like
+        High-res wavelength grid
+    lamLR : array-like
+        Low-res wavelength grid
+    dlam : array-like, optional
+        Low-res wavelength width grid
+
+    Returns
+    -------
+    specLR : :py:obj:`numpy.ndarray`
+        Low-res spectrum
+    errLR : :py:obj:`numpy.ndarray`
+        Low-res spectrum one sigma errors
+    """
+
+    if dlam is None:
+        ValueError("Please supply dlam in downbin_spec_err()")
+
+    # Reverse ordering if wl vector is decreasing with index
+    if len(lamLR) > 1:
+        if lamHR[0] > lamHR[1]:
+            lamHI = np.array(lamHR[::-1])
+            spec = np.array(specHR[::-1])
+        if lamLR[0] > lamLR[1]:
+            lamLO = np.array(lamLR[::-1])
+            dlamLO = np.array(dlam[::-1])
+
+    # Calculate bin edges
+    LRedges = np.hstack([lamLR - 0.5*dlam, lamLR[-1]+0.5*dlam[-1]])
+
+    # Calc the sum of the squares of the noise weighted spectrum in each bin
+    wsum = binned_statistic(lamHR, (specHR / errHR)**2., statistic="sum", bins=LRedges)[0]
+
+    # Calc the sum of the squares of just the weights
+    w = binned_statistic(lamHR, (1. / errHR)**2., statistic="sum", bins=LRedges)[0]
+
+    # Get weighted spectrum means: normalize noise weighted spectrum by noise weights and take square root
+    specLR = np.sqrt(wsum / w)
+
+    # Get one sigma errors: take square root of 1/weights
+    errLR = np.sqrt(1. / w)
+
+    return specLR, errLR
 
 def degrade_spec(specHR, lamHR, lamLR, dlam=None):
     """
