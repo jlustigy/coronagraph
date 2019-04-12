@@ -5,7 +5,7 @@ from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
 # Version number
-__version__ = "0.0.3"
+__version__ = "0.1"
 
 # Was coronagraph imported from setup.py?
 try:
