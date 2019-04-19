@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://travis-ci.org/jlustigy/coronagraph"><img src="http://img.shields.io/travis/jlustigy/coronagraph/master.svg?style=flat"/></a>
-  <a href="http://coronagraph.readthedocs.io/en/latest/"><img src="https://readthedocs.org/projects/coronagraph/badge/?version=latest"/></a>
+  <a href="https://jlustigy.github.io/coronagraph/"><img src="https://img.shields.io/badge/read-the_docs-blue.svg?style=flat"/></a>
   <a href="https://github.com/jlustigy/coronagraph/blob/master/LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat"/></a>
   <a href="https://coveralls.io/github/jlustigy/coronagraph?branch=master"><img src="https://coveralls.io/repos/github/jlustigy/coronagraph/badge.svg?branch=master&style=flat"/></a>
 </p>
@@ -14,7 +14,7 @@
 Documentation
 =============
 
-Please refer to the [code documentation](http://coronagraph.readthedocs.io/en/latest/) on Read the Docs. 
+Please refer to the [code documentation](https://jlustigy.github.io/coronagraph/) on Read the Docs. 
 
 Installation
 ============
