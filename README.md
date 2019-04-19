@@ -1,5 +1,5 @@
 <p align="center">
-  <img width = "450" src="https://github.com/jlustigy/coronagraph/blob/luvoir_drm/docs/_static/logo6.png?raw=true"/>
+  <img width = "450" src="https://github.com/jlustigy/coronagraph/blob/master/docs/_static/logo6.png?raw=true"/>
   <br>
   A Python noise model for directly imaging exoplanets with coronagraph equipped telescopes.  
 </p>
