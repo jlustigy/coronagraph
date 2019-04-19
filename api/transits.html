@@ -1,0 +1,838 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Simulating Transmission Spectra &mdash; coronagraph 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coronagraph 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="../api.html"/>
+        <link rel="prev" title="Filter Photometry" href="imager.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo1.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts.html">Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="count_rates.html">Coronagraph Noise Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="observe.html">Observational Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="teleplanstar.html">Telescopes, Planets, and Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Simulating Transmission Spectra</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph/issues">Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coronagraph</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API</a> &raquo;</li>
+        
+      <li>Simulating Transmission Spectra</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/transits.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-coronagraph.transits">
+<span id="simulating-transmission-spectra"></span><h1>Simulating Transmission Spectra<a class="headerlink" href="#module-coronagraph.transits" title="Permalink to this headline">¶</a></h1>
+<p>Simulate exoplanet transmission spectroscopy with a blank mask coronagraph.
+This uses the same telesope and detector as the coronagraph, but does not
+block the star’s light. As a result, stellar photons dominate the noise
+budget.</p>
+<dl class="class">
+<dt id="coronagraph.transits.EclipseNoise">
+<em class="property">class </em><code class="descclassname">coronagraph.transits.</code><code class="descname">EclipseNoise</code><span class="sig-paren">(</span><em>tdur=3432.0</em>, <em>telescope=&lt;coronagraph.teleplanstar.Telescope object&gt;</em>, <em>planet=&lt;coronagraph.teleplanstar.Planet object&gt;</em>, <em>star=&lt;coronagraph.teleplanstar.Star object&gt;</em>, <em>ntran=1</em>, <em>nout=1</em>, <em>wantsnr=1000.0</em>, <em>NIR=True</em>, <em>THERMAL=True</em>, <em>GROUND=False</em>, <em>vod=False</em>, <em>IMAGE=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate exoplanet secondary eclipse emission spectroscopy with a next-generation
+telescope.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>telescope</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><em>Telescope</em></a>) – Initialized object containing <code class="docutils literal notranslate"><span class="pre">Telescope</span></code> parameters</li>
+<li><strong>planet</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><em>Planet</em></a>) – Initialized object containing <code class="docutils literal notranslate"><span class="pre">Planet</span></code> parameters</li>
+<li><strong>star</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Star" title="coronagraph.teleplanstar.Star"><em>Star</em></a>) – Initialized object containing <code class="docutils literal notranslate"><span class="pre">Star</span></code> parameters</li>
+<li><strong>tdur</strong> (<em>float</em>) – Transit duration [s]</li>
+<li><strong>ntran</strong> (<em>float</em>) – Number of transits/eclipses</li>
+<li><strong>nout</strong> (<em>float</em>) – Number of out-of-eclipse transit durations to observe</li>
+<li><strong>wantsnr</strong> (<em>float</em><em>, </em><em>optional</em>) – Desired signal-to-noise ratio in each pixel</li>
+<li><strong>FIX_OWA</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to fix OWA at <code class="docutils literal notranslate"><span class="pre">OWA*lammin/D</span></code>, as would occur if lenslet array is
+limiting the OWA</li>
+<li><strong>COMPUTE_LAM</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to compute lo-res wavelength grid, otherwise the grid input as
+variable <code class="docutils literal notranslate"><span class="pre">lam</span></code> is used</li>
+<li><strong>SILENT</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to suppress print statements</li>
+<li><strong>NIR</strong> (<em>bool</em><em>, </em><em>optional</em>) – Re-adjusts pixel size in NIR, as would occur if a second instrument
+was designed to handle the NIR</li>
+<li><strong>THERMAL</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to compute thermal photon counts due to telescope temperature</li>
+<li><strong>GROUND</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to simulate ground-based observations through atmosphere</li>
+<li><strong>vod</strong> (<em>bool</em><em>, </em><em>optional</em>) – “Valley of Death” red QE parameterization from Robinson et al. (2016)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.run_count_rates">
+<code class="descname">run_count_rates</code><span class="sig-paren">(</span><em>lamhr=None</em>, <em>Fphr=None</em>, <em>Fshr=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.run_count_rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the photon count rates and signal to noise on a secondary
+eclipse spectrum observation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lamhr</strong> (<em>numpy.ndarray</em>) – Wavelength [$mu$m]</li>
+<li><strong>Fphr</strong> (<em>numpy.ndarray</em>) – Dayside exoplanet TOA flux spectrum [W/m$^2$/$mu$]</li>
+<li><strong>Fshr</strong> (<em>numpy.ndarray</em>) – Stellar flux incident at the planet’s TOA [W/m$^2$/$mu$]</li>
+<li><strong>run_count_rates</strong><strong>(</strong><strong>) </strong><strong>creates the following attributes for</strong> (<em>Calling</em>) – </li>
+<li><strong>EclipseNoise instance</strong> (<em>the</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lamhr</strong> (<em>array</em>) – Wavelength [$mu$m]</li>
+<li><strong>Fphr</strong> (<em>array</em>) – Dayside exoplanet TOA flux spectrum [W/m$^2$/$mu$]</li>
+<li><strong>Fshr</strong> (<em>array</em>) – Stellar flux incident at the planet’s TOA [W/m$^2$/$mu$]</li>
+<li><strong>cs</strong> (<em>array</em>) – Stellar photon count rate [photons/s]</li>
+<li><strong>cback</strong> (<em>array</em>) – Background photon count rate [photons/s]</li>
+<li><strong>cz</strong> (<em>array</em>) – Zodi photon count rate [photons/s]</li>
+<li><strong>cez</strong> (<em>array</em>) – Exo-zodi photon count rate [photons/s]</li>
+<li><strong>cth</strong> (<em>array</em>) – Thermal photon count rate [photons/s]</li>
+<li><strong>cD</strong> (<em>array</em>) – Dark current photon count rate [photons/s]</li>
+<li><strong>cR</strong> (<em>array</em>) – Read noise photon count rate [photons/s]</li>
+<li><strong>cmiss</strong> (<em>array</em>) – Occulted stellar photon count rate [photons/s]</li>
+<li><strong>SNR1</strong> (<em>array</em>) – S/N for one eclipse</li>
+<li><strong>SNRn</strong> (<em>array</em>) – S/N for <code class="docutils literal notranslate"><span class="pre">ntran</span></code> eclipses</li>
+<li><strong>tSNR</strong> (<em>array</em>) – Exposure time to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code> [s]</li>
+<li><strong>nSNR</strong> (<em>array</em>) – Number of eclipses to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code></li>
+<li><strong>lam</strong> (<em>array</em>) – Observed wavelength grid [$mu$m]</li>
+<li><strong>dlam</strong> (<em>array</em>) – Observed wavelength grid widths [$mu$m]</li>
+<li><strong>FpFslr</strong> (<em>array</em>) – Low-res planet/star flux ratio</li>
+<li><strong>FpFshr</strong> (<em>array</em>) – High-res planetr/star flux ratio</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.make_fake_data">
+<code class="descname">make_fake_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.make_fake_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a fake dataset by sampling from a Gaussian.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>SNRn</strong> (<em>array</em>) – S/N in <code class="docutils literal notranslate"><span class="pre">ntran</span></code> eclipses</li>
+<li><strong>obs</strong> (<em>array</em>) – Observed emission specrum with noise</li>
+<li><strong>sig</strong> (<em>array</em>) – Observed uncertainties on emission spectrum</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.recalc_wantsnr">
+<code class="descname">recalc_wantsnr</code><span class="sig-paren">(</span><em>wantsnr=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.recalc_wantsnr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recalculate the time and number of eclipses required to achieve a
+user specified SNR via <cite>wantsnr</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tSNR</strong> (<em>array</em>) – Exposure time to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code> [s]</li>
+<li><strong>nSNR</strong> (<em>array</em>) – Number of eclipses to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.plot_spectrum">
+<code class="descname">plot_spectrum</code><span class="sig-paren">(</span><em>SNR_threshold=0.0</em>, <em>Nsig=None</em>, <em>ax0=None</em>, <em>err_kws={'alpha': 1</em>, <em>'c': 'k'</em>, <em>'fmt': '.'}</em>, <em>plot_kws={'alpha': 0.5</em>, <em>'c': 'C4'</em>, <em>'lw': 1.0}</em>, <em>draw_box=True</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.plot_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot noised emission spectrum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>SNR_threshold</strong> (<em>float</em>) – Threshold SNR below which do not plot</li>
+<li><strong>Nsig</strong> (<em>float</em>) – Number of standard deviations about median observed points to set
+yaxis limits</li>
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>err_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>errorbar</cite></li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+<li><strong>draw_box</strong> (<em>bool</em>) – Draw important quantities in a box?</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.plot_SNRn">
+<code class="descname">plot_SNRn</code><span class="sig-paren">(</span><em>ax0=None</em>, <em>plot_kws={'ls': 'steps-mid'}</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.plot_SNRn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the S/N on the Eclipse Depth as a function of wavelength.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.plot_ntran_to_wantsnr">
+<code class="descname">plot_ntran_to_wantsnr</code><span class="sig-paren">(</span><em>ax0=None</em>, <em>plot_kws={'alpha': 1.0</em>, <em>'ls': 'steps-mid'}</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.plot_ntran_to_wantsnr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the number of eclipses to get a SNR on the eclipse depth as
+a function of wavelength.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.plot_time_to_wantsnr">
+<code class="descname">plot_time_to_wantsnr</code><span class="sig-paren">(</span><em>ax0=None</em>, <em>plot_kws={'alpha': 1.0</em>, <em>'ls': 'steps-mid'}</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.plot_time_to_wantsnr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the time to get a SNR on the eclipse depth as
+a function of wavelength.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.EclipseNoise.plot_count_rates">
+<code class="descname">plot_count_rates</code><span class="sig-paren">(</span><em>ax0=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise.plot_count_rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the photon count rate for all sources.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="coronagraph.transits.TransitNoise">
+<em class="property">class </em><code class="descclassname">coronagraph.transits.</code><code class="descname">TransitNoise</code><span class="sig-paren">(</span><em>tdur=3432.0</em>, <em>telescope=&lt;coronagraph.teleplanstar.Telescope object&gt;</em>, <em>planet=&lt;coronagraph.teleplanstar.Planet object&gt;</em>, <em>star=&lt;coronagraph.teleplanstar.Star object&gt;</em>, <em>ntran=1</em>, <em>nout=1</em>, <em>wantsnr=1000.0</em>, <em>NIR=True</em>, <em>THERMAL=True</em>, <em>GROUND=False</em>, <em>vod=False</em>, <em>IMAGE=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate exoplanet transit transmission spectroscopy with a next-generation
+telescope.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>telescope</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><em>Telescope</em></a>) – Initialized object containing <code class="docutils literal notranslate"><span class="pre">Telescope</span></code> parameters</li>
+<li><strong>planet</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><em>Planet</em></a>) – Initialized object containing <code class="docutils literal notranslate"><span class="pre">Planet</span></code> parameters</li>
+<li><strong>star</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Star" title="coronagraph.teleplanstar.Star"><em>Star</em></a>) – Initialized object containing <code class="docutils literal notranslate"><span class="pre">Star</span></code> parameters</li>
+<li><strong>tdur</strong> (<em>float</em>) – Transit duration [s]</li>
+<li><strong>ntran</strong> (<em>float</em>) – Number of transits</li>
+<li><strong>nout</strong> (<em>float</em>) – Number of out-of-transit transit durations to observe</li>
+<li><strong>wantsnr</strong> (<em>float</em><em>, </em><em>optional</em>) – Desired signal-to-noise ratio in each pixel</li>
+<li><strong>FIX_OWA</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to fix OWA at <code class="docutils literal notranslate"><span class="pre">OWA*lammin/D</span></code>, as would occur if lenslet array is
+limiting the OWA</li>
+<li><strong>COMPUTE_LAM</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to compute lo-res wavelength grid, otherwise the grid input as
+variable <code class="docutils literal notranslate"><span class="pre">lam</span></code> is used</li>
+<li><strong>SILENT</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to suppress print statements</li>
+<li><strong>NIR</strong> (<em>bool</em><em>, </em><em>optional</em>) – Re-adjusts pixel size in NIR, as would occur if a second instrument
+was designed to handle the NIR</li>
+<li><strong>THERMAL</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to compute thermal photon counts due to telescope temperature</li>
+<li><strong>GROUND</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to simulate ground-based observations through atmosphere</li>
+<li><strong>vod</strong> (<em>bool</em><em>, </em><em>optional</em>) – “Valley of Death” red QE parameterization from Robinson et al. (2016)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.run_count_rates">
+<code class="descname">run_count_rates</code><span class="sig-paren">(</span><em>lamhr=None</em>, <em>tdhr=None</em>, <em>Fshr=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.run_count_rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the photon count rates and signal to noise on a
+transmission spectrum observation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lamhr</strong> (<em>numpy.ndarray</em>) – Wavelength [$mu$m]</li>
+<li><strong>tdhr</strong> (<em>numpy.ndarray</em>) – Transit Depth $(Rp/Rs)^2$</li>
+<li><strong>Fshr</strong> (<em>numpy.ndarray</em>) – Flux density incident at the planet’s TOA [W/m$^2$/$mu$]</li>
+<li><strong>run_count_rates</strong><strong>(</strong><strong>) </strong><strong>creates the following attributes for</strong> (<em>Calling</em>) – </li>
+<li><strong>TransitNoise instance</strong> (<em>the</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lamhr</strong> (<em>array</em>) – Wavelength [$mu$m]</li>
+<li><strong>tdhr</strong> (<em>array</em>) – Transit Depth $(Rp/Rs)^2$</li>
+<li><strong>Fshr</strong> (<em>array</em>) – Flux density incident at the planet’s TOA [W/m$^2$/$mu$]</li>
+<li><strong>cs</strong> (<em>array</em>) – Stellar photon count rate [photons/s]</li>
+<li><strong>cback</strong> (<em>array</em>) – Background photon count rate [photons/s]</li>
+<li><strong>cz</strong> (<em>array</em>) – Zodi photon count rate [photons/s]</li>
+<li><strong>cez</strong> (<em>array</em>) – Exo-zodi photon count rate [photons/s]</li>
+<li><strong>cth</strong> (<em>array</em>) – Thermal photon count rate [photons/s]</li>
+<li><strong>cD</strong> (<em>array</em>) – Dark current photon count rate [photons/s]</li>
+<li><strong>cR</strong> (<em>array</em>) – Read noise photon count rate [photons/s]</li>
+<li><strong>cmiss</strong> (<em>array</em>) – Occulted stellar photon count rate [photons/s]</li>
+<li><strong>SNR1</strong> (<em>array</em>) – S/N for one transit</li>
+<li><strong>SNRn</strong> (<em>array</em>) – S/N for <code class="docutils literal notranslate"><span class="pre">ntran</span></code> transits</li>
+<li><strong>tSNR</strong> (<em>array</em>) – Exposure time to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code> [s]</li>
+<li><strong>nSNR</strong> (<em>array</em>) – Number of transits to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code></li>
+<li><strong>lam</strong> (<em>array</em>) – Observed wavelength grid [$mu$m]</li>
+<li><strong>dlam</strong> (<em>array</em>) – Observed wavelength grid widths [$mu$m]</li>
+<li><strong>RpRs2</strong> (<em>array</em>) – Low-res transit depth</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.make_fake_data">
+<code class="descname">make_fake_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.make_fake_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a fake dataset by sampling from a Gaussian.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>SNRn</strong> (<em>array</em>) – S/N in <code class="docutils literal notranslate"><span class="pre">ntran</span></code> transits</li>
+<li><strong>obs</strong> (<em>array</em>) – Observed transit depth with noise</li>
+<li><strong>sig</strong> (<em>array</em>) – Observed uncertainties on transit depth</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.recalc_wantsnr">
+<code class="descname">recalc_wantsnr</code><span class="sig-paren">(</span><em>wantsnr=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.recalc_wantsnr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recalculate the time and number of transits required to achieve a
+user specified SNR via <cite>wantsnr</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tSNR</strong> (<em>array</em>) – Exposure time to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code> [s]</li>
+<li><strong>nSNR</strong> (<em>array</em>) – Number of transits to <code class="docutils literal notranslate"><span class="pre">wantsnr</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.plot_spectrum">
+<code class="descname">plot_spectrum</code><span class="sig-paren">(</span><em>SNR_threshold=1.0</em>, <em>Nsig=6.0</em>, <em>ax0=None</em>, <em>err_kws={'alpha': 1</em>, <em>'c': 'k'</em>, <em>'fmt': '.'}</em>, <em>plot_kws={'alpha': 0.5</em>, <em>'c': 'C4'</em>, <em>'lw': 1.0}</em>, <em>draw_box=True</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.plot_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot noised transmission spectrum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>SNR_threshold</strong> (<em>float</em>) – Threshold SNR below which do not plot</li>
+<li><strong>Nsig</strong> (<em>float</em>) – Number of standard deviations about median observed points to set
+yaxis limits</li>
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>err_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>errorbar</cite></li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+<li><strong>draw_box</strong> (<em>bool</em>) – Draw important quantities in a box?</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.plot_SNRn">
+<code class="descname">plot_SNRn</code><span class="sig-paren">(</span><em>ax0=None</em>, <em>plot_kws={'ls': 'steps-mid'}</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.plot_SNRn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the S/N on the Transit Depth as a function of wavelength.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.plot_ntran_to_wantsnr">
+<code class="descname">plot_ntran_to_wantsnr</code><span class="sig-paren">(</span><em>ax0=None</em>, <em>plot_kws={'alpha': 1.0</em>, <em>'ls': 'steps-mid'}</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.plot_ntran_to_wantsnr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the number of transits to get a SNR on the transit depth as
+a function of wavelength.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.plot_time_to_wantsnr">
+<code class="descname">plot_time_to_wantsnr</code><span class="sig-paren">(</span><em>ax0=None</em>, <em>plot_kws={'alpha': 1.0</em>, <em>'ls': 'steps-mid'}</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.plot_time_to_wantsnr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the time to get a SNR on the transit depth as
+a function of wavelength.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</li>
+<li><strong>plot_kws</strong> (<em>dic</em>) – Keyword arguments for <cite>plot</cite></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.transits.TransitNoise.plot_count_rates">
+<code class="descname">plot_count_rates</code><span class="sig-paren">(</span><em>ax0=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.TransitNoise.plot_count_rates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the photon count rate for all sources.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ax0</strong> (<cite>matplotlib.axes</cite>) – Optional axis to provide</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>fig</strong> (<cite>matplotlib.figure.Figure</cite>) – Returns a figure if <cite>ax0</cite> is <cite>None</cite></li>
+<li><strong>ax</strong> (<cite>matplotlib.axes</cite>) – Returns an axis if <cite>ax0</cite> is <cite>None</cite></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <cite>fig</cite> and <cite>ax</cite> is <code class="docutils literal notranslate"><span class="pre">ax0</span> <span class="pre">is</span> <span class="pre">None</span></code></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.transits.get_earth_trans_spectrum">
+<code class="descclassname">coronagraph.transits.</code><code class="descname">get_earth_trans_spectrum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.get_earth_trans_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the transmission spectrum of the Earth around the Sun.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>lam</strong> (<cite>numpy.ndarray</cite>) – Wavelength grid [um]</li>
+<li><strong>tdepth</strong> (<cite>numpy.ndarray</cite>) – Transit depth (Rp/Rs)^2</li>
+<li><strong>fplan</strong> (<cite>numpy.ndarray</cite>) – TOA planet flux [W/m^2/um]</li>
+<li><strong>fstar</strong> (<cite>numpy.ndarray</cite>) – Stellar flux at planet [W/m^2/um]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="imager.html" class="btn btn-neutral" title="Filter Photometry" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jacob Lustig-Yaeger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

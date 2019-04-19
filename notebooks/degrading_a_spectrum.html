@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Degrading a Spectrum to Lower Resolution &mdash; coronagraph 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coronagraph 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Examples" href="../examples.html"/>
+        <link rel="next" title="Secondary Eclipse Spectroscopy" href="eclipse_example.html"/>
+        <link rel="prev" title="Examples" href="../examples.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo1.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../examples.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Degrading a Spectrum</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Proxima-Centauri-Stellar-Spectrum">Proxima Centauri Stellar Spectrum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Optimal-Resolution-for-Observing-Earth's-O-A-band">Optimal Resolution for Observing Earth’s O<span class="math notranslate">\(_2\)</span> A-band</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="eclipse_example.html">Secondary Eclipse Spectroscopy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph/issues">Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coronagraph</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../examples.html">Examples</a> &raquo;</li>
+        
+      <li>Degrading a Spectrum to Lower Resolution</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/notebooks/degrading_a_spectrum.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 0;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Degrading-a-Spectrum-to-Lower-Resolution">
+<h1>Degrading a Spectrum to Lower Resolution<a class="headerlink" href="#Degrading-a-Spectrum-to-Lower-Resolution" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">coronagraph</span> <span class="kn">as</span> <span class="nn">cg</span>
+<span class="k">print</span><span class="p">(</span><span class="n">cg</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.1
+</pre></div></div>
+</div>
+<div class="section" id="Proxima-Centauri-Stellar-Spectrum">
+<h2>Proxima Centauri Stellar Spectrum<a class="headerlink" href="#Proxima-Centauri-Stellar-Spectrum" title="Permalink to this headline">¶</a></h2>
+<p>First, let’s grab the stellar spectral energy distribution (SED) of
+Proxima Centauri from the VPL website:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># The file is located at the following URL:</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://vpl.astro.washington.edu/spectra/stellar/proxima_cen_sed.txt&quot;</span>
+
+<span class="c1"># We can open the URL with the following</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+<span class="c1"># Read file lines</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+<span class="c1"># Remove header and extraneous info</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">25</span><span class="p">:]])[:,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span>
+
+<span class="c1"># Extract columns</span>
+<span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+<p>Now let’s set the min and max for our low res wavelength grid, use
+<code class="docutils literal notranslate"><span class="pre">construct_lam</span></code> to create the low-res wavelength grid, use
+<code class="docutils literal notranslate"><span class="pre">downbin_spec</span></code> to make a low-res spectrum, and plot it.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Set the wavelength and resolution parameters</span>
+<span class="n">lammin</span> <span class="o">=</span> <span class="mf">0.12</span>
+<span class="n">lammax</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">dl</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+<span class="c1"># Construct new low-res wavelength grid</span>
+<span class="n">wl</span><span class="p">,</span> <span class="n">dwl</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">noise_routines</span><span class="o">.</span><span class="n">construct_lam</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">,</span> <span class="n">dlam</span> <span class="o">=</span> <span class="n">dl</span><span class="p">)</span>
+
+<span class="c1"># Down-bin flux to low-res</span>
+<span class="n">flr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&gt;</span> <span class="n">lammin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&lt;</span> <span class="n">lammax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lam</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">flux</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">flr</span><span class="p">)</span>
+<span class="c1">#plt.yscale(&quot;log&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Wavelength [$\mu$m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flux [W/m$^2$/$\mu$m]&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_7_0.png" src="../_images/notebooks_degrading_a_spectrum_7_0.png" />
+</div>
+</div>
+<p>NaNs can occur when no high-resolution values exist within a given
+lower-resolution bein. How many NaNs are there?</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">flr</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0
+</pre></div></div>
+</div>
+<p>Let’s try it again now focusing on the UV with a higher resolution.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Set the wavelength and resolution parameters</span>
+<span class="n">lammin</span> <span class="o">=</span> <span class="mf">0.12</span>
+<span class="n">lammax</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="c1"># Construct new low-res wavelength grid</span>
+<span class="n">wl</span><span class="p">,</span> <span class="n">dwl</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">noise_routines</span><span class="o">.</span><span class="n">construct_lam</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+
+<span class="c1"># Down-bin flux to low-res</span>
+<span class="n">flr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">lam</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
+
+<span class="c1"># Plot</span>
+<span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&gt;</span> <span class="n">lammin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&lt;</span> <span class="n">lammax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lam</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">flux</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">flr</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Wavelength [$\mu$m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flux [W/m$^2$/$\mu$m]&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_11_0.png" src="../_images/notebooks_degrading_a_spectrum_11_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">flr</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+26
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Optimal-Resolution-for-Observing-Earth's-O-A-band">
+<h2>Optimal Resolution for Observing Earth’s O<span class="math notranslate">\(_2\)</span> A-band<a class="headerlink" href="#Optimal-Resolution-for-Observing-Earth's-O-A-band" title="Permalink to this headline">¶</a></h2>
+<p>Let’s load in the Earth’s reflectance spectrum <a class="reference external" href="http://adsabs.harvard.edu/abs/2011AsBio..11..393R">(Robinson et al.,
+2011)</a>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lamhr</span><span class="p">,</span> <span class="n">Ahr</span><span class="p">,</span> <span class="n">fstar</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">get_earth_reflect_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Now let’s isolate just the O<span class="math notranslate">\(_2\)</span> A-band.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lammin</span> <span class="o">=</span> <span class="mf">0.750</span>
+<span class="n">lammax</span> <span class="o">=</span> <span class="mf">0.775</span>
+
+<span class="c1"># Create a wavelength mask</span>
+<span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">lamhr</span> <span class="o">&gt;</span> <span class="n">lammin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lamhr</span> <span class="o">&lt;</span> <span class="n">lammax</span><span class="p">)</span>
+
+<span class="c1"># Plot the band</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lamhr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">Ahr</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Wavelength [$\mu$m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Geometric Albedo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth&#39;s O$_2$ A-Band&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_16_0.png" src="../_images/notebooks_degrading_a_spectrum_16_0.png" />
+</div>
+</div>
+<p>Define a set of resolving powers for us to loop over.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s down-bin the high-res spectrum at each <code class="docutils literal notranslate"><span class="pre">R</span></code>. For each <code class="docutils literal notranslate"><span class="pre">R</span></code> in
+the loop we will construct a new wavelength grid, down-bin the high-res
+spectrum, and plot the degraded spectrum. Let’s also save the minimum
+value in the degraded spectrum to assess how close we get to the actual
+bottom of the band.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">bottom_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+
+<span class="c1"># Loop over R</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+
+    <span class="c1"># Construct new low-res wavelength grid</span>
+    <span class="n">wl</span><span class="p">,</span> <span class="n">dwl</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">noise_routines</span><span class="o">.</span><span class="n">construct_lam</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+    <span class="c1"># Down-bin flux to low-res</span>
+    <span class="n">Alr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">Ahr</span><span class="p">,</span> <span class="n">lamhr</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
+
+    <span class="c1"># Plot</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lamhr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">Ahr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">Alr</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;steps-mid&quot;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span><span class="k">r</span>)
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">)</span>
+
+    <span class="c1"># Save bottom value</span>
+    <span class="n">bottom_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span>
+
+<span class="c1"># Finsh plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\lambda / \Delta \lambda$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Wavelength [$\mu$m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Geometric Albedo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth&#39;s O$_2$ A-Band&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_20_0.png" src="../_images/notebooks_degrading_a_spectrum_20_0.png" />
+</div>
+</div>
+<p>We can now compare the bottom value in low-res spectra to the bottom of
+the high-res spectrum.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<span class="n">bottom_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
+
+<span class="c1"># Loop over R</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+    <span class="c1"># Construct new low-res wavelength grid</span>
+    <span class="n">wl</span><span class="p">,</span> <span class="n">dwl</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">noise_routines</span><span class="o">.</span><span class="n">construct_lam</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="c1"># Down-bin flux to low-res</span>
+    <span class="n">Alr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">Ahr</span><span class="p">,</span> <span class="n">lamhr</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
+    <span class="c1"># Save bottom value</span>
+    <span class="n">bottom_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">bottom_val</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Resolving Power ($\lambda / \Delta \lambda$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Bottom of the Band Albedo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth&#39;s O$_2$ A-Band&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_22_0.png" src="../_images/notebooks_degrading_a_spectrum_22_0.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="eclipse_example.html" class="btn btn-neutral float-right" title="Secondary Eclipse Spectroscopy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../examples.html" class="btn btn-neutral" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jacob Lustig-Yaeger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

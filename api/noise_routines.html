@@ -1,0 +1,994 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Noise Routines &mdash; coronagraph 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coronagraph 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="../api.html"/>
+        <link rel="next" title="Degrade Spectra" href="degrade_spec.html"/>
+        <link rel="prev" title="Telescopes, Planets, and Stars" href="teleplanstar.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo1.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts.html">Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="count_rates.html">Coronagraph Noise Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="observe.html">Observational Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="teleplanstar.html">Telescopes, Planets, and Stars</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Noise Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph/issues">Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coronagraph</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API</a> &raquo;</li>
+        
+      <li>Noise Routines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/noise_routines.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-coronagraph.noise_routines">
+<span id="noise-routines"></span><h1>Noise Routines<a class="headerlink" href="#module-coronagraph.noise_routines" title="Permalink to this headline">¶</a></h1>
+<p>Routines for simulating coronagraph noise.</p>
+<p>Contents:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#coronagraph.noise_routines.Fstar" title="coronagraph.noise_routines.Fstar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fstar</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.Fplan" title="coronagraph.noise_routines.Fplan"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fplan</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.FpFs" title="coronagraph.noise_routines.FpFs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FpFs</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.cplan" title="coronagraph.noise_routines.cplan"><code class="xref py py-class docutils literal notranslate"><span class="pre">cplan</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.czodi" title="coronagraph.noise_routines.czodi"><code class="xref py py-class docutils literal notranslate"><span class="pre">czodi</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.cezodi" title="coronagraph.noise_routines.cezodi"><code class="xref py py-class docutils literal notranslate"><span class="pre">cezodi</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.cspeck" title="coronagraph.noise_routines.cspeck"><code class="xref py py-class docutils literal notranslate"><span class="pre">cspeck</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.cdark" title="coronagraph.noise_routines.cdark"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdark</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.cread" title="coronagraph.noise_routines.cread"><code class="xref py py-class docutils literal notranslate"><span class="pre">cread</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.ccic" title="coronagraph.noise_routines.ccic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ccic</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.ctherm" title="coronagraph.noise_routines.ctherm"><code class="xref py py-class docutils literal notranslate"><span class="pre">ctherm</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.ctherm_earth" title="coronagraph.noise_routines.ctherm_earth"><code class="xref py py-class docutils literal notranslate"><span class="pre">ctherm_earth</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.cstar" title="coronagraph.noise_routines.cstar"><code class="xref py py-class docutils literal notranslate"><span class="pre">cstar</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.f_airy" title="coronagraph.noise_routines.f_airy"><code class="xref py py-class docutils literal notranslate"><span class="pre">f_airy</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.construct_lam" title="coronagraph.noise_routines.construct_lam"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct_lam</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.set_quantum_efficiency" title="coronagraph.noise_routines.set_quantum_efficiency"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_quantum_efficiency</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.set_dark_current" title="coronagraph.noise_routines.set_dark_current"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_dark_current</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.set_read_noise" title="coronagraph.noise_routines.set_read_noise"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_read_noise</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.set_lenslet" title="coronagraph.noise_routines.set_lenslet"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_lenslet</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.set_throughput" title="coronagraph.noise_routines.set_throughput"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_throughput</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.set_atmos_throughput" title="coronagraph.noise_routines.set_atmos_throughput"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_atmos_throughput</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.exptime_element" title="coronagraph.noise_routines.exptime_element"><code class="xref py py-class docutils literal notranslate"><span class="pre">exptime_element</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.lambertPhaseFunction" title="coronagraph.noise_routines.lambertPhaseFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">lambertPhaseFunction</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.get_sky_flux" title="coronagraph.noise_routines.get_sky_flux"><code class="xref py py-class docutils literal notranslate"><span class="pre">get_sky_flux</span></code></a></li>
+<li><a class="reference internal" href="#coronagraph.noise_routines.planck" title="coronagraph.noise_routines.planck"><code class="xref py py-class docutils literal notranslate"><span class="pre">planck</span></code></a></li>
+</ul>
+<dl class="function">
+<dt id="coronagraph.noise_routines.Fstar">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">Fstar</code><span class="sig-paren">(</span><em>lam</em>, <em>Teff</em>, <em>Rs</em>, <em>d</em>, <em>AU=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.Fstar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stellar flux function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>Teff</strong> (<em>float</em>) – Stellar effective temperature [K]</li>
+<li><strong>Rs</strong> – Stellar radius [solar radii]</li>
+<li><strong>d</strong> – Distance to star [pc]</li>
+<li><strong>AU</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag that indicates d is in AU</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Fstar</strong> – Stellar flux [W/m**2/um]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.Fplan">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">Fplan</code><span class="sig-paren">(</span><em>A</em>, <em>Phi</em>, <em>Fstar</em>, <em>Rp</em>, <em>d</em>, <em>AU=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.Fplan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planetary flux function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>float</em><em> or </em><em>array-like</em>) – Planetary geometric albedo</li>
+<li><strong>Phi</strong> (<em>float</em>) – Planetary phase function</li>
+<li><strong>Fstar</strong> (<em>float</em><em> or </em><em>array-like</em>) – Stellar flux [W/m**2/um]</li>
+<li><strong>Rp</strong> (<em>float</em>) – Planetary radius [Earth radii]</li>
+<li><strong>d</strong> (<em>float</em>) – Distance to star [pc]</li>
+<li><strong>AU</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag that indicates d is in AU</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Fplan</strong> – Planetary flux [W/m**2/um]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.FpFs">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">FpFs</code><span class="sig-paren">(</span><em>A</em>, <em>Phi</em>, <em>Rp</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.FpFs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planet-star flux ratio</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>A</strong> (<em>float</em><em> or </em><em>array-like</em>) – Planetary geometric albedo</li>
+<li><strong>Phi</strong> (<em>float</em>) – Planetary phase function</li>
+<li><strong>Rp</strong> (<em>float</em>) – Planetary radius [Earth radii]</li>
+<li><strong>r</strong> (<em>float</em>) – Planetary orbital semi-major axis [AU]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>FpFs</strong> – Planet-star flux ratio</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.cstar">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cstar</code><span class="sig-paren">(</span><em>q</em>, <em>fpa</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>Fstar</em>, <em>D</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cstar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stellar photon count rate (not used with coronagraph)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>fpa</strong> (<em>float</em>) – Fraction of planetary light that falls within photometric aperture</li>
+<li><strong>T</strong> (<em>float</em>) – Telescope and system throughput</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>Fplan</strong> (<em>float</em><em> or </em><em>array-like</em>) – Planetary flux [W/m**2/um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cs</strong> – Stellar photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.cplan">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cplan</code><span class="sig-paren">(</span><em>q</em>, <em>fpa</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>Fplan</em>, <em>D</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cplan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exoplanetary photon count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>fpa</strong> (<em>float</em>) – Fraction of planetary light that falls within photometric aperture</li>
+<li><strong>T</strong> (<em>float</em>) – Telescope and system throughput</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>Fplan</strong> (<em>float</em><em> or </em><em>array-like</em>) – Planetary flux [W/m**2/um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cplan</strong> – Exoplanetary photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.czodi">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">czodi</code><span class="sig-paren">(</span><em>q</em>, <em>X</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>D</em>, <em>Mzv</em>, <em>SUN=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.czodi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zodiacal light count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>X</strong> (<em>float</em>) – Size of photometric aperture (lambda/D)</li>
+<li><strong>T</strong> (<em>float</em>) – Telescope and system throughput</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>MzV</strong> (<em>float</em>) – Zodiacal light surface brightness [mag/arcsec**2]</li>
+<li><strong>SUN</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use solar spectrum (Not Implemented)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>czodi</strong> – Zodiacal light photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.cezodi">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cezodi</code><span class="sig-paren">(</span><em>q</em>, <em>X</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>D</em>, <em>r</em>, <em>Fstar</em>, <em>Nez</em>, <em>Mezv</em>, <em>SUN=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cezodi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exozodiacal light count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>X</strong> (<em>float</em>) – Size of photometric aperture (lambda/D)</li>
+<li><strong>T</strong> (<em>float</em>) – System throughput</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>r</strong> (<em>float</em>) – Planetary orbital semi-major axis [AU]</li>
+<li><strong>Fstar</strong> (<em>array-like</em>) – Host star spectrum <em>at 1 au</em> (W/m**2/um)</li>
+<li><strong>Nez</strong> (<em>float</em>) – Number of exozodis in exoplanetary disk</li>
+<li><strong>MezV</strong> (<em>float</em>) – Exozodiacal light surface brightness [mag/arcsec**2]</li>
+<li><strong>SUN</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use solar spectrum (Not Implemented)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cezodi</strong> – Exozodiacal light photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.cspeck">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cspeck</code><span class="sig-paren">(</span><em>q</em>, <em>T</em>, <em>C</em>, <em>lam</em>, <em>dlam</em>, <em>Fstar</em>, <em>D</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cspeck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Speckle count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>T</strong> (<em>float</em>) – System throughput</li>
+<li><strong>C</strong> (<em>float</em><em>, </em><em>optional</em>) – Coronagraph design contrast</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>Fstar</strong> (<em>float</em><em> or </em><em>array-like</em>) – Host star spectrum at distance of planet (TOA) [W/m**2/um]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cspeck</strong> – Speckle photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.cdark">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cdark</code><span class="sig-paren">(</span><em>De</em>, <em>X</em>, <em>lam</em>, <em>D</em>, <em>theta</em>, <em>DNhpix</em>, <em>IMAGE=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cdark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dark current photon count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>De</strong> (<em>float</em><em>, </em><em>optional</em>) – Dark current [counts/s]</li>
+<li><strong>X</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of photometric aperture ( * lambda / diam)</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>theta</strong> – Angular size of lenslet or pixel [arcsec**2]</li>
+<li><strong>DNHpix</strong> (<em>float</em><em>, </em><em>optional</em>) – Number of horizontal/spatial pixels for dispersed spectrum</li>
+<li><strong>IMAGE</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to indicate imaging mode (not IFS)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dark current photon count rate (s**-1)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">cdark</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.cread">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cread</code><span class="sig-paren">(</span><em>Re</em>, <em>X</em>, <em>lam</em>, <em>D</em>, <em>theta</em>, <em>DNhpix</em>, <em>Dtmax</em>, <em>IMAGE=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read noise count rate (assuming detector has a maximum exposure time)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Re</strong> (<em>float</em><em> or </em><em>array-like</em>) – Read noise counts per pixel</li>
+<li><strong>X</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of photometric aperture ( * lambda / diam)</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>theta</strong> – Angular size of lenslet or pixel [arcsec**2]</li>
+<li><strong>Dtmax</strong> (<em>float</em><em>, </em><em>optional</em>) – Detector maximum exposure time [hours]</li>
+<li><strong>IMAGE</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to indicate imaging mode (not IFS)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cread</strong> – Read noise photon count rate (s**-1)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.ccic">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">ccic</code><span class="sig-paren">(</span><em>Rc</em>, <em>cscene</em>, <em>X</em>, <em>lam</em>, <em>D</em>, <em>theta</em>, <em>DNhpix</em>, <em>Dtmax</em>, <em>IMAGE=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.ccic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clock induced charge count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Rc</strong> (<em>float</em><em> or </em><em>array-like</em>) – Clock induced charge counts/pixel/photon</li>
+<li><strong>cscene</strong> (<em>float</em><em> or </em><em>array-like</em>) – Photon count rate of brightest pixel in the scene [counts/s]</li>
+<li><strong>X</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of photometric aperture ( * lambda / diam)</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>theta</strong> – Angular size of lenslet or pixel [arcsec**2]</li>
+<li><strong>Dtmax</strong> (<em>float</em><em>, </em><em>optional</em>) – Detector maximum exposure time [hours]</li>
+<li><strong>IMAGE</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to indicate imaging mode (not IFS)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Clock induced charge count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ccic</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.f_airy">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">f_airy</code><span class="sig-paren">(</span><em>X</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.f_airy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fraction of Airy power contained in square or circular aperture</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>X</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of photometric aperture ( * lambda / diam)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>f_airy</strong> – Fraction of planetary light that falls within photometric aperture X*lambda/D</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.ctherm">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">ctherm</code><span class="sig-paren">(</span><em>q</em>, <em>X</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>D</em>, <em>Tsys</em>, <em>emis</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.ctherm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Telescope thermal count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>X</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of photometric aperture ( * lambda / diam)</li>
+<li><strong>T</strong> (<em>float</em>) – System throughput</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>Tsys</strong> (<em>float</em>) – Telescope mirror temperature [K]</li>
+<li><strong>emis</strong> (<em>float</em>) – Effective emissivity for the observing system (of order unity)</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ctherm</strong> – Telescope thermal photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.ctherm_earth">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">ctherm_earth</code><span class="sig-paren">(</span><em>q</em>, <em>X</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>D</em>, <em>Itherm</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.ctherm_earth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Earth atmosphere thermal count rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>q</strong> (<em>float</em><em> or </em><em>array-like</em>) – Quantum efficiency</li>
+<li><strong>X</strong> (<em>float</em><em>, </em><em>optional</em>) – Width of photometric aperture ( * lambda / diam)</li>
+<li><strong>T</strong> (<em>float</em>) – System throughput</li>
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Spectral element width [um]</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>Itherm</strong> (<em>float</em><em> or </em><em>array-like</em>) – Earth thermal intensity [W/m**2/um/sr]</li>
+<li><strong>CIRC</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to use a circular aperture</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cthe</strong> – Earth atmosphere thermal photon count rate [1/s]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float or array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.lambertPhaseFunction">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">lambertPhaseFunction</code><span class="sig-paren">(</span><em>alpha</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.lambertPhaseFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Lambertian Phase Function from the phase angle</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>alpha</strong> (<em>float</em>) – Planet phase angle [deg]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>Phi</strong> – Lambertian phase function</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.construct_lam">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">construct_lam</code><span class="sig-paren">(</span><em>lammin</em>, <em>lammax</em>, <em>Res=None</em>, <em>dlam=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.construct_lam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a wavelength grid by specifying either a resolving power (<cite>Res</cite>)
+or a bandwidth (<cite>dlam</cite>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lammin</strong> (<em>float</em>) – Minimum wavelength [microns]</li>
+<li><strong>lammax</strong> (<em>float</em>) – Maximum wavelength [microns]</li>
+<li><strong>Res</strong> (<em>float</em><em>, </em><em>optional</em>) – Resolving power (lambda / delta-lambda)</li>
+<li><strong>dlam</strong> (<em>float</em><em>, </em><em>optional</em>) – Spectral element width for evenly spaced grid [microns]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>lam</strong> (<em>float or array-like</em>) – Wavelength [um]</li>
+<li><strong>dlam</strong> (<em>float or array-like</em>) – Spectral element width [um]</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.set_quantum_efficiency">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">set_quantum_efficiency</code><span class="sig-paren">(</span><em>lam</em>, <em>qe</em>, <em>NIR=False</em>, <em>qe_nir=0.9</em>, <em>vod=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.set_quantum_efficiency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set instrumental quantum efficiency</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [um]</li>
+<li><strong>qe</strong> (<em>float</em>) – Detector quantum efficiency</li>
+<li><strong>NIR</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use near-IR detector proporties</li>
+<li><strong>q_nir</strong> (<em>float</em><em>, </em><em>optional</em>) – NIR quantum efficiency</li>
+<li><strong>vod</strong> (<em>bool</em><em>, </em><em>optional</em>) – “Valley of Death” red QE parameterization from Robinson et al. (2016)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>q</strong> – Wavelength-dependent instrumental quantum efficiency</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.set_dark_current">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">set_dark_current</code><span class="sig-paren">(</span><em>lam</em>, <em>De</em>, <em>lammax</em>, <em>Tdet</em>, <em>NIR=False</em>, <em>De_nir=0.001</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.set_dark_current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set dark current grid as a function of wavelength</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>array-like</em>) – Wavelength grid [microns]</li>
+<li><strong>De</strong> (<em>float</em>) – Dark current count rate per pixel (s**-1)</li>
+<li><strong>lammax</strong> (<em>float</em>) – Maximum wavelength</li>
+<li><strong>Tdet</strong> (<em>float</em>) – Detector Temperature [K]</li>
+<li><strong>NIR</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use near-IR detector proporties</li>
+<li><strong>De_nir</strong> (<em>float</em><em>, </em><em>optional</em>) – NIR minimum dark current count rate per pixel</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>De</strong> – Dark current as a function of wavelength</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.set_read_noise">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">set_read_noise</code><span class="sig-paren">(</span><em>lam</em>, <em>Re</em>, <em>NIR=False</em>, <em>Re_nir=2.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.set_read_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set read noise grid as a function of wavelength</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>array-like</em>) – Wavelength grid [microns]</li>
+<li><strong>Re</strong> (<em>float</em>) – Read noise counts per pixel (s**-1)</li>
+<li><strong>NIR</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use near-IR detector proporties</li>
+<li><strong>Re_nir</strong> (<em>float</em><em>, </em><em>optional</em>) – NIR read noise counts per pixel</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Re</strong> – Read noise as a function of wavelength</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array-like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.set_lenslet">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">set_lenslet</code><span class="sig-paren">(</span><em>lam</em>, <em>lammin</em>, <em>diam</em>, <em>X</em>, <em>NIR=True</em>, <em>lammin_nir=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.set_lenslet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the angular size of the lenslet</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>ndarray</em>) – Wavelength grid</li>
+<li><strong>lammin</strong> (<em>float</em>) – Minimum wavelength</li>
+<li><strong>diam</strong> (<em>float</em>) – Telescope Diameter [m]</li>
+<li><strong>X</strong> (<em>float</em>) – Width of photometric aperture (<code class="docutils literal notranslate"><span class="pre">*lambda/diam</span></code>)</li>
+<li><strong>NIR</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Use near-IR detector proporties</li>
+<li><strong>lammin_nir</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – Wavelength min to use for NIR lenslet size</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>theta</strong> – Angular size of lenslet</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.set_throughput">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">set_throughput</code><span class="sig-paren">(</span><em>lam</em>, <em>Tput</em>, <em>diam</em>, <em>sep</em>, <em>IWA</em>, <em>OWA</em>, <em>lammin</em>, <em>FIX_OWA=False</em>, <em>SILENT=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.set_throughput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set wavelength-dependent telescope throughput</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>ndarray</em>) – Wavelength grid</li>
+<li><strong>Tput</strong> (<em>float</em>) – Throughput</li>
+<li><strong>diam</strong> (<em>float</em>) – Telescope diameter [m]</li>
+<li><strong>sep</strong> (<em>float</em>) – Planet-star separation in radians</li>
+<li><strong>IWA</strong> (<em>float</em>) – Inner working angle</li>
+<li><strong>OWA</strong> (<em>float</em>) – Outer working angle</li>
+<li><strong>lammin</strong> (<em>float</em>) – Minimum wavelength</li>
+<li><strong>FIX_OWA</strong> (<em>bool</em><em>, </em><em>optional</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>SILENT</strong> – Suppress printing</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool, optional</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.set_atmos_throughput">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">set_atmos_throughput</code><span class="sig-paren">(</span><em>lam</em>, <em>dlam</em>, <em>convolve</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.set_atmos_throughput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use pre-computed Earth atmospheric transmission to set throughput term for
+radiation through the atmosphere</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>ndarray</em>) – Wavelength grid</li>
+<li><strong>dlam</strong> (<em>ndarray</em>) – Wavelength bin width grid</li>
+<li><strong>convolve</strong> (<em>func</em>) – Function used to degrade/downbin spectrum</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Tatmos</strong> – Atmospheric throughput as a function of wavelength</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.get_sky_flux">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">get_sky_flux</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.get_sky_flux" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.exptime_element">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">exptime_element</code><span class="sig-paren">(</span><em>lam</em>, <em>cp</em>, <em>cn</em>, <em>wantsnr</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.exptime_element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the exposure time (in hours) to get a specified signal-to-noise</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>ndarray</em>) – Wavelength grid</li>
+<li><strong>cp</strong> (<em>ndarray</em>) – Planetary photon count rate [s**-1]</li>
+<li><strong>cn</strong> (<em>ndarray</em>) – Noise photon count rate [s**-1]</li>
+<li><strong>wantsnr</strong> (<em>float</em>) – Signal-to-noise required in each spectral element</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DtSNR</strong> – Exposure time necessary to get specified SNR [hours]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.noise_routines.planck">
+<code class="descclassname">coronagraph.noise_routines.</code><code class="descname">planck</code><span class="sig-paren">(</span><em>temp</em>, <em>wav</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.planck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planck blackbody function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>temp</strong> (<em>float</em><em> or </em><em>array-like</em>) – Temperature [K]</li>
+<li><strong>wav</strong> (<em>float</em><em> or </em><em>array-like</em>) – Wavelength [microns]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">B_lambda [W/m^2/um/sr]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="degrade_spec.html" class="btn btn-neutral float-right" title="Degrade Spectra" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="teleplanstar.html" class="btn btn-neutral" title="Telescopes, Planets, and Stars" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jacob Lustig-Yaeger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

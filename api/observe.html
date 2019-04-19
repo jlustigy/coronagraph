@@ -1,0 +1,564 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Observational Routines &mdash; coronagraph 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coronagraph 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="../api.html"/>
+        <link rel="next" title="Telescopes, Planets, and Stars" href="teleplanstar.html"/>
+        <link rel="prev" title="Coronagraph Noise Modeling" href="count_rates.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo1.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts.html">Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="count_rates.html">Coronagraph Noise Modeling</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Observational Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="teleplanstar.html">Telescopes, Planets, and Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph/issues">Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coronagraph</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API</a> &raquo;</li>
+        
+      <li>Observational Routines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/observe.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-coronagraph.observe">
+<span id="observational-routines"></span><h1>Observational Routines<a class="headerlink" href="#module-coronagraph.observe" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="coronagraph.observe.get_earth_reflect_spectrum">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">get_earth_reflect_spectrum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.get_earth_reflect_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the geometric albedo spectrum of the Earth around the Sun.
+This was produced by Tyler Robinson using the VPL Earth Model
+(Robinson et al., 2011)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>lamhr</strong> (<em>numpy.ndarray</em>)</li>
+<li><strong>Ahr</strong> (<em>numpy.ndarray</em>)</li>
+<li><strong>fstar</strong> (<em>numpy.ndarray</em>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.planetzoo_observation">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">planetzoo_observation</code><span class="sig-paren">(</span><em>name='earth'</em>, <em>telescope=&lt;coronagraph.teleplanstar.Telescope object&gt;</em>, <em>planet=&lt;coronagraph.teleplanstar.Planet object&gt;</em>, <em>itime=10.0</em>, <em>planetdir='/Users/Jake/Projects/coronagraph/coronagraph/planets/'</em>, <em>plot=False</em>, <em>savedata=False</em>, <em>saveplot=False</em>, <em>ref_lam=0.55</em>, <em>THERMAL=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.planetzoo_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses py:obj:<cite>coronagraph</cite> to observe Solar System planets as if they
+were exoplanets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em><em> (</em><em>optional</em><em>)</em>) – Name of the planet (e.g. “venus”, “earth”, “archean”, “mars”,
+“earlymars”, “hazyarchean”, “earlyvenus”, “jupiter”, “saturn”, “uranus”,
+“neptune”)</li>
+<li><strong>telescope</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><em>Telescope</em></a><em> (</em><em>optional</em><em>)</em>) – Telescope object to be used for observation</li>
+<li><strong>planet</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><em>Planet</em></a><em> (</em><em>optional</em><em>)</em>) – Planet object to be used for observation</li>
+<li><strong>itime</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – Integration time (hours)</li>
+<li><strong>planetdir</strong> (<em>str</em>) – Location of planets/ directory</li>
+<li><strong>plot</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Make plot flag</li>
+<li><strong>savedata</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Save output as data file</li>
+<li><strong>saveplot</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Save plot as PDF</li>
+<li><strong>ref_lam</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – Wavelength at which SNR is computed</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>lam</strong> (<em>array</em>) – Observed wavelength array (microns)</li>
+<li><strong>spec</strong> (<em>array</em>) – Observed reflectivity spectrum</li>
+<li><strong>sig</strong> (<em>array</em>) – Observed 1-sigma error bars on spectrum</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">coronagraph.observe</span> <span class="k">import</span> <span class="n">planetzoo_observation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lam</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">planetzoo_observation</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;venus&quot;</span><span class="p">,</span> <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<img alt="../_images/observe-1.png" src="../_images/observe-1.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lam</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">planetzoo_observation</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;earth&quot;</span><span class="p">,</span> <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<img alt="../_images/observe-2.png" src="../_images/observe-2.png" />
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lam</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="n">planetzoo_observation</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;mars&quot;</span><span class="p">,</span> <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-center">
+<img alt="../_images/observe-3.png" src="../_images/observe-3.png" />
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.generate_observation">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">generate_observation</code><span class="sig-paren">(</span><em>wlhr</em>, <em>Ahr</em>, <em>solhr</em>, <em>itime</em>, <em>telescope</em>, <em>planet</em>, <em>star</em>, <em>ref_lam=0.55</em>, <em>tag=''</em>, <em>plot=True</em>, <em>saveplot=False</em>, <em>savedata=False</em>, <em>THERMAL=False</em>, <em>wantsnr=10</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.generate_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic wrapper function for <cite>count_rates</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>wlhr</strong> (<em>float</em>) – Wavelength array (microns)</li>
+<li><strong>Ahr</strong> (<em>float</em>) – Geometric albedo spectrum array</li>
+<li><strong>itime</strong> (<em>float</em>) – Integration time (hours)</li>
+<li><strong>telescope</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><em>Telescope</em></a>) – Telescope object</li>
+<li><strong>planet</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><em>Planet</em></a>) – Planet object</li>
+<li><strong>star</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Star" title="coronagraph.teleplanstar.Star"><em>Star</em></a>) – Star object</li>
+<li><strong>tag</strong> (<em>string</em>) – ID for output files</li>
+<li><strong>plot</strong> (<em>boolean</em>) – Set to True to make plot</li>
+<li><strong>saveplot</strong> (<em>boolean</em>) – Set to True to save the plot as a PDF</li>
+<li><strong>savedata</strong> (<em>boolean</em>) – Set to True to save data file of observation</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>lam</strong> (<em>array</em>) – Wavelength grid for observed spectrum</li>
+<li><strong>dlam</strong> (<em>array</em>) – Wavelength grid widths for observed spectrum</li>
+<li><strong>A</strong> (<em>array</em>) – Low res albedo spectrum</li>
+<li><strong>spec</strong> (<em>array</em>) – Observed albedo spectrum</li>
+<li><strong>sig</strong> (<em>array</em>) – One sigma errorbars on albedo spectrum</li>
+<li><strong>SNR</strong> (<em>array</em>) – SNR in each spectral element</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If <cite>saveplot=True</cite> then plot will be saved
+If <cite>savedata=True</cite> then data will be saved</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.plot_coronagraph_spectrum">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">plot_coronagraph_spectrum</code><span class="sig-paren">(</span><em>wl</em>, <em>ofrat</em>, <em>sig</em>, <em>itime</em>, <em>d</em>, <em>ref_lam</em>, <em>SNR</em>, <em>truth=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>title=''</em>, <em>save=False</em>, <em>tag=''</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.plot_coronagraph_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot synthetic data from the coronagraph model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>wl</strong> (<em>array-like</em>) – Wavelength grid [microns]</li>
+<li><strong>ofrat</strong> (<em>array-like</em>) – Observed contrast ratio (with noise applied)</li>
+<li><strong>sig</strong> (<em>array-like</em>) – One-sigma errors on <code class="docutils literal notranslate"><span class="pre">ofrat</span></code></li>
+<li><strong>itime</strong> (<em>float</em>) – Integration time for calculated observation [hours]</li>
+<li><strong>d</strong> (<em>float</em>) – Distance to system [pc]</li>
+<li><strong>ref_lam</strong> (<em>float</em>) – Reference wavelength [microns]</li>
+<li><strong>SNR</strong> (<em>array</em>) – Signal-to-noise</li>
+<li><strong>truth</strong> (<em>array-like</em><em> (</em><em>optional</em><em>)</em>) – True contrast ratio</li>
+<li><strong>xlim</strong> (<em>list</em><em> (</em><em>optional</em><em>)</em>) – Plot x-axis limits</li>
+<li><strong>ylim</strong> (<em>list</em><em> (</em><em>optional</em><em>)</em>) – Plot y-axis limits</li>
+<li><strong>title</strong> (<em>str</em><em> (</em><em>optional</em><em>)</em>) – Plot title and saved plot name</li>
+<li><strong>save</strong> (<em>bool</em><em> (</em><em>optional</em><em>)</em>) – Set to save plot</li>
+<li><strong>tag</strong> (<em>str</em><em> (</em><em>optional</em><em>)</em>) – String to append to saved file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>fig</strong> (<em>matplotlib.Figure</em>)</li>
+<li><strong>ax</strong> (<em>matplotlib.Axis</em>)</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only returns <code class="docutils literal notranslate"><span class="pre">fig,</span> <span class="pre">ax</span></code> if <code class="docutils literal notranslate"><span class="pre">save</span> <span class="pre">=</span> <span class="pre">False</span></code></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.process_noise">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">process_noise</code><span class="sig-paren">(</span><em>Dt</em>, <em>Cratio</em>, <em>cp</em>, <em>cb</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.process_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes SNR, noised data, and error on noised data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Dt</strong> (<em>float</em>) – Telescope integration time in seconds</li>
+<li><strong>Cratio</strong> (<em>array</em>) – Planet/Star flux ratio in each spectral bin</li>
+<li><strong>cp</strong> (<em>array</em>) – Planet Photon count rate in each spectral bin</li>
+<li><strong>cb</strong> (<em>array</em>) – Background Photon count rate in each spectral bin</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>cont</strong> (<em>array</em>) – Noised Planet/Star flux ratio in each spectral bin</li>
+<li><strong>sigma</strong> (<em>array</em>) – One-sigma errors on flux ratio in each spectral bin</li>
+<li><strong>SNR</strong> (<em>array</em>) – Signal-to-noise ratio in each spectral bin</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.random_draw">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">random_draw</code><span class="sig-paren">(</span><em>val</em>, <em>sig</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.random_draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw fake data points from model <code class="docutils literal notranslate"><span class="pre">val</span></code> with errors <code class="docutils literal notranslate"><span class="pre">sig</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.interp_cont_over_band">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">interp_cont_over_band</code><span class="sig-paren">(</span><em>lam</em>, <em>cp</em>, <em>icont</em>, <em>iband</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.interp_cont_over_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate the continuum of a spectrum over a masked absorption or emission
+band.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lam</strong> (<em>array</em>) – Wavelength grid (abscissa)</li>
+<li><strong>cp</strong> (<em>array</em>) – Planet photon count rates or any spectrum</li>
+<li><strong>icont</strong> (<em>list</em>) – Indicies of continuum (neighboring points)</li>
+<li><strong>iband</strong> (<em>list</em>) – Indicies of spectral feature (the band)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ccont</strong> – Continuum planet photon count rates across spectral feature, where
+len(ccont) == len(iband)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.exptime_band">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">exptime_band</code><span class="sig-paren">(</span><em>cp</em>, <em>ccont</em>, <em>cb</em>, <em>iband</em>, <em>SNR=5.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.exptime_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calc the exposure time necessary to get a given S/N on a molecular band
+following Eqn 7 from Robinson et al. 2016.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cp</strong> – Planet count rate</li>
+<li><strong>ccont</strong> – Continuum count rate</li>
+<li><strong>cb</strong> – Background count rate</li>
+<li><strong>iband</strong> – Indicies of molecular band</li>
+<li><strong>SNR</strong> – Desired signal-to-noise ratio on molecular band</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>texp</strong> – Telescope exposure time [hrs]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="coronagraph.observe.plot_interactive_band">
+<code class="descclassname">coronagraph.observe.</code><code class="descname">plot_interactive_band</code><span class="sig-paren">(</span><em>lam</em>, <em>Cratio</em>, <em>cp</em>, <em>cb</em>, <em>itime=None</em>, <em>SNR=5.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.plot_interactive_band" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes an interactive spectrum plot for the user to identify all observed
+spectral points that make up a molecular band. Once the plot is active,
+press ‘c’ then select neighboring points in the Continuum, press ‘b’ then
+select all points in the Band, then press ‘d’ to perform the calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lam</strong> (<em>array</em>) – Wavelength grid</li>
+<li><strong>Cratio</strong> (<em>array</em>) – Planet-to-star flux contrast ratio</li>
+<li><strong>cp</strong> (<em>array</em>) – Planetary photon count rate</li>
+<li><strong>cb</strong> (<em>array</em>) – Background photon count rate</li>
+<li><strong>itime</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – Fiducial exposure time for which to calculate the SNR</li>
+<li><strong>SNR</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – Fiducial SNR for which to calculate the exposure time</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="teleplanstar.html" class="btn btn-neutral float-right" title="Telescopes, Planets, and Stars" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="count_rates.html" class="btn btn-neutral" title="Coronagraph Noise Modeling" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jacob Lustig-Yaeger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

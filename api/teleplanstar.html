@@ -1,0 +1,448 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Telescopes, Planets, and Stars &mdash; coronagraph 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coronagraph 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="../api.html"/>
+        <link rel="next" title="Noise Routines" href="noise_routines.html"/>
+        <link rel="prev" title="Observational Routines" href="observe.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo1.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts.html">Scripts</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="count_rates.html">Coronagraph Noise Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="observe.html">Observational Routines</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Telescopes, Planets, and Stars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph/issues">Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coronagraph</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../api.html">API</a> &raquo;</li>
+        
+      <li>Telescopes, Planets, and Stars</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/teleplanstar.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="module-coronagraph.teleplanstar">
+<span id="telescopes-planets-and-stars"></span><h1>Telescopes, Planets, and Stars<a class="headerlink" href="#module-coronagraph.teleplanstar" title="Permalink to this headline">¶</a></h1>
+<p>Telescope, Planet, and Star classes.</p>
+<dl class="class">
+<dt id="coronagraph.teleplanstar.Telescope">
+<em class="property">class </em><code class="descclassname">coronagraph.teleplanstar.</code><code class="descname">Telescope</code><span class="sig-paren">(</span><em>mode='IFS'</em>, <em>lammin=0.3</em>, <em>lammax=2.0</em>, <em>R=70.0</em>, <em>Tput=0.2</em>, <em>D=8.0</em>, <em>Tsys=260.0</em>, <em>Tdet=50.0</em>, <em>IWA=0.5</em>, <em>OWA=30000.0</em>, <em>emis=0.9</em>, <em>C=1e-10</em>, <em>De=0.0001</em>, <em>DNHpix=3.0</em>, <em>Re=0.1</em>, <em>Rc=0.0</em>, <em>Dtmax=1.0</em>, <em>X=0.7</em>, <em>q=0.9</em>, <em>filter_wheel=None</em>, <em>aperture='circular'</em>, <em>A_collect=None</em>, <em>Tput_lam=None</em>, <em>qe_lam=None</em>, <em>lammin_lenslet=None</em>, <em>diam_circumscribed=None</em>, <em>diam_inscribed=None</em>, <em>lam=None</em>, <em>dlam=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Telescope" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to represent a telescope object and all design specifications
+therein</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mode</strong> (<em>str</em>) – Telescope observing modes: ‘IFS’, ‘Imaging’</li>
+<li><strong>lammin</strong> (<em>float</em>) – Minimum wavelength (um)</li>
+<li><strong>lammax</strong> (<em>float</em>) – Maximum wavelength (um)</li>
+<li><strong>R</strong> (<em>float</em>) – Spectral resolution (lambda / delta-lambda)</li>
+<li><strong>Tsys</strong> (<em>float</em>) – Telescope temperature (K)</li>
+<li><strong>D</strong> (<em>float</em>) – Telescope diameter (m)</li>
+<li><strong>emis</strong> (<em>float</em>) – Telescope emissivity</li>
+<li><strong>IWA</strong> (<em>float</em>) – Inner Working Angle (lambda/D)</li>
+<li><strong>OWA</strong> (<em>float</em>) – Outer Working Angle (lambda/D)</li>
+<li><strong>Tput</strong> (<em>float</em>) – Telescope throughput</li>
+<li><strong>C</strong> (<em>float</em>) – Raw Contrast</li>
+<li><strong>De</strong> (<em>float</em>) – Dark current (s**-1)</li>
+<li><strong>DNHpix</strong> (<em>float</em>) – Horizontal pixel spread of IFS spectrum</li>
+<li><strong>Re</strong> (<em>float</em>) – Read noise per pixel</li>
+<li><strong>Rc</strong> (<em>float</em><em>, </em><em>optional</em>) – Clock induced charge [counts/pixel/photon]</li>
+<li><strong>Dtmax</strong> (<em>float</em>) – Maximum exposure time (hr)</li>
+<li><strong>X</strong> (<em>float</em>) – Size of photometric aperture (lambda/D)</li>
+<li><strong>q</strong> (<em>float</em>) – Quantum efficiency</li>
+<li><strong>filter_wheel</strong> (<a class="reference internal" href="imager.html#coronagraph.imager.Wheel" title="coronagraph.imager.Wheel"><em>Wheel</em></a><em> (</em><em>optional</em><em>)</em>) – Wheel object containing imaging filters</li>
+<li><strong>aperture</strong> (<em>str</em>) – Aperture type (“circular” or “square”)</li>
+<li><strong>A_collect</strong> (<em>float</em>) – Mirror collecting area (m**2)</li>
+<li><strong>diam_circumscribed</strong> (<em>float</em><em>, </em><em>optional</em>) – Circumscribed telescope diameter [m] used for IWA and OWA (uses <cite>diam</cite>
+if <cite>None</cite> provided)</li>
+<li><strong>diam_inscribed</strong> (<em>float</em><em>, </em><em>optional</em>) – Inscribed telescope diameter [m] used for lenslet calculations
+(uses <cite>diam</cite> if <cite>None</cite> provided)</li>
+<li><strong>Tput_lam</strong> (<em>tuple of arrays</em>) – Wavelength-dependent throughput e.g. <code class="docutils literal notranslate"><span class="pre">(wls,</span> <span class="pre">tputs)</span></code>. Note that if
+<code class="docutils literal notranslate"><span class="pre">Tput_lam</span></code> is used the end-to-end throughput will equal the
+convolution of <code class="docutils literal notranslate"><span class="pre">Tput_lam[1]</span></code> with <code class="docutils literal notranslate"><span class="pre">Tput</span></code>.</li>
+<li><strong>qe_lam</strong> (<em>tuple of arrays</em>) – Wavelength-dependent throughput e.g. <code class="docutils literal notranslate"><span class="pre">(wls,</span> <span class="pre">qe)</span></code>. Note that if
+<code class="docutils literal notranslate"><span class="pre">qe_lam</span></code> is used the total quantum efficiency will equal the
+convolution of <code class="docutils literal notranslate"><span class="pre">qe_lam[1]</span></code> with <code class="docutils literal notranslate"><span class="pre">q</span></code>.</li>
+<li><strong>lammin_lenslet</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum wavelength to use for lenslet calculation (default is <code class="docutils literal notranslate"><span class="pre">lammin</span></code>)</li>
+<li><strong>lam</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Wavelength grid for spectrograph [microns] (uses <code class="docutils literal notranslate"><span class="pre">lammin</span></code>, <code class="docutils literal notranslate"><span class="pre">lammax</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">resolution</span></code> to determine if <code class="docutils literal notranslate"><span class="pre">None</span></code> provided)</li>
+<li><strong>dlam</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Wavelength grid <cite>widths</cite> for spectrograph [microns] (uses <code class="docutils literal notranslate"><span class="pre">lammin</span></code>, <code class="docutils literal notranslate"><span class="pre">lammax</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">resolution</span></code> to determine if <code class="docutils literal notranslate"><span class="pre">None</span></code> provided)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="coronagraph.teleplanstar.Telescope.default_luvoir">
+<code class="descname">default_luvoir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Telescope.default_luvoir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize telescope object using current LUVOIR parameters (Not decided!)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.teleplanstar.Telescope.default_habex">
+<code class="descname">default_habex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Telescope.default_habex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize telescope object using current HabEx parameters (Not decided!)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="coronagraph.teleplanstar.Telescope.default_wfirst">
+<code class="descname">default_wfirst</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Telescope.default_wfirst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize telescope object using current WFIRST parameters (Not decided!)</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt>
+<em class="property">classmethod </em><code class="descname">default_luvoir</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt>
+<em class="property">classmethod </em><code class="descname">default_habex</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt>
+<em class="property">classmethod </em><code class="descname">default_wfirst</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="coronagraph.teleplanstar.Telescope.mode">
+<code class="descname">mode</code><a class="headerlink" href="#coronagraph.teleplanstar.Telescope.mode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="coronagraph.teleplanstar.Telescope.filter_wheel">
+<code class="descname">filter_wheel</code><a class="headerlink" href="#coronagraph.teleplanstar.Telescope.filter_wheel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="coronagraph.teleplanstar.Planet">
+<em class="property">class </em><code class="descclassname">coronagraph.teleplanstar.</code><code class="descname">Planet</code><span class="sig-paren">(</span><em>name='earth'</em>, <em>star='sun'</em>, <em>d=10.0</em>, <em>Nez=1.0</em>, <em>Rp=1.0</em>, <em>a=1.0</em>, <em>alpha=90.0</em>, <em>MzV=23.0</em>, <em>MezV=22.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Planet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to represent a planet and all associated parameters of the planet
+to be observed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> (<em>string</em>) – Planet name from database</li>
+<li><strong>star</strong> (<em>string</em>) – Stellar type of planet host star</li>
+<li><strong>d</strong> (<em>float</em>) – Distance to system (pc)</li>
+<li><strong>Nez</strong> (<em>float</em>) – Number of exzodis (zodis)</li>
+<li><strong>Rp</strong> (<em>float</em>) – Radius of planet (Earth Radii)</li>
+<li><strong>a</strong> (<em>float</em>) – Semi-major axis (AU)</li>
+<li><strong>alpha</strong> (<em>float</em>) – Phase angle (deg)</li>
+<li><strong>Phi</strong> (<em>float</em>) – Lambertian phase function</li>
+<li><strong>MzV</strong> (<em>float</em>) – Zodiacal light surface brightness (mag/arcsec**2)</li>
+<li><strong>MezV</strong> (<em>float</em>) – exozodiacal light surface brightness (mag/arcsec**2)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="coronagraph.teleplanstar.Planet.from_file">
+<code class="descname">from_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Planet.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize object using planet parameters in the Input file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="coronagraph.teleplanstar.Planet.alpha">
+<code class="descname">alpha</code><a class="headerlink" href="#coronagraph.teleplanstar.Planet.alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="coronagraph.teleplanstar.Planet.Phi">
+<code class="descname">Phi</code><a class="headerlink" href="#coronagraph.teleplanstar.Planet.Phi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="coronagraph.teleplanstar.Star">
+<em class="property">class </em><code class="descclassname">coronagraph.teleplanstar.</code><code class="descname">Star</code><span class="sig-paren">(</span><em>Teff=5780.0</em>, <em>Rs=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Star" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to represent the stellar host for an exoplanet observation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>Teff</strong> (<em>float</em>) – Stellar effective temperature [K]</li>
+<li><strong>Rs</strong> (<em>float</em>) – Stellar radius [Solar Radii]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="noise_routines.html" class="btn btn-neutral float-right" title="Noise Routines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="observe.html" class="btn btn-neutral" title="Observational Routines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jacob Lustig-Yaeger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

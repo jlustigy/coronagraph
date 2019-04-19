@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Summary &mdash; coronagraph 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coronagraph 0.1 documentation" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo1.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts.html">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph/issues">Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coronagraph</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Summary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/paper/paper.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+/* nice headers on first paragraph of info/warning boxes */
+.admonition .first {
+    margin: -12px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    color: #fff;
+    line-height: 1;
+    display: block;
+}
+.admonition.warning .first {
+    background: #f0b37e;
+}
+.admonition.note .first {
+    background: #6ab0de;
+}
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<hr class="docutils" />
+<p>title: ‘<code class="docutils literal notranslate"><span class="pre">coronagraph</span></code>: Telescope Noise Modeling for Exoplanets in Python’
+tags:</p>
+<ul class="simple">
+<li>Python</li>
+<li>Astronomy</li>
+<li>Exoplanets</li>
+<li>Telescopes
+authors:</li>
+<li>name: Jacob Lustig-Yaeger
+orcid: 0000-0002-0746-1980
+affiliation: 1</li>
+<li>name: Tyler Robinson
+orcid: 0000-0002-3196-414X
+affiliation: 2</li>
+<li>name: Giada Arney
+orcid: 0000-0001-6285-267X
+affiliation: 3
+affiliations:</li>
+<li>name: University of Washington
+index: 1</li>
+<li>name: Northern Arizona State University
+index: 2</li>
+<li>name: NASA Goddard Space Flight Center
+index: 3
+date:
+bibliography: paper.bib</li>
+</ul>
+<hr class="docutils" />
+<div class="section" id="summary">
+<h1>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> is an open-source Python package for generalized telescope noise
+modeling for extrasolar planet (exoplanet) science. This package is based on
+Interactive Data Language (IDL) code originally developed by T. Robinson<span class="raw-html-m2r"><br></span>
+[&#64;coronagraph_noise_github], and described in detail with science applications
+in [&#64;Robinson2016].</p>
+<p>Briefly, <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> uses analytic relations to calculate the photon count
+rates for a variety of astrophysical, telescope, and
+instrumental noise sources. These include photons from
+coronagraph speckles, zodiacal and exozodiacal dust, telescope thermal emission,
+dark current, and read noise. The model also includes Earth’s atmospheric
+transmission and emission spectrum from the UV through the near IR for
+ground-based telescope modeling [&#64;Meadows2018]. Photons from a user-provided
+exoplanet source spectrum are compared against sources of noise to provide
+signal-to-noise ratios and synthetic observations that may be used to assess
+the exoplanet science capabilities of near- and far-term future telescopes.</p>
+<p><code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> has already been used in numerous practical science
+applications. This includes peer-reviewed work on the potential for
+direct-imaging Proxima Centauri b with ground- and space-based telescopes
+[&#64;Meadows2018], and the detectability of exoplanet aurorae on Proxima Centauri b
+[&#64;Luger2017]. The <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> model is used within NASA Goddard’s
+interactive tool <strong>Coronagraphic Spectra of Exoplanets</strong> [&#64;cron_model_nasa],<span class="raw-html-m2r"><br></span>
+and is actively being used to motivate science cases for next-generation,
+space-based, direct-imaging mission concepts [&#64;Mennesson2016; &#64;Bolcar2016].</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> package may also be used to simulate signal-to-noise ratios
+and synthetic spectra for transiting exoplanets in transmission and emission.
+The transiting exoplanet modules extend the potential science applications of
+<code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> to non-coronagraph-equipped telescopes, enabling studies
+relevant to a far-infrared surveyor mission concept [&#64;Cooray2017].</p>
+</div>
+<div class="section" id="acknowledgements">
+<h1>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h1>
+<p>This work was supported by the NASA Astrobiology Institute’s Virtual Planetary
+Laboratory under Cooperative Agreement number NNA13AA93A.</p>
+</div>
+<div class="section" id="references">
+<h1>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h1>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jacob Lustig-Yaeger.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
