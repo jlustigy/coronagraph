@@ -14,7 +14,7 @@
 Documentation
 =============
 
-Please refer to the [code documentation](https://jlustigy.github.io/coronagraph/) on Read the Docs. 
+Please refer to the [code documentation](https://jlustigy.github.io/coronagraph/) for examples, API, and more. 
 
 Installation
 ============
