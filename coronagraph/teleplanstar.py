@@ -69,13 +69,22 @@ class Telescope(object):
         Inscribed telescope diameter [m] used for lenslet calculations
         (uses `diam` if `None` provided)
     Tput_lam : tuple of arrays
-        Wavelength-dependent throughput e.g. ``(wls, tputs)``. Note that if
+        Wavelength-dependent throughput e.g. ``(wls, Tput)``. Note that if
         ``Tput_lam`` is used the end-to-end throughput will equal the
         convolution of ``Tput_lam[1]`` with ``Tput``.
     qe_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, qe)``. Note that if
         ``qe_lam`` is used the total quantum efficiency will equal the
-        convolution of ``qe_lam[1]`` with ``q``. 
+        convolution of ``qe_lam[1]`` with ``q``.
+    Tput_sep : tuple of arrays
+        Coronagraph core throughput as a function of planet-star separation (``sep``)
+        in units of :math:`\lambda/D` e.g. ``(sep, Tput)``. Note that if
+        ``Tput_sep`` is specified, it will replace ``Tput`` (but not
+        ``Tput_lam``, which is typically a detector throughput)
+    C_sep : tuple of arrays
+        Coronagraph contrast as a function of planet-star separation (``sep``)
+        in units of :math:`\lambda/D` e.g. ``(sep, C)``. Note that if ``C_sep``
+        is specified, it will replace ``C``.
     lammin_lenslet : float, optional
         Minimum wavelength to use for lenslet calculation (default is ``lammin``)
     lam : array-like, optional
@@ -102,7 +111,7 @@ class Telescope(object):
                  filter_wheel=None, aperture = "circular", A_collect = None,
                  Tput_lam = None, qe_lam = None, lammin_lenslet = None,
                  diam_circumscribed = None, diam_inscribed = None, lam = None,
-                 dlam = None):
+                 dlam = None, Tput_sep = None, C_sep = None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -132,6 +141,8 @@ class Telescope(object):
         self.Tput_lam = Tput_lam
         self.qe_lam = qe_lam
         self.lammin_lenslet = lammin_lenslet
+        self.Tput_sep = Tput_sep
+        self.C_sep = C_sep
 
         self._filter_wheel=filter_wheel
 

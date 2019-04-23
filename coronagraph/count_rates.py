@@ -206,6 +206,8 @@ class CoronagraphNoise(object):
                         dlam   = self.telescope.dlam,
                         Tput_lam = self.telescope.Tput_lam,
                         qe_lam = self.telescope.qe_lam,
+                        Tput_sep = self.telescope.Tput_sep,
+                        C_sep = self.telescope.C_sep,
                         lammin_lenslet = self.telescope.lammin_lenslet,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
@@ -498,6 +500,8 @@ def count_rates(Ahr, lamhr, solhr,
                 dlam   = None,
                 Tput_lam = None,
                 qe_lam = None,
+                Tput_sep = None,
+                C_sep = None,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
@@ -592,6 +596,15 @@ def count_rates(Ahr, lamhr, solhr,
         Wavelength-dependent throughput e.g. ``(wls, tputs)``
     qe_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, qe)``
+    Tput_sep : tuple of arrays
+        Coronagraph core throughput as a function of planet-star separation (``sep``)
+        in units of :math:`\lambda/D` e.g. ``(sep, Tput)``. Note that if
+        ``Tput_sep`` is specified, it will replace ``Tput`` (but not
+        ``Tput_lam``, which is typically a detector throughput)
+    C_sep : tuple of arrays
+        Coronagraph contrast as a function of planet-star separation (``sep``)
+        in units of :math:`\lambda/D` e.g. ``(sep, C)``. Note that if ``C_sep``
+        is specified, it will replace ``C``.
     lammin_lenslet : float, optional
         Minimum wavelength to use for lenslet calculation (default is ``lammin``)
     wantsnr : float, optional
@@ -721,11 +734,28 @@ def count_rates(Ahr, lamhr, solhr,
     if lammin_lenslet is None: lammin_lenslet = lammin
     theta = set_lenslet(lam, lammin_lenslet, diam_inscribed, X, NIR=True)
 
-    # Set throughput (for inner and outer working angle cutoffs)
-    sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600. # separation in radians
-    T = set_throughput(lam, Tput, diam_circumscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
+    # Calculate separation in radians
+    sep  = r/d*np.sin(alpha*np.pi/180.)*np.pi/180./3600.
 
-    # Apply wavelength-dependent throuput, if needed
+    # Apply angular separation-dependent throughput, if needed
+    if Tput_sep is not None:
+        # Convert separation to units of lam/D to make wavelength-dependent
+        sep_lam_d = sep / (1e-6 * lam / diam_circumscribed)
+        # Interpolate coronagraph throughput to separation curves
+        T = np.interp(sep_lam_d, Tput_sep[0], Tput_sep[1])
+    else:
+        # Set throughput using the original calculation from Robinson et al. (2016)
+        # which uses inner and outer working angle cutoffs
+        T = set_throughput(lam, Tput, diam_circumscribed, sep, IWA, OWA, lammin, FIX_OWA=FIX_OWA, SILENT=SILENT)
+
+    # Apply angular separation-dependent contrast, if needed
+    if C_sep is not None:
+        # Convert separation to units of lam/D to make wavelength-dependent
+        sep_lam_d = sep / (1e-6 * lam / diam_circumscribed)
+        # Interpolate coronagraph throughput to separation curves
+        C = np.interp(sep_lam_d, C_sep[0], C_sep[1])
+
+    # Apply wavelength-dependent throughput, if needed
     if Tput_lam is not None:
         # Bin input throughput curve to native res
         Tlam = np.interp(lam, Tput_lam[0], Tput_lam[1])
