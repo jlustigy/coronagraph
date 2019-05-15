@@ -5,6 +5,7 @@ from __future__ import (division as _, print_function as _,
 import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
+import scipy.interpolate
 
 from .degrade_spec import downbin_spec
 from .convolve_spec import convolve_spec
@@ -742,7 +743,12 @@ def count_rates(Ahr, lamhr, solhr,
         # Convert separation to units of lam/D to make wavelength-dependent
         sep_lam_d = sep / (1e-6 * lam / diam_circumscribed)
         # Interpolate coronagraph throughput to separation curves
-        T = np.interp(sep_lam_d, Tput_sep[0], Tput_sep[1])
+        #T = np.interp(sep_lam_d, Tput_sep[0], Tput_sep[1])
+        # Interpolate coronagraph throughput to separation curves
+        tfunc = scipy.interpolate.interp1d(Tput_sep[0], Tput_sep[1],
+                                           bounds_error = False,
+                                           fill_value=np.nan)
+        T = tfunc(sep_lam_d)
     else:
         # Set throughput using the original calculation from Robinson et al. (2016)
         # which uses inner and outer working angle cutoffs
@@ -752,8 +758,14 @@ def count_rates(Ahr, lamhr, solhr,
     if C_sep is not None:
         # Convert separation to units of lam/D to make wavelength-dependent
         sep_lam_d = sep / (1e-6 * lam / diam_circumscribed)
-        # Interpolate coronagraph throughput to separation curves
-        C = np.interp(sep_lam_d, C_sep[0], C_sep[1])
+        # Interpolate coronagraph contrast to separation curves
+        #C = np.interp(sep_lam_d, C_sep[0], C_sep[1])
+        # Interpolate coronagraph log-contrast to separation curves, allow for
+        # extrapolation to penalize IWA and OWA
+        cfunc = scipy.interpolate.interp1d(C_sep[0], np.log10(C_sep[1]),
+                                           bounds_error = False,
+                                           fill_value=np.nan)
+        C = 10.**cfunc(sep_lam_d)
 
     # Apply wavelength-dependent throughput, if needed
     if Tput_lam is not None:
