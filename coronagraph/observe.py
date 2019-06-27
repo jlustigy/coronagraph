@@ -1,3 +1,8 @@
+"""
+The following functions provide additional mock observing features for use with
+the coronagraph model.
+"""
+
 from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
@@ -46,15 +51,15 @@ def planetzoo_observation(name='earth', telescope=Telescope(), planet=Planet(), 
                             planetdir = relpath, plot=False, savedata=False, saveplot=False,
                             ref_lam=0.55, THERMAL=False):
     """
-    Uses py:obj:`coronagraph` to observe Solar System planets as if they
-    were exoplanets.
+    Observe the Solar System planets as if they were exoplanets.
 
     Parameters
     ----------
     name : str (optional)
-        Name of the planet (e.g. "venus", "earth", "archean", "mars",
-        "earlymars", "hazyarchean", "earlyvenus", "jupiter", "saturn", "uranus",
-        "neptune")
+        Name of the planet. Possibilities include:
+            "venus", "earth", "archean", "mars",
+            "earlymars", "hazyarchean", "earlyvenus", "jupiter", "saturn",
+            "uranus", "neptune"
     telescope : Telescope (optional)
         Telescope object to be used for observation
     planet : Planet (optional)
@@ -292,7 +297,7 @@ def generate_observation(wlhr, Ahr, solhr, itime, telescope, planet, star,
                          ref_lam=0.55, tag='', plot=True, saveplot=False, savedata=False,
                          THERMAL=False, wantsnr=10):
     """
-    Generic wrapper function for `count_rates`.
+    (Depreciated) Generic wrapper function for `count_rates`.
 
     Parameters
     ----------
@@ -560,8 +565,13 @@ def interp_cont_over_band(lam, cp, icont, iband):
 
 def exptime_band(cp, ccont, cb, iband, SNR=5.0):
     """
-    Calc the exposure time necessary to get a given S/N on a molecular band
-    following Eqn 7 from Robinson et al. 2016.
+    Calculate the exposure time necessary to get a given S/N on a molecular band
+    following Eqn 7 from Robinson et al. (2016),
+
+    :math:`{\\rm{S}}/{{\\rm{N}}}_{\\mathrm{band}}=\\displaystyle \\frac{{\\displaystyle \\sum }_{j}\\;{c}_{{\\rm{cont,}}j}-{c}_{{\\rm{p,}}j}}{\\sqrt{{\\displaystyle \\sum }_{j}\\;{c}_{{\\rm{p,}}j}+2{c}_{{\\rm{b,}}j}}}\\;\\Delta {t}_{\\mathrm{exp}}^{1/2}`
+
+    where the sum is over all spectral elements (denoted by subscript "j")
+    within the molecular band.
 
     Parameters
     ----------

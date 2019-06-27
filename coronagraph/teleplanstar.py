@@ -1,5 +1,8 @@
 """
-Telescope, Planet, and Star classes.
+The coronagraph model relies on numerous parameters describing the telescope,
+planet, and star used for each calculation. Below :class:`telescope`,
+:class:`planet`, and :class:`star` classes are listed, which can be instantiated
+and passed along to noise calculations.
 """
 from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
@@ -61,7 +64,7 @@ class Telescope(object):
     aperture : str
         Aperture type ("circular" or "square")
     A_collect : float
-        Mirror collecting area (m**2)
+        Mirror collecting area (m**2) if different than :math:`\\pi(D/2)^2`
     diam_circumscribed : float, optional
         Circumscribed telescope diameter [m] used for IWA and OWA (uses `diam`
         if `None` provided)
@@ -75,7 +78,7 @@ class Telescope(object):
     qe_lam : tuple of arrays
         Wavelength-dependent throughput e.g. ``(wls, qe)``. Note that if
         ``qe_lam`` is used the total quantum efficiency will equal the
-        convolution of ``qe_lam[1]`` with ``q``. 
+        convolution of ``qe_lam[1]`` with ``q``.
     lammin_lenslet : float, optional
         Minimum wavelength to use for lenslet calculation (default is ``lammin``)
     lam : array-like, optional

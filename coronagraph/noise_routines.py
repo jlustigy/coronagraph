@@ -112,7 +112,9 @@ def Fplan(A, Phi, Fstar, Rp, d, AU=False):
 
 def FpFs(A, Phi, Rp, r):
     """
-    Planet-star flux ratio
+    Planet-star flux ratio (Equation 11 from Robinson et al. 2016).
+
+    :math:`\\frac{{F}_{p,\\lambda }}{{F}_{{\\rm{s}},\\lambda }}=A{\\rm{\\Phi }}(\\alpha ){\\left(\\displaystyle \\frac{{R}_{{\\rm{p}}}}{r}\\right)}^{2}`
 
     Parameters
     ----------
@@ -165,7 +167,9 @@ def cstar(q, fpa, T, lam, dlam, Fstar, D):
 
 def cplan(q, fpa, T, lam, dlam, Fplan, D):
     """
-    Exoplanetary photon count rate
+    Exoplanetary photon count rate (Equation 12 from Robinson et al. 2016)
+
+    :math:`{c}_{{\\rm{p}}}=\\pi {{qf}}_{\\mathrm{pa}}{ \\mathcal T }\\displaystyle \\frac{\\lambda }{{hc}}{F}_{{\\rm{p}},\\lambda }(d)\\Delta \\lambda {\\left(\\displaystyle \\frac{D}{2}\\right)}^{2}`
 
     Parameters
     ----------
@@ -194,7 +198,9 @@ def cplan(q, fpa, T, lam, dlam, Fplan, D):
 
 def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
     """
-    Zodiacal light count rate
+    Zodiacal light count rate (Equation 15 from Robinson et al. 2016)
+
+    :math:`{c}_{{\\rm{z}}}=\\pi q{ \\mathcal T }{\\rm{\\Omega }}\\Delta \\lambda \\displaystyle \\frac{\\lambda }{{hc}}{\\left(\\displaystyle \\frac{D}{2}\\right)}^{2}\\displaystyle \\frac{{F}_{\\odot ,\\lambda }(1\\;{\\rm{AU}})}{{F}_{\\odot ,V}(1\\;{\\rm{AU}})}\\;{F}_{0,V}{10}^{-{M}_{{\\rm{z}},V}/2.5}`
 
     Parameters
     ----------
@@ -245,7 +251,9 @@ def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
 
 def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     """
-    Exozodiacal light count rate
+    Exozodiacal light count rate (Equation 18 from Robinson et al. 2016)
+
+    :math:`{c}_{\\mathrm{ez}} = \\pi q{ \\mathcal T }{X}^{2}\\displaystyle \\frac{{\\lambda }^{4}}{4{hc}{ \\mathcal R }}{\\left(\\displaystyle \\frac{1{\\rm{AU}}}{r}\\right)}^{2}\\displaystyle \\frac{{F}_{{\\rm{s}},\\lambda }(1\\;{\\rm{AU}})}{{F}_{{\\rm{s}},V}(1\\;{\\rm{AU}})}\\\\ \\times \\displaystyle \\frac{{F}_{{\\rm{s}},V}(1\\;{\\rm{AU}})}{{F}_{\\odot ,V}(1\\;{\\rm{AU}})}{N}_{\\mathrm{ez}}{F}_{0,V}{10}^{-{M}_{\\mathrm{ez},V}/2.5}`
 
     Parameters
     ----------
@@ -302,7 +310,9 @@ def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
 
 def cspeck(q, T, C, lam, dlam, Fstar, D):
     """
-    Speckle count rate
+    Speckle count rate (Equation 19 from Robinson et al. 2016)
+
+    :math:`{c}_{\\mathrm{sp}} = \\pi q{ \\mathcal T }C\\Delta \\lambda {F}_{{\\rm{s}},\\lambda }(d)\\displaystyle \\frac{\\lambda }{{hc}}{\\left(\\displaystyle \\frac{D}{2}\\right)}^{2}`
 
     Parameters
     ----------
@@ -624,7 +634,9 @@ def ctherm_earth(q, X, T, lam, dlam, D, Itherm, CIRC=False):
 
 def lambertPhaseFunction(alpha):
     """
-    Calculate the Lambertian Phase Function from the phase angle
+    Calculate the Lambertian Phase Function from the phase angle,
+
+    :math:`{{\\rm{\\Phi }}}_{{\\rm{L}}}(\\alpha )=\\displaystyle \\frac{\\mathrm{sin}\\alpha +(\\pi -\\alpha )\\mathrm{cos}\\alpha }{\\pi }`
 
     Parameters
     ----------

@@ -1,3 +1,13 @@
+"""
+The crux of ``coronagraph`` noise modeling is to determine the photon count rate
+incident upon the detector due to both the target planet and an assortment of
+different telescope, instrumental, and astrophysical noise sources.
+The following classes and functions serve as your interface to the photon count
+rate calculations. The core function for these calculations is
+:func:`count_rates`, but it may be accessed using the :class:`CoronagraphNoise`
+object.
+"""
+
 from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
@@ -19,7 +29,12 @@ __all__ = ['count_rates', 'CoronagraphNoise']
 
 class CoronagraphNoise(object):
     """
-    The primary interface for ``coronagraph`` noise modeling.
+    The primary interface for ``coronagraph`` noise modeling. This object wraps
+    around the functionality of :func:`count_rates`. Simply instantiate a
+    `CoronagraphNoise` object by passing it :class:`telescope`, :class:`planet`,
+    and :class:`star` objects, and then call
+    :func:`CoronagraphNoise.run_count_rates` to perform the photon count rate
+    calculation.
 
     Parameters
     ----------
@@ -58,6 +73,11 @@ class CoronagraphNoise(object):
         telescope roll maneuver needed to subtract out the background. See
         Brown (2005) for more details.
 
+    Note
+    ----
+    The results of the coronagraph noise calculation will become available as
+    attributes of the :class:`CoronagraphNoise` object after
+    :func:`CoronagraphNoise.run_count_rates` is called.
     """
     def __init__(self, telescope = Telescope(), planet = Planet(),
                  star = Star(), texp = 10.0, wantsnr=10.0, FIX_OWA = False,
@@ -88,7 +108,8 @@ class CoronagraphNoise(object):
     def run_count_rates(self, Ahr, lamhr, solhr):
         """
         Calculate the photon count rates and signal to noise on a
-        coronagraph observation
+        coronagraph observation given a wavelength-dependent planetary
+        geometric albedo and stellar flux density.
 
         Parameters
         ----------
@@ -241,12 +262,14 @@ class CoronagraphNoise(object):
 
     def make_fake_data(self, texp = None):
         """
-        Make a fake dataset by sampling from a Gaussian.
+        Make a fake/synthetic dataset by sampling from a Gaussian.
 
         Parameters
         ----------
         texp : float, optional
-            Exposure time [hours]
+            Exposure time [hours]. If not provided, the ``CoronagraphNoise.texp``
+            will be used by default.
+
 
         Calling ``make_fake_data()`` creates the following attributes for
         the ``CoronagraphNoise`` instance:
