@@ -1,33 +1,30 @@
 '''
-Routines for simulating coronagraph noise.
+Routines for simulating `coronagraph` model noise terms are listed below. These
+functions are used within the :class:`coronagraph.CoronagraphNoise` and
+:func:`coronagraph.count_rates` functions, but are provided here for
+independent use.
 
-Contents:
+The most important functions are the individual photon count rate terms due to
+different photon sources. This including photons from the planet :func:`cplan`,
+from zodiacal light :func:`czodi` and exo-zodiacal light :func:`cezodi`, from
+coronagraph speckles :func:`cspeck`, from dark current :func:`cdark` and read
+noise :func:`cread`, from thermal emission from the telescope mirror
+:func:`ctherm`, and from clock-induced charge :func:`ccic`.
 
-* :class:`Fstar`
-* :class:`Fplan`
-* :class:`FpFs`
-* :class:`cplan`
-* :class:`czodi`
-* :class:`cezodi`
-* :class:`cspeck`
-* :class:`cdark`
-* :class:`cread`
-* :class:`ccic`
-* :class:`ctherm`
-* :class:`ctherm_earth`
-* :class:`cstar`
-* :class:`f_airy`
-* :class:`construct_lam`
-* :class:`set_quantum_efficiency`
-* :class:`set_dark_current`
-* :class:`set_read_noise`
-* :class:`set_lenslet`
-* :class:`set_throughput`
-* :class:`set_atmos_throughput`
-* :class:`exptime_element`
-* :class:`lambertPhaseFunction`
-* :class:`get_sky_flux`
-* :class:`planck`
+Optional ground-based telescope noise modeling includes extra terms for the
+emission from Earth's atmosphere incident on the telescope,
+:func:`ctherm_earth` (also see :func:`get_sky_flux`), and an additional
+throughput term due to atmospheric extinction :func:`set_atmos_throughput`.
+
+Finally, there are some extra convenience functions:
+Calculate the fraction of Airy power contained in square or circular aperture
+using :func:`f_airy`;
+Construct a wavelength grid by specifying either a spectral resolving power or
+a fixed wavelength bandwidth using :func:`construct_lam`;
+Calculate the Lambertian Phase Function of a planet from the phase angle using
+:func:`lambertPhaseFunction`;
+Calculate the Planck blackbody radiance given temperature and wavelength
+using :func:`planck`.
 '''
 
 from __future__ import (division as _, print_function as _,
@@ -987,6 +984,20 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def get_sky_flux():
     """
+    Get the spectral flux density from the sky viewed at a ground-based
+    telescope an an average night. This calculation comes from
+    `ESO SKYCALC <https://www.eso.org/observing/etc/bin/gen/form?INS.MODE=swspectr+INS.NAME=SKYCALC>`_
+    and includes contributions from molecular emission of lower atmosphere,
+    emission lines of upper atmosphere, and airglow/residual continuum, but
+    neglects scattered moonlight, starlight, and zodi.
+
+    Returns
+    -------
+    lam_sky : `numpy.array`
+        Wavelength grid [microns]
+    flux_sky : `numpy.array`
+        Flux from the sky [W/m^2/um]
+
     """
     hc    = 1.986446e-25 # h*c (kg*m**3/s**2)
 
