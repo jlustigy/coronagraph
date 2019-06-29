@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Simulating Transmission Spectra &mdash; coronagraph 0.1 documentation</title>
+  <title>Simulating Transmission and Emission Spectroscopy &mdash; coronagraph 0.1 documentation</title>
   
 
   
@@ -105,7 +105,7 @@
 <li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Simulating Transmission Spectra</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Simulating Transmission and Emission Spectroscopy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
@@ -156,7 +156,7 @@
         
           <li><a href="../api.html">API</a> &raquo;</li>
         
-      <li>Simulating Transmission Spectra</li>
+      <li>Simulating Transmission and Emission Spectroscopy</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -210,11 +210,15 @@
 }
 </style>
 <div class="section" id="module-coronagraph.transits">
-<span id="simulating-transmission-spectra"></span><h1>Simulating Transmission Spectra<a class="headerlink" href="#module-coronagraph.transits" title="Permalink to this headline">¶</a></h1>
-<p>Simulate exoplanet transmission spectroscopy with a blank mask coronagraph.
-This uses the same telesope and detector as the coronagraph, but does not
-block the star’s light. As a result, stellar photons dominate the noise
-budget.</p>
+<span id="simulating-transmission-and-emission-spectroscopy"></span><h1>Simulating Transmission and Emission Spectroscopy<a class="headerlink" href="#module-coronagraph.transits" title="Permalink to this headline">¶</a></h1>
+<p>Simulate exoplanet transmission and/or emission spectroscopy without
+using the coronagraph routines. This uses the same telesope and detector
+parameters as the coronagraph model, but does not suppress the star’s light.
+As a result, stellar photons dominate the noise budget.</p>
+<p>For transmission spectroscopy calculations use <a class="reference internal" href="#coronagraph.transits.TransitNoise" title="coronagraph.transits.TransitNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransitNoise</span></code></a>,
+and for emission spectroscopy use <a class="reference internal" href="#coronagraph.transits.EclipseNoise" title="coronagraph.transits.EclipseNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">EclipseNoise</span></code></a>. You may also get an
+example transmission and emission spectrum of the Earth by calling
+<a class="reference internal" href="#coronagraph.transits.get_earth_trans_spectrum" title="coronagraph.transits.get_earth_trans_spectrum"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_earth_trans_spectrum()</span></code></a>.</p>
 <dl class="class">
 <dt id="coronagraph.transits.EclipseNoise">
 <em class="property">class </em><code class="descclassname">coronagraph.transits.</code><code class="descname">EclipseNoise</code><span class="sig-paren">(</span><em>tdur=3432.0</em>, <em>telescope=&lt;coronagraph.teleplanstar.Telescope object&gt;</em>, <em>planet=&lt;coronagraph.teleplanstar.Planet object&gt;</em>, <em>star=&lt;coronagraph.teleplanstar.Star object&gt;</em>, <em>ntran=1</em>, <em>nout=1</em>, <em>wantsnr=1000.0</em>, <em>NIR=True</em>, <em>THERMAL=True</em>, <em>GROUND=False</em>, <em>vod=False</em>, <em>IMAGE=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.transits.EclipseNoise" title="Permalink to this definition">¶</a></dt>

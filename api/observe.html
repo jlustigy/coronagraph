@@ -106,7 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission and Emission Spectroscopy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
@@ -212,6 +212,8 @@
 </style>
 <div class="section" id="module-coronagraph.observe">
 <span id="observational-routines"></span><h1>Observational Routines<a class="headerlink" href="#module-coronagraph.observe" title="Permalink to this headline">¶</a></h1>
+<p>The following functions provide additional mock observing features for use with
+the coronagraph model.</p>
 <dl class="function">
 <dt id="coronagraph.observe.get_earth_reflect_spectrum">
 <code class="descclassname">coronagraph.observe.</code><code class="descname">get_earth_reflect_spectrum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.get_earth_reflect_spectrum" title="Permalink to this definition">¶</a></dt>
@@ -236,16 +238,19 @@ This was produced by Tyler Robinson using the VPL Earth Model
 <dl class="function">
 <dt id="coronagraph.observe.planetzoo_observation">
 <code class="descclassname">coronagraph.observe.</code><code class="descname">planetzoo_observation</code><span class="sig-paren">(</span><em>name='earth'</em>, <em>telescope=&lt;coronagraph.teleplanstar.Telescope object&gt;</em>, <em>planet=&lt;coronagraph.teleplanstar.Planet object&gt;</em>, <em>itime=10.0</em>, <em>planetdir='/Users/Jake/Projects/coronagraph/coronagraph/planets/'</em>, <em>plot=False</em>, <em>savedata=False</em>, <em>saveplot=False</em>, <em>ref_lam=0.55</em>, <em>THERMAL=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.planetzoo_observation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uses py:obj:<cite>coronagraph</cite> to observe Solar System planets as if they
-were exoplanets.</p>
+<dd><p>Observe the Solar System planets as if they were exoplanets.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>str</em><em> (</em><em>optional</em><em>)</em>) – Name of the planet (e.g. “venus”, “earth”, “archean”, “mars”,
-“earlymars”, “hazyarchean”, “earlyvenus”, “jupiter”, “saturn”, “uranus”,
-“neptune”)</li>
+<li><strong>name</strong> (<em>str</em><em> (</em><em>optional</em><em>)</em>) – <dl class="docutils">
+<dt>Name of the planet. Possibilities include:</dt>
+<dd>”venus”, “earth”, “archean”, “mars”,
+“earlymars”, “hazyarchean”, “earlyvenus”, “jupiter”, “saturn”,
+“uranus”, “neptune”</dd>
+</dl>
+</li>
 <li><strong>telescope</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><em>Telescope</em></a><em> (</em><em>optional</em><em>)</em>) – Telescope object to be used for observation</li>
 <li><strong>planet</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><em>Planet</em></a><em> (</em><em>optional</em><em>)</em>) – Planet object to be used for observation</li>
 <li><strong>itime</strong> (<em>float</em><em> (</em><em>optional</em><em>)</em>) – Integration time (hours)</li>
@@ -292,7 +297,7 @@ were exoplanets.</p>
 <dl class="function">
 <dt id="coronagraph.observe.generate_observation">
 <code class="descclassname">coronagraph.observe.</code><code class="descname">generate_observation</code><span class="sig-paren">(</span><em>wlhr</em>, <em>Ahr</em>, <em>solhr</em>, <em>itime</em>, <em>telescope</em>, <em>planet</em>, <em>star</em>, <em>ref_lam=0.55</em>, <em>tag=''</em>, <em>plot=True</em>, <em>saveplot=False</em>, <em>savedata=False</em>, <em>THERMAL=False</em>, <em>wantsnr=10</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.generate_observation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generic wrapper function for <cite>count_rates</cite>.</p>
+<dd><p>(Depreciated) Generic wrapper function for <cite>count_rates</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -436,8 +441,11 @@ len(ccont) == len(iband)</p>
 <dl class="function">
 <dt id="coronagraph.observe.exptime_band">
 <code class="descclassname">coronagraph.observe.</code><code class="descname">exptime_band</code><span class="sig-paren">(</span><em>cp</em>, <em>ccont</em>, <em>cb</em>, <em>iband</em>, <em>SNR=5.0</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.observe.exptime_band" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calc the exposure time necessary to get a given S/N on a molecular band
-following Eqn 7 from Robinson et al. 2016.</p>
+<dd><p>Calculate the exposure time necessary to get a given S/N on a molecular band
+following Eqn 7 from Robinson et al. (2016),</p>
+<p><span class="math notranslate">\({\rm{S}}/{{\rm{N}}}_{\mathrm{band}}=\displaystyle \frac{{\displaystyle \sum }_{j}\;{c}_{{\rm{cont,}}j}-{c}_{{\rm{p,}}j}}{\sqrt{{\displaystyle \sum }_{j}\;{c}_{{\rm{p,}}j}+2{c}_{{\rm{b,}}j}}}\;\Delta {t}_{\mathrm{exp}}^{1/2}\)</span></p>
+<p>where the sum is over all spectral elements (denoted by subscript “j”)
+within the molecular band.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

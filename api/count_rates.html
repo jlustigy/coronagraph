@@ -106,7 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission and Emission Spectroscopy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
@@ -210,16 +210,24 @@
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="coronagraph-noise-modeling">
-<h1>Coronagraph Noise Modeling<a class="headerlink" href="#coronagraph-noise-modeling" title="Permalink to this headline">¶</a></h1>
-<p>The crux of <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> noise modeling is determining the photon count rate
-incident upon the detector due to the planet and an assortment of
-different noise sources. The following classes and functions serve as your
-interface to the photon count rate calculations.</p>
-<span class="target" id="module-coronagraph.count_rates"></span><dl class="class">
+<div class="section" id="module-coronagraph.count_rates">
+<span id="coronagraph-noise-modeling"></span><h1>Coronagraph Noise Modeling<a class="headerlink" href="#module-coronagraph.count_rates" title="Permalink to this headline">¶</a></h1>
+<p>The crux of <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> noise modeling is to determine the photon count rate
+incident upon the detector due to both the target planet and an assortment of
+different telescope, instrumental, and astrophysical noise sources.
+The following classes and functions serve as your interface to the photon count
+rate calculations. The core function for these calculations is
+<a class="reference internal" href="#coronagraph.count_rates.count_rates" title="coronagraph.count_rates.count_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">count_rates()</span></code></a>, but it may be accessed using the <a class="reference internal" href="#coronagraph.count_rates.CoronagraphNoise" title="coronagraph.count_rates.CoronagraphNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoronagraphNoise</span></code></a>
+object.</p>
+<dl class="class">
 <dt id="coronagraph.count_rates.CoronagraphNoise">
 <em class="property">class </em><code class="descclassname">coronagraph.count_rates.</code><code class="descname">CoronagraphNoise</code><span class="sig-paren">(</span><em>telescope=&lt;coronagraph.teleplanstar.Telescope object&gt;</em>, <em>planet=&lt;coronagraph.teleplanstar.Planet object&gt;</em>, <em>star=&lt;coronagraph.teleplanstar.Star object&gt;</em>, <em>texp=10.0</em>, <em>wantsnr=10.0</em>, <em>FIX_OWA=False</em>, <em>COMPUTE_LAM=False</em>, <em>SILENT=False</em>, <em>NIR=False</em>, <em>THERMAL=True</em>, <em>GROUND=False</em>, <em>vod=False</em>, <em>set_fpa=None</em>, <em>roll_maneuver=True</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.count_rates.CoronagraphNoise" title="Permalink to this definition">¶</a></dt>
-<dd><p>The primary interface for <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> noise modeling.</p>
+<dd><p>The primary interface for <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> noise modeling. This object wraps
+around the functionality of <a class="reference internal" href="#coronagraph.count_rates.count_rates" title="coronagraph.count_rates.count_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">count_rates()</span></code></a>. Simply instantiate a
+<cite>CoronagraphNoise</cite> object by passing it <code class="xref py py-class docutils literal notranslate"><span class="pre">telescope</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">planet</span></code>,
+and <code class="xref py py-class docutils literal notranslate"><span class="pre">star</span></code> objects, and then call
+<a class="reference internal" href="#coronagraph.count_rates.CoronagraphNoise.run_count_rates" title="coronagraph.count_rates.CoronagraphNoise.run_count_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">CoronagraphNoise.run_count_rates()</span></code></a> to perform the photon count rate
+calculation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -250,11 +258,18 @@ Brown (2005) for more details.</li>
 </tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The results of the coronagraph noise calculation will become available as
+attributes of the <a class="reference internal" href="#coronagraph.count_rates.CoronagraphNoise" title="coronagraph.count_rates.CoronagraphNoise"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoronagraphNoise</span></code></a> object after
+<a class="reference internal" href="#coronagraph.count_rates.CoronagraphNoise.run_count_rates" title="coronagraph.count_rates.CoronagraphNoise.run_count_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">CoronagraphNoise.run_count_rates()</span></code></a> is called.</p>
+</div>
 <dl class="method">
 <dt id="coronagraph.count_rates.CoronagraphNoise.run_count_rates">
 <code class="descname">run_count_rates</code><span class="sig-paren">(</span><em>Ahr</em>, <em>lamhr</em>, <em>solhr</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.count_rates.CoronagraphNoise.run_count_rates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the photon count rates and signal to noise on a
-coronagraph observation</p>
+coronagraph observation given a wavelength-dependent planetary
+geometric albedo and stellar flux density.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -307,19 +322,23 @@ the <code class="docutils literal notranslate"><span class="pre">CoronagraphNois
 <dl class="method">
 <dt id="coronagraph.count_rates.CoronagraphNoise.make_fake_data">
 <code class="descname">make_fake_data</code><span class="sig-paren">(</span><em>texp=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.count_rates.CoronagraphNoise.make_fake_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a fake dataset by sampling from a Gaussian.</p>
+<dd><p>Make a fake/synthetic dataset by sampling from a Gaussian.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>texp</strong> (<em>float</em><em>, </em><em>optional</em>) – Exposure time [hours]</li>
-<li><strong>make_fake_data</strong><strong>(</strong><strong>) </strong><strong>creates the following attributes for</strong> (<em>Calling</em>) – </li>
-<li><strong>CoronagraphNoise instance</strong> (<em>the</em>) – </li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>texp</strong> (<em>float</em><em>, </em><em>optional</em>) – Exposure time [hours]. If not provided, the <code class="docutils literal notranslate"><span class="pre">CoronagraphNoise.texp</span></code>
+will be used by default.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+</tbody>
+</table>
+<p>Calling <code class="docutils literal notranslate"><span class="pre">make_fake_data()</span></code> creates the following attributes for
+the <code class="docutils literal notranslate"><span class="pre">CoronagraphNoise</span></code> instance:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
 <li><strong>SNRt</strong> (<em>array</em>) – S/N in a <code class="docutils literal notranslate"><span class="pre">texp</span></code> hour exposure</li>
 <li><strong>Aobs</strong> (<em>array</em>) – Observed albedo with noise</li>
 <li><strong>Asig</strong> (<em>array</em>) – Observed uncertainties on albedo</li>
@@ -518,34 +537,6 @@ Brown (2005) for more details.</li>
 <li><strong>DtSNR</strong> (<em>ndarray</em>) – Exposure time required to get desired S/N (wantsnr) [hours]</li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<span class="target" id="module-coronagraph.count_rates_wrapper"></span><dl class="function">
-<dt id="coronagraph.count_rates_wrapper.count_rates_wrapper">
-<code class="descclassname">coronagraph.count_rates_wrapper.</code><code class="descname">count_rates_wrapper</code><span class="sig-paren">(</span><em>Ahr</em>, <em>lamhr</em>, <em>solhr</em>, <em>telescope</em>, <em>planet</em>, <em>star</em>, <em>wantsnr=10.0</em>, <em>FIX_OWA=False</em>, <em>COMPUTE_LAM=False</em>, <em>SILENT=False</em>, <em>NIR=True</em>, <em>THERMAL=False</em>, <em>GROUND=False</em>, <em>vod=False</em>, <em>otype=1</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.count_rates_wrapper.count_rates_wrapper" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>Ahr</strong> (<em>array</em>) – hi-res planetary albedo spectrum</li>
-<li><strong>lamhr</strong> (<em>array</em>) – wavelength grid for Ahr (um)</li>
-<li><strong>solhr</strong> (<em>array</em>) – hi-res TOA solar spectrum (W/m**2/um)</li>
-<li><strong>telescope</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><em>Telescope</em></a>) – Telescope object containing parameters</li>
-<li><strong>planet</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><em>Planet</em></a>) – Planet object containing parameters</li>
-<li><strong>star</strong> (<a class="reference internal" href="teleplanstar.html#coronagraph.teleplanstar.Star" title="coronagraph.teleplanstar.Star"><em>Star</em></a>) – Star object containing parameters</li>
-<li><strong>FIX_OWA</strong> (<em>bool</em>) – set to fix OWA at OWA*lammin/D, as would occur if lenslet array is limiting the OWA</li>
-<li><strong>COMPUTE_LAM</strong> (<em>bool</em>) – set to compute lo-res wavelength grid, otherwise the grid input as variable ‘lam’ is used</li>
-<li><strong>NIR</strong> (<em>bool</em>) – re-adjusts pixel size in NIR, as would occur if a second instrument was designed to handle the NIR</li>
-<li><strong>THERMAL</strong> (<em>bool</em>) – set to compute thermal photon counts due to telescope temperature</li>
-<li><strong>GROUND</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to simulate ground-based observations through atmosphere</li>
-<li><strong>vod</strong> (<em>bool</em><em>, </em><em>optional</em>) – “Valley of Death” red QE parameterization from Robinson et al. (2016)</li>
-<li><strong>otype</strong> (<em>int</em><em>, </em><em>optional</em>) – Set to 1 to return output object, 2 to return arrays</li>
-</ul>
 </td>
 </tr>
 </tbody>

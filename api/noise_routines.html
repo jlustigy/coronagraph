@@ -106,7 +106,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Noise Routines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission and Emission Spectroscopy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
@@ -212,35 +212,29 @@
 </style>
 <div class="section" id="module-coronagraph.noise_routines">
 <span id="noise-routines"></span><h1>Noise Routines<a class="headerlink" href="#module-coronagraph.noise_routines" title="Permalink to this headline">¶</a></h1>
-<p>Routines for simulating coronagraph noise.</p>
-<p>Contents:</p>
-<ul class="simple">
-<li><a class="reference internal" href="#coronagraph.noise_routines.Fstar" title="coronagraph.noise_routines.Fstar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fstar</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.Fplan" title="coronagraph.noise_routines.Fplan"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fplan</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.FpFs" title="coronagraph.noise_routines.FpFs"><code class="xref py py-class docutils literal notranslate"><span class="pre">FpFs</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.cplan" title="coronagraph.noise_routines.cplan"><code class="xref py py-class docutils literal notranslate"><span class="pre">cplan</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.czodi" title="coronagraph.noise_routines.czodi"><code class="xref py py-class docutils literal notranslate"><span class="pre">czodi</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.cezodi" title="coronagraph.noise_routines.cezodi"><code class="xref py py-class docutils literal notranslate"><span class="pre">cezodi</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.cspeck" title="coronagraph.noise_routines.cspeck"><code class="xref py py-class docutils literal notranslate"><span class="pre">cspeck</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.cdark" title="coronagraph.noise_routines.cdark"><code class="xref py py-class docutils literal notranslate"><span class="pre">cdark</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.cread" title="coronagraph.noise_routines.cread"><code class="xref py py-class docutils literal notranslate"><span class="pre">cread</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.ccic" title="coronagraph.noise_routines.ccic"><code class="xref py py-class docutils literal notranslate"><span class="pre">ccic</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.ctherm" title="coronagraph.noise_routines.ctherm"><code class="xref py py-class docutils literal notranslate"><span class="pre">ctherm</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.ctherm_earth" title="coronagraph.noise_routines.ctherm_earth"><code class="xref py py-class docutils literal notranslate"><span class="pre">ctherm_earth</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.cstar" title="coronagraph.noise_routines.cstar"><code class="xref py py-class docutils literal notranslate"><span class="pre">cstar</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.f_airy" title="coronagraph.noise_routines.f_airy"><code class="xref py py-class docutils literal notranslate"><span class="pre">f_airy</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.construct_lam" title="coronagraph.noise_routines.construct_lam"><code class="xref py py-class docutils literal notranslate"><span class="pre">construct_lam</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.set_quantum_efficiency" title="coronagraph.noise_routines.set_quantum_efficiency"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_quantum_efficiency</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.set_dark_current" title="coronagraph.noise_routines.set_dark_current"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_dark_current</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.set_read_noise" title="coronagraph.noise_routines.set_read_noise"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_read_noise</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.set_lenslet" title="coronagraph.noise_routines.set_lenslet"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_lenslet</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.set_throughput" title="coronagraph.noise_routines.set_throughput"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_throughput</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.set_atmos_throughput" title="coronagraph.noise_routines.set_atmos_throughput"><code class="xref py py-class docutils literal notranslate"><span class="pre">set_atmos_throughput</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.exptime_element" title="coronagraph.noise_routines.exptime_element"><code class="xref py py-class docutils literal notranslate"><span class="pre">exptime_element</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.lambertPhaseFunction" title="coronagraph.noise_routines.lambertPhaseFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">lambertPhaseFunction</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.get_sky_flux" title="coronagraph.noise_routines.get_sky_flux"><code class="xref py py-class docutils literal notranslate"><span class="pre">get_sky_flux</span></code></a></li>
-<li><a class="reference internal" href="#coronagraph.noise_routines.planck" title="coronagraph.noise_routines.planck"><code class="xref py py-class docutils literal notranslate"><span class="pre">planck</span></code></a></li>
-</ul>
+<p>Routines for simulating <cite>coronagraph</cite> model noise terms are listed below. These
+functions are used within the <code class="xref py py-class docutils literal notranslate"><span class="pre">coronagraph.CoronagraphNoise</span></code> and
+<a class="reference internal" href="count_rates.html#module-coronagraph.count_rates" title="coronagraph.count_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">coronagraph.count_rates()</span></code></a> functions, but are provided here for
+independent use.</p>
+<p>The most important functions are the individual photon count rate terms due to
+different photon sources. This including photons from the planet <a class="reference internal" href="#coronagraph.noise_routines.cplan" title="coronagraph.noise_routines.cplan"><code class="xref py py-func docutils literal notranslate"><span class="pre">cplan()</span></code></a>,
+from zodiacal light <a class="reference internal" href="#coronagraph.noise_routines.czodi" title="coronagraph.noise_routines.czodi"><code class="xref py py-func docutils literal notranslate"><span class="pre">czodi()</span></code></a> and exo-zodiacal light <a class="reference internal" href="#coronagraph.noise_routines.cezodi" title="coronagraph.noise_routines.cezodi"><code class="xref py py-func docutils literal notranslate"><span class="pre">cezodi()</span></code></a>, from
+coronagraph speckles <a class="reference internal" href="#coronagraph.noise_routines.cspeck" title="coronagraph.noise_routines.cspeck"><code class="xref py py-func docutils literal notranslate"><span class="pre">cspeck()</span></code></a>, from dark current <a class="reference internal" href="#coronagraph.noise_routines.cdark" title="coronagraph.noise_routines.cdark"><code class="xref py py-func docutils literal notranslate"><span class="pre">cdark()</span></code></a> and read
+noise <a class="reference internal" href="#coronagraph.noise_routines.cread" title="coronagraph.noise_routines.cread"><code class="xref py py-func docutils literal notranslate"><span class="pre">cread()</span></code></a>, from thermal emission from the telescope mirror
+<a class="reference internal" href="#coronagraph.noise_routines.ctherm" title="coronagraph.noise_routines.ctherm"><code class="xref py py-func docutils literal notranslate"><span class="pre">ctherm()</span></code></a>, and from clock-induced charge <a class="reference internal" href="#coronagraph.noise_routines.ccic" title="coronagraph.noise_routines.ccic"><code class="xref py py-func docutils literal notranslate"><span class="pre">ccic()</span></code></a>.</p>
+<p>Optional ground-based telescope noise modeling includes extra terms for the
+emission from Earth’s atmosphere incident on the telescope,
+<a class="reference internal" href="#coronagraph.noise_routines.ctherm_earth" title="coronagraph.noise_routines.ctherm_earth"><code class="xref py py-func docutils literal notranslate"><span class="pre">ctherm_earth()</span></code></a> (also see <a class="reference internal" href="#coronagraph.noise_routines.get_sky_flux" title="coronagraph.noise_routines.get_sky_flux"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_sky_flux()</span></code></a>), and an additional
+throughput term due to atmospheric extinction <a class="reference internal" href="#coronagraph.noise_routines.set_atmos_throughput" title="coronagraph.noise_routines.set_atmos_throughput"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_atmos_throughput()</span></code></a>.</p>
+<p>Finally, there are some extra convenience functions:
+Calculate the fraction of Airy power contained in square or circular aperture
+using <a class="reference internal" href="#coronagraph.noise_routines.f_airy" title="coronagraph.noise_routines.f_airy"><code class="xref py py-func docutils literal notranslate"><span class="pre">f_airy()</span></code></a>;
+Construct a wavelength grid by specifying either a spectral resolving power or
+a fixed wavelength bandwidth using <a class="reference internal" href="#coronagraph.noise_routines.construct_lam" title="coronagraph.noise_routines.construct_lam"><code class="xref py py-func docutils literal notranslate"><span class="pre">construct_lam()</span></code></a>;
+Calculate the Lambertian Phase Function of a planet from the phase angle using
+<a class="reference internal" href="#coronagraph.noise_routines.lambertPhaseFunction" title="coronagraph.noise_routines.lambertPhaseFunction"><code class="xref py py-func docutils literal notranslate"><span class="pre">lambertPhaseFunction()</span></code></a>;
+Calculate the Planck blackbody radiance given temperature and wavelength
+using <a class="reference internal" href="#coronagraph.noise_routines.planck" title="coronagraph.noise_routines.planck"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck()</span></code></a>.</p>
 <dl class="function">
 <dt id="coronagraph.noise_routines.Fstar">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">Fstar</code><span class="sig-paren">(</span><em>lam</em>, <em>Teff</em>, <em>Rs</em>, <em>d</em>, <em>AU=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.Fstar" title="Permalink to this definition">¶</a></dt>
@@ -299,7 +293,8 @@
 <dl class="function">
 <dt id="coronagraph.noise_routines.FpFs">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">FpFs</code><span class="sig-paren">(</span><em>A</em>, <em>Phi</em>, <em>Rp</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.FpFs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Planet-star flux ratio</p>
+<dd><p>Planet-star flux ratio (Equation 11 from Robinson et al. 2016).</p>
+<p><span class="math notranslate">\(\frac{{F}_{p,\lambda }}{{F}_{{\rm{s}},\lambda }}=A{\rm{\Phi }}(\alpha ){\left(\displaystyle \frac{{R}_{{\rm{p}}}}{r}\right)}^{2}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -354,7 +349,8 @@
 <dl class="function">
 <dt id="coronagraph.noise_routines.cplan">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cplan</code><span class="sig-paren">(</span><em>q</em>, <em>fpa</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>Fplan</em>, <em>D</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cplan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exoplanetary photon count rate</p>
+<dd><p>Exoplanetary photon count rate (Equation 12 from Robinson et al. 2016)</p>
+<p><span class="math notranslate">\({c}_{{\rm{p}}}=\pi {{qf}}_{\mathrm{pa}}{ \mathcal T }\displaystyle \frac{\lambda }{{hc}}{F}_{{\rm{p}},\lambda }(d)\Delta \lambda {\left(\displaystyle \frac{D}{2}\right)}^{2}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -383,7 +379,8 @@
 <dl class="function">
 <dt id="coronagraph.noise_routines.czodi">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">czodi</code><span class="sig-paren">(</span><em>q</em>, <em>X</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>D</em>, <em>Mzv</em>, <em>SUN=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.czodi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Zodiacal light count rate</p>
+<dd><p>Zodiacal light count rate (Equation 15 from Robinson et al. 2016)</p>
+<p><span class="math notranslate">\({c}_{{\rm{z}}}=\pi q{ \mathcal T }{\rm{\Omega }}\Delta \lambda \displaystyle \frac{\lambda }{{hc}}{\left(\displaystyle \frac{D}{2}\right)}^{2}\displaystyle \frac{{F}_{\odot ,\lambda }(1\;{\rm{AU}})}{{F}_{\odot ,V}(1\;{\rm{AU}})}\;{F}_{0,V}{10}^{-{M}_{{\rm{z}},V}/2.5}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -414,7 +411,8 @@
 <dl class="function">
 <dt id="coronagraph.noise_routines.cezodi">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cezodi</code><span class="sig-paren">(</span><em>q</em>, <em>X</em>, <em>T</em>, <em>lam</em>, <em>dlam</em>, <em>D</em>, <em>r</em>, <em>Fstar</em>, <em>Nez</em>, <em>Mezv</em>, <em>SUN=False</em>, <em>CIRC=False</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cezodi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exozodiacal light count rate</p>
+<dd><p>Exozodiacal light count rate (Equation 18 from Robinson et al. 2016)</p>
+<p><span class="math notranslate">\({c}_{\mathrm{ez}} = \pi q{ \mathcal T }{X}^{2}\displaystyle \frac{{\lambda }^{4}}{4{hc}{ \mathcal R }}{\left(\displaystyle \frac{1{\rm{AU}}}{r}\right)}^{2}\displaystyle \frac{{F}_{{\rm{s}},\lambda }(1\;{\rm{AU}})}{{F}_{{\rm{s}},V}(1\;{\rm{AU}})}\\ \times \displaystyle \frac{{F}_{{\rm{s}},V}(1\;{\rm{AU}})}{{F}_{\odot ,V}(1\;{\rm{AU}})}{N}_{\mathrm{ez}}{F}_{0,V}{10}^{-{M}_{\mathrm{ez},V}/2.5}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -448,7 +446,8 @@
 <dl class="function">
 <dt id="coronagraph.noise_routines.cspeck">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">cspeck</code><span class="sig-paren">(</span><em>q</em>, <em>T</em>, <em>C</em>, <em>lam</em>, <em>dlam</em>, <em>Fstar</em>, <em>D</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.cspeck" title="Permalink to this definition">¶</a></dt>
-<dd><p>Speckle count rate</p>
+<dd><p>Speckle count rate (Equation 19 from Robinson et al. 2016)</p>
+<p><span class="math notranslate">\({c}_{\mathrm{sp}} = \pi q{ \mathcal T }C\Delta \lambda {F}_{{\rm{s}},\lambda }(d)\displaystyle \frac{\lambda }{{hc}}{\left(\displaystyle \frac{D}{2}\right)}^{2}\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -653,7 +652,8 @@
 <dl class="function">
 <dt id="coronagraph.noise_routines.lambertPhaseFunction">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">lambertPhaseFunction</code><span class="sig-paren">(</span><em>alpha</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.lambertPhaseFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the Lambertian Phase Function from the phase angle</p>
+<dd><p>Calculate the Lambertian Phase Function from the phase angle,</p>
+<p><span class="math notranslate">\({{\rm{\Phi }}}_{{\rm{L}}}(\alpha )=\displaystyle \frac{\mathrm{sin}\alpha +(\pi -\alpha )\mathrm{cos}\alpha }{\pi }\)</span></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -864,7 +864,25 @@ radiation through the atmosphere</p>
 <dl class="function">
 <dt id="coronagraph.noise_routines.get_sky_flux">
 <code class="descclassname">coronagraph.noise_routines.</code><code class="descname">get_sky_flux</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.noise_routines.get_sky_flux" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the spectral flux density from the sky viewed at a ground-based
+telescope an an average night. This calculation comes from
+<a class="reference external" href="https://www.eso.org/observing/etc/bin/gen/form?INS.MODE=swspectr+INS.NAME=SKYCALC">ESO SKYCALC</a>
+and includes contributions from molecular emission of lower atmosphere,
+emission lines of upper atmosphere, and airglow/residual continuum, but
+neglects scattered moonlight, starlight, and zodi.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li><strong>lam_sky</strong> (<cite>numpy.array</cite>) – Wavelength grid [microns]</li>
+<li><strong>flux_sky</strong> (<cite>numpy.array</cite>) – Flux from the sky [W/m^2/um]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="function">
 <dt id="coronagraph.noise_routines.exptime_element">

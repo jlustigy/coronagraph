@@ -106,7 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="noise_routines.html">Noise Routines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="degrade_spec.html">Degrade Spectra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="imager.html">Filter Photometry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission Spectra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transits.html">Simulating Transmission and Emission Spectroscopy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/jlustigy/coronagraph">Github</a></li>
@@ -212,7 +212,10 @@
 </style>
 <div class="section" id="module-coronagraph.teleplanstar">
 <span id="telescopes-planets-and-stars"></span><h1>Telescopes, Planets, and Stars<a class="headerlink" href="#module-coronagraph.teleplanstar" title="Permalink to this headline">¶</a></h1>
-<p>Telescope, Planet, and Star classes.</p>
+<p>The coronagraph model relies on numerous parameters describing the telescope,
+planet, and star used for each calculation. Below <a class="reference internal" href="#coronagraph.teleplanstar.Telescope" title="coronagraph.teleplanstar.Telescope"><code class="xref py py-class docutils literal notranslate"><span class="pre">Telescope</span></code></a>,
+<a class="reference internal" href="#coronagraph.teleplanstar.Planet" title="coronagraph.teleplanstar.Planet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Planet</span></code></a>, and <a class="reference internal" href="#coronagraph.teleplanstar.Star" title="coronagraph.teleplanstar.Star"><code class="xref py py-class docutils literal notranslate"><span class="pre">Star</span></code></a> classes are listed, which can be instantiated
+and passed along to noise calculations.</p>
 <dl class="class">
 <dt id="coronagraph.teleplanstar.Telescope">
 <em class="property">class </em><code class="descclassname">coronagraph.teleplanstar.</code><code class="descname">Telescope</code><span class="sig-paren">(</span><em>mode='IFS'</em>, <em>lammin=0.3</em>, <em>lammax=2.0</em>, <em>R=70.0</em>, <em>Tput=0.2</em>, <em>D=8.0</em>, <em>Tsys=260.0</em>, <em>Tdet=50.0</em>, <em>IWA=0.5</em>, <em>OWA=30000.0</em>, <em>emis=0.9</em>, <em>C=1e-10</em>, <em>De=0.0001</em>, <em>DNHpix=3.0</em>, <em>Re=0.1</em>, <em>Rc=0.0</em>, <em>Dtmax=1.0</em>, <em>X=0.7</em>, <em>q=0.9</em>, <em>filter_wheel=None</em>, <em>aperture='circular'</em>, <em>A_collect=None</em>, <em>Tput_lam=None</em>, <em>qe_lam=None</em>, <em>lammin_lenslet=None</em>, <em>diam_circumscribed=None</em>, <em>diam_inscribed=None</em>, <em>lam=None</em>, <em>dlam=None</em><span class="sig-paren">)</span><a class="headerlink" href="#coronagraph.teleplanstar.Telescope" title="Permalink to this definition">¶</a></dt>
@@ -243,7 +246,7 @@ therein</p>
 <li><strong>q</strong> (<em>float</em>) – Quantum efficiency</li>
 <li><strong>filter_wheel</strong> (<a class="reference internal" href="imager.html#coronagraph.imager.Wheel" title="coronagraph.imager.Wheel"><em>Wheel</em></a><em> (</em><em>optional</em><em>)</em>) – Wheel object containing imaging filters</li>
 <li><strong>aperture</strong> (<em>str</em>) – Aperture type (“circular” or “square”)</li>
-<li><strong>A_collect</strong> (<em>float</em>) – Mirror collecting area (m**2)</li>
+<li><strong>A_collect</strong> (<em>float</em>) – Mirror collecting area (m**2) if different than <span class="math notranslate">\(\pi(D/2)^2\)</span></li>
 <li><strong>diam_circumscribed</strong> (<em>float</em><em>, </em><em>optional</em>) – Circumscribed telescope diameter [m] used for IWA and OWA (uses <cite>diam</cite>
 if <cite>None</cite> provided)</li>
 <li><strong>diam_inscribed</strong> (<em>float</em><em>, </em><em>optional</em>) – Inscribed telescope diameter [m] used for lenslet calculations
