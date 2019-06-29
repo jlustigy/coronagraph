@@ -1,7 +1,7 @@
 """
 The coronagraph model relies on numerous parameters describing the telescope,
-planet, and star used for each calculation. Below :class:`telescope`,
-:class:`planet`, and :class:`star` classes are listed, which can be instantiated
+planet, and star used for each calculation. Below :class:`Telescope`,
+:class:`Planet`, and :class:`Star` classes are listed, which can be instantiated
 and passed along to noise calculations.
 """
 from __future__ import (division as _, print_function as _,

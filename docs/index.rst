@@ -27,6 +27,11 @@ reflected light coronagraph noise modeling can now be used for
 transmission and emission spectroscopy noise modeling, making this model a
 general purpose exoplanet noise model for many different types of observations.
 
+To get started using the ``coronagraph`` noise model, take a look at the
+`Quickstart <notebooks/quickstart.html>`_ tutorial and the
+`examples <examples.html>`_. For more details about the full functionality of
+the code see the `Application Programming Interface (API) <api.html>`_. 
+
 If you use this model in your own research please cite Robinson et al (2016) and
 include something akin to the following acknowledgement:
 "This work made use of the Python coronagraph noise model, developed by
