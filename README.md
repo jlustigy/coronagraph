@@ -7,6 +7,7 @@
 <p align="center">
   <a href="https://travis-ci.org/jlustigy/coronagraph"><img src="http://img.shields.io/travis/jlustigy/coronagraph/master.svg?style=flat"/></a>
   <a href="https://jlustigy.github.io/coronagraph/"><img src="https://img.shields.io/badge/read-the_docs-blue.svg?style=flat"/></a>
+  <a href="http://joss.theoj.org/papers/29a123d0178ea95da358dafc0282e8f7"><img src="http://joss.theoj.org/papers/29a123d0178ea95da358dafc0282e8f7/status.svg"></a>
   <a href="https://github.com/jlustigy/coronagraph/blob/master/LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat"/></a>
   <a href="https://coveralls.io/github/jlustigy/coronagraph?branch=master"><img src="https://coveralls.io/repos/github/jlustigy/coronagraph/badge.svg?branch=master&style=flat"/></a>
 </p>
