@@ -740,7 +740,7 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
 
     Returns
     -------
-    q : array-like
+    q : numpy.array 
         Wavelength-dependent instrumental quantum efficiency
     """
     Nlam = len(lam)
@@ -779,7 +779,7 @@ def set_dark_current(lam, De, lammax, Tdet, NIR=False, De_nir=1e-3):
 
     Returns
     -------
-    De : array-like
+    De : numpy.array
         Dark current as a function of wavelength
     """
     De = np.zeros(len(lam)) + De
@@ -814,7 +814,7 @@ def set_read_noise(lam, Re, NIR=False, Re_nir=2.):
 
     Returns
     -------
-    Re : array-like
+    Re : numpy.array
         Read noise as a function of wavelength
     """
     Re = np.zeros(len(lam)) + Re
@@ -847,7 +847,7 @@ def set_lenslet(lam, lammin, diam, X,
 
     Returns
     -------
-    theta : ndarray
+    theta : numpy.array
         Angular size of lenslet
     """
     Nlam = len(lam)
@@ -867,7 +867,8 @@ def set_lenslet(lam, lammin, diam, X,
 def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
                    FIX_OWA=False, SILENT=False):
     """
-    Set wavelength-dependent telescope throughput
+    Set wavelength-dependent telescope throughput such that it is zero
+    inside the IWA and outside the OWA.
 
     Parameters
     ----------
@@ -885,12 +886,13 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
         Outer working angle
     lammin : float
         Minimum wavelength
-    FIX_OWA : bool, optional
+    SILENT : bool, optional
+        Suppress printing
 
     Returns
     -------
-    SILENT : bool, optional
-        Suppress printing
+    T : numpy.array
+        Wavelength-dependent throughput
     """
     Nlam = len(lam)
     T    = Tput + np.zeros(Nlam)
@@ -928,7 +930,7 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
 
     Returns
     -------
-    Tatmos : ndarray
+    Tatmos : numpy.array
         Atmospheric throughput as a function of wavelength
     """
     # Read in earth transmission file
