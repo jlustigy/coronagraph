@@ -30,9 +30,7 @@ bibliography: paper.bib
 
 ``coronagraph`` is an open-source Python package for generalized telescope noise
 modeling for extrasolar planet (exoplanet) science. This package is based on
-Interactive Data Language (IDL) code originally developed by T. Robinson  
-[@coronagraph_noise_github], and described in detail with science applications
-in [@Robinson2016].
+Interactive Data Language (IDL) code originally developed by T. Robinson [@coronagraph_noise_github], and described in detail with science applications in [@Robinson2016].
 
 Briefly, ``coronagraph`` uses analytic relations to calculate the photon count
 rates for a variety of astrophysical, telescope, and
@@ -67,7 +65,7 @@ applications. This includes peer-reviewed work on the potential for
 direct-imaging Proxima Centauri b with ground- and space-based telescopes
 [@Meadows2018], and the detectability of exoplanet aurorae on Proxima Centauri b
 [@Luger2017]. The ``coronagraph`` model is used within NASA Goddard's
-interactive tool **Coronagraphic Spectra of Exoplanets** [@cron_model_nasa],   
+interactive tool **Coronagraphic Spectra of Exoplanets** [@cron_model_nasa],
 and is actively being used to motivate science cases for next-generation,
 space-based, direct-imaging mission concepts [@Mennesson2016; @Bolcar2016].
 
