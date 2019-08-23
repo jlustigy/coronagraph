@@ -36,7 +36,7 @@ Users may also clone the repository on Github:
 
 Citation
 ========
-If you use this model in your own research please cite [Robinson, Stapelfeldt & Marley (2016)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and [Lustig-Yaeger, Robinson & Arney (2019)](http://joss.theoj.org/papers/29a123d0178ea95da358dafc0282e8f7).  
+If you use this model in your own research please cite [Robinson, Stapelfeldt & Marley (2016)](https://ui.adsabs.harvard.edu/abs/2016PASP..128b5003R/abstract) and [Lustig-Yaeger, Robinson & Arney (2019)](http://joss.theoj.org/papers/29a123d0178ea95da358dafc0282e8f7).  
 
 ```
 @article{Lustig2019coronagraph,
