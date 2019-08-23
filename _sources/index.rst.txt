@@ -8,6 +8,8 @@ coronagraph
 
 .. image:: https://img.shields.io/badge/GitHub-jlustigy%2Fcoronagraph-blue.svg?style=flat
     :target: https://github.com/jlustigy/coronagraph
+.. image:: https://joss.theoj.org/papers/10.21105/joss.01387/status.svg
+    :target: https://doi.org/10.21105/joss.01387
 .. image:: http://img.shields.io/travis/jlustigy/coronagraph/master.svg?style=flat
     :target: http://travis-ci.org/jlustigy/coronagraph
 .. image:: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
@@ -30,12 +32,11 @@ general purpose exoplanet noise model for many different types of observations.
 To get started using the ``coronagraph`` noise model, take a look at the
 `Quickstart <notebooks/quickstart.html>`_ tutorial and the
 `examples <examples.html>`_. For more details about the full functionality of
-the code see the `Application Programming Interface (API) <api.html>`_. 
+the code see the `Application Programming Interface (API) <api.html>`_.
 
-If you use this model in your own research please cite Robinson et al (2016) and
-include something akin to the following acknowledgement:
-"This work made use of the Python coronagraph noise model, developed by
-J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/".
+If you use this model in your own research please cite
+`Robinson, Stapelfeldt & Marley (2016) <https://ui.adsabs.harvard.edu/abs/2016PASP..128b5003R/abstract>`_
+and `Lustig-Yaeger, Robinson & Arney (2019) <http://joss.theoj.org/papers/29a123d0178ea95da358dafc0282e8f7>`_.
 
 Documentation
 =============
