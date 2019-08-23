@@ -9,7 +9,7 @@ authors:
   - name: Jacob Lustig-Yaeger
     orcid: 0000-0002-0746-1980
     affiliation: 1
-  - name: Tyler Robinson
+  - name: Tyler D. Robinson
     orcid: 0000-0002-3196-414X
     affiliation: 2
   - name: Giada Arney
@@ -18,7 +18,7 @@ authors:
 affiliations:
   - name: University of Washington
     index: 1
-  - name: Northern Arizona State University
+  - name: Northern Arizona University
     index: 2
   - name: NASA Goddard Space Flight Center
     index: 3
