@@ -34,6 +34,25 @@ Users may also clone the repository on Github:
    python setup.py
 ```
 
-Note
-====
-If you use this model in your own research please cite [Robinson et al (2016)](http://adsabs.harvard.edu/cgi-bin/bib_query?arXiv:1507.00777) and include the following acknowledgement: "This work made use of the Python coronagraph noise model, developed by J. Lustig-Yaeger and available at https://github.com/jlustigy/coronagraph/".
+Citation
+========
+If you use this model in your own research please cite [Robinson, Stapelfeldt & Marley (2016)](https://ui.adsabs.harvard.edu/abs/2016PASP..128b5003R/abstract) and [Lustig-Yaeger, Robinson & Arney (2019)](http://joss.theoj.org/papers/29a123d0178ea95da358dafc0282e8f7).  
+
+```
+@article{Lustig2019coronagraph,
+	journal = {Journal of Open Source Software},
+	doi = {10.21105/joss.01387},
+	issn = {2475-9066},
+	number = {40},
+	publisher = {The Open Journal},
+	title = {coronagraph: Telescope Noise Modeling for Exoplanets in Python},
+	url = {http://dx.doi.org/10.21105/joss.01387},
+	volume = {4},
+	author = {Lustig-Yaeger, Jacob and Robinson, Tyler D. and Arney, Giada},
+	pages = {1387},
+	date = {2019-08-23},
+	year = {2019},
+	month = {8},
+	day = {23},
+}
+```
