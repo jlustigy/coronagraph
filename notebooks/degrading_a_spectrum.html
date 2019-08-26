@@ -373,6 +373,11 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This tutorial was generated from a Jupyter notebook that can be
+downloaded <a class="reference external" href="https://github.com/jlustigy/coronagraph/blob/master/docs/notebooks/degrading_a_spectrum.ipynb">here</a>.</p>
+</div>
 <div class="section" id="Degrading-a-Spectrum-to-Lower-Resolution">
 <h1>Degrading a Spectrum to Lower Resolution<a class="headerlink" href="#Degrading-a-Spectrum-to-Lower-Resolution" title="Permalink to this headline">¶</a></h1>
 <div class="nbinput docutils container">
@@ -391,7 +396,7 @@ div.nboutput div.output_area.stderr {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.1
+1.0
 </pre></div></div>
 </div>
 <div class="section" id="Proxima-Centauri-Stellar-Spectrum">
@@ -541,7 +546,7 @@ lower-resolution bein. How many NaNs are there?</p>
 2011)</a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<span></span>In [4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -552,7 +557,7 @@ lower-resolution bein. How many NaNs are there?</p>
 <p>Now let’s isolate just the O<span class="math notranslate">\(_2\)</span> A-band.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<span></span>In [5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -580,7 +585,7 @@ lower-resolution bein. How many NaNs are there?</p>
 <p>Define a set of resolving powers for us to loop over.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<span></span>In [6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -595,7 +600,7 @@ value in the degraded spectrum to assess how close we get to the actual
 bottom of the band.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<span></span>In [7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -611,14 +616,14 @@ bottom of the band.</p>
     <span class="n">Alr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">Ahr</span><span class="p">,</span> <span class="n">lamhr</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
 
     <span class="c1"># Plot</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lamhr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">Ahr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">Alr</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;steps-mid&quot;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span><span class="k">r</span>)
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">)</span>
 
     <span class="c1"># Save bottom value</span>
     <span class="n">bottom_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span>
 
 <span class="c1"># Finsh plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lamhr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">Ahr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\lambda / \Delta \lambda$&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Wavelength [$\mu$m]&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Geometric Albedo&quot;</span><span class="p">)</span>
@@ -637,22 +642,30 @@ bottom of the band.</p>
 the high-res spectrum.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<span></span>In [68]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<span></span><span class="c1"># Create resolution array to loop over</span>
+<span class="n">Nres</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Nres</span><span class="p">)</span>
+
+<span class="c1"># Array to store bottom-of-band albedos</span>
 <span class="n">bottom_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">))</span>
 
 <span class="c1"># Loop over R</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+
     <span class="c1"># Construct new low-res wavelength grid</span>
     <span class="n">wl</span><span class="p">,</span> <span class="n">dwl</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">noise_routines</span><span class="o">.</span><span class="n">construct_lam</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
     <span class="c1"># Down-bin flux to low-res</span>
     <span class="n">Alr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">Ahr</span><span class="p">,</span> <span class="n">lamhr</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
+
     <span class="c1"># Save bottom value</span>
     <span class="n">bottom_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span>
 
+<span class="c1"># Make plot</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">bottom_val</span><span class="p">);</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Resolving Power ($\lambda / \Delta \lambda$)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Bottom of the Band Albedo&quot;</span><span class="p">)</span>
@@ -667,6 +680,123 @@ the high-res spectrum.</p>
 <img alt="../_images/notebooks_degrading_a_spectrum_22_0.png" src="../_images/notebooks_degrading_a_spectrum_22_0.png" />
 </div>
 </div>
+<p>The oscillations in the above plot are the result of non-optimal
+placement of the resolution element relative to the oxygen A-band
+central wavelength. We can do better than this by iterating over
+different minimum wavelength positions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [183]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Create resolution array to loop over</span>
+<span class="n">Nres</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span> <span class="n">Nres</span><span class="p">)</span>
+
+<span class="c1"># Set number of initial positions</span>
+<span class="n">Ntest</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="c1"># Arrays to save quantities</span>
+<span class="n">bottom_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">Ntest</span><span class="p">])</span>
+<span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">Alrs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">lams</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Loop over R</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+
+    <span class="c1"># Set grid of minimum wavelengths to iterate over</span>
+    <span class="n">lammin_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lammin</span> <span class="o">-</span> <span class="mf">1.0</span><span class="o">*</span><span class="mf">0.76</span><span class="o">/</span><span class="n">r</span><span class="p">,</span> <span class="n">lammin</span><span class="p">,</span> <span class="n">Ntest</span><span class="p">)</span>
+
+    <span class="c1"># Loop over minimum wavelengths to adjust bin centers</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">lmin</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lammin_vals</span><span class="p">):</span>
+
+        <span class="c1"># Construct new low-res wavelength grid</span>
+        <span class="n">wl</span><span class="p">,</span> <span class="n">dwl</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">noise_routines</span><span class="o">.</span><span class="n">construct_lam</span><span class="p">(</span><span class="n">lmin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+
+        <span class="c1"># Down-bin flux to low-res</span>
+        <span class="n">Alr</span> <span class="o">=</span> <span class="n">cg</span><span class="o">.</span><span class="n">downbin_spec</span><span class="p">(</span><span class="n">Ahr</span><span class="p">,</span> <span class="n">lamhr</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dlam</span><span class="o">=</span><span class="n">dwl</span><span class="p">)</span>
+
+        <span class="c1"># Keep track of the minimum</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">best</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">bottom_vals</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">best</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+
+        <span class="c1"># Save quantities</span>
+        <span class="n">bottom_vals</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span>
+        <span class="n">Alrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Alr</span><span class="p">)</span>
+        <span class="n">lams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
+
+<span class="c1"># Reshape saved arrays</span>
+<span class="n">Alrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Alrs</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">Ntest</span><span class="p">,</span> <span class="n">Nres</span><span class="p">),</span> <span class="n">order</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+<span class="n">lams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lams</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">Ntest</span><span class="p">,</span> <span class="n">Nres</span><span class="p">),</span> <span class="n">order</span> <span class="o">=</span> <span class="s1">&#39;F&#39;</span><span class="p">)</span>
+<span class="n">best</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">best</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Plot the global minimum</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">bottom_vals</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">));</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Resolving Power ($\lambda / \Delta \lambda$)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Bottom of the Band Albedo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth&#39;s O$_2$ A-Band&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_24_0.png" src="../_images/notebooks_degrading_a_spectrum_24_0.png" />
+</div>
+</div>
+<p>In the above plot we are looking at the minimum albedo of the oxygen
+A-band <em>after optimizing the central band location</em>, and we can see that
+the pesky oscillations are now gone. At low resolution the above curve
+quickly decays as less and less continuum is mixed into the band
+measurement, while at high resolution the curve asymptotes to the true
+minimum of the band.</p>
+<p>Essentially what we have done is ensure that, when possible, the oxygen
+band is not split between multiple spectral elements. This can be seen
+in the following plot, which samples a few of the optimal solutions. It
+doesn’t look too different from the first version of this plot, but it
+does more efficiently sample the band shape (note that the lower
+resolution spectra have deeper bottoms and more tightly capture the band
+wings).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [186]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Get some log-spaced indices so we&#39;re not plotting all R</span>
+<span class="n">iz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="c1"># Loop over R</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+
+    <span class="c1"># Plot some of the resolutions</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iz</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">best</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">best</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">],</span> <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;steps-mid&quot;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span><span class="k">r</span>)
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">lammin</span><span class="p">,</span> <span class="n">lammax</span><span class="p">)</span>
+
+<span class="c1"># Finsh plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lamhr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">Ahr</span><span class="p">[</span><span class="n">m</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\lambda / \Delta \lambda$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Wavelength [$\mu$m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Geometric Albedo&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Earth&#39;s O$_2$ A-Band&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_degrading_a_spectrum_26_0.png" src="../_images/notebooks_degrading_a_spectrum_26_0.png" />
+</div>
+</div>
+<p>As you can see, much can be done with the simple re-binning functions,
+but the true utility of the <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> model comes from the noise
+calculations. Please refer to the other tutorials and examples for more
+details!</p>
 </div>
 </div>
 

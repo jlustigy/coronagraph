@@ -374,6 +374,11 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This tutorial was generated from a Jupyter notebook that can be
+downloaded <a class="reference external" href="https://github.com/jlustigy/coronagraph/blob/master/docs/notebooks/eclipse_example.ipynb">here</a>.</p>
+</div>
 <div class="section" id="Secondary-Eclipse-Spectroscopy">
 <h1>Secondary Eclipse Spectroscopy<a class="headerlink" href="#Secondary-Eclipse-Spectroscopy" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">coronagraph</span></code> model can be used to model exoplanet observations
@@ -397,7 +402,7 @@ using the generic telescope noise modeling tools available with the
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-0.1
+1.0
 </pre></div></div>
 </div>
 <div class="section" id="Earth-in-Emission">
@@ -463,13 +468,14 @@ that there is a lesson to be leared here, so let’s push forward into
 infeasibility.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [7]:
+<span></span>In [17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">tdur</span> <span class="o">=</span> <span class="mf">8.0</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>  <span class="c1"># Transit/Eclipse duration [seconds]</span>
 <span class="n">ntran</span> <span class="o">=</span> <span class="mf">1e3</span>           <span class="c1"># Number of eclipses</span>
 <span class="n">nout</span> <span class="o">=</span> <span class="mf">2.0</span>            <span class="c1"># Number of out-of-eclipse durations [transit durations]</span>
+<span class="n">wantsnr</span> <span class="o">=</span> <span class="mf">10.0</span>        <span class="c1"># Desired S/N per resolution element (when applicable)</span>
 </pre></div>
 </div>
 </div>
@@ -478,7 +484,7 @@ simulation, which contains all of the information needed to perform the
 noise calculation.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [8]:
+<span></span>In [18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -487,7 +493,8 @@ noise calculation.</p>
                      <span class="n">planet</span> <span class="o">=</span> <span class="n">planet</span><span class="p">,</span>        <span class="c1"># Planet object</span>
                      <span class="n">star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span>            <span class="c1"># Star object</span>
                      <span class="n">ntran</span> <span class="o">=</span> <span class="n">ntran</span><span class="p">,</span>          <span class="c1"># Number of eclipses to observe</span>
-                     <span class="n">nout</span> <span class="o">=</span> <span class="n">nout</span><span class="p">)</span>            <span class="c1"># Number of out-of-eclipse observing</span>
+                     <span class="n">nout</span> <span class="o">=</span> <span class="n">nout</span><span class="p">,</span>            <span class="c1"># Number of out-of-eclipse observing</span>
+                     <span class="n">wantsnr</span> <span class="o">=</span> <span class="n">wantsnr</span><span class="p">)</span>      <span class="c1"># Desired S/N per resolution element (when applicable)</span>
 </pre></div>
 </div>
 </div>
@@ -495,7 +502,7 @@ noise calculation.</p>
 <code class="docutils literal notranslate"><span class="pre">run_count_rates</span></code> method:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [9]:
+<span></span>In [19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -506,7 +513,7 @@ noise calculation.</p>
 <p>Let’s now plot our fiducial secondary eclipse spectrum.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [10]:
+<span></span>In [20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -540,7 +547,7 @@ detection more complicated and telescope-dependent.</p>
 <p>Let’s take a look that the signal-to-noise as a function of wavelength.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [11]:
+<span></span>In [21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -560,7 +567,7 @@ to get a given S/N in each spectral element. Let’s take a look at these
 devastating numbers for the Earth around the Sun.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [12]:
+<span></span>In [22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -581,7 +588,7 @@ the photon count rates incident upon the detector from various noise
 sources compared to our signal.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [13]:
+<span></span>In [23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -615,7 +622,7 @@ model.</p>
 a temperature for the planet:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [14]:
+<span></span>In [24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -627,7 +634,7 @@ a temperature for the planet:</p>
 spectrum and calculate the photon count rates.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [15]:
+<span></span>In [25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -636,7 +643,8 @@ spectrum and calculate the photon count rates.</p>
                       <span class="n">planet</span> <span class="o">=</span> <span class="n">planet</span><span class="p">,</span>
                       <span class="n">star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span>
                       <span class="n">ntran</span> <span class="o">=</span> <span class="n">ntran</span><span class="p">,</span>
-                      <span class="n">nout</span> <span class="o">=</span> <span class="n">nout</span><span class="p">)</span>
+                      <span class="n">nout</span> <span class="o">=</span> <span class="n">nout</span><span class="p">,</span>
+                      <span class="n">wantsnr</span> <span class="o">=</span> <span class="n">wantsnr</span><span class="p">)</span>
 
 <span class="n">enf</span><span class="o">.</span><span class="n">run_count_rates</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span>
 </pre></div>
@@ -646,7 +654,7 @@ spectrum and calculate the photon count rates.</p>
 emission spectrum.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [16]:
+<span></span>In [26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -688,7 +696,7 @@ secondary eclipse around this small, cool, dim star.</p>
 radius <code class="docutils literal notranslate"><span class="pre">Rs</span></code> of the <code class="docutils literal notranslate"><span class="pre">star</span></code>:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [17]:
+<span></span>In [27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -701,7 +709,7 @@ radius <code class="docutils literal notranslate"><span class="pre">Rs</span></c
 transit duration of TRAPPIST-1e and only observe 25 secondary eclipses.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [18]:
+<span></span>In [28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -710,7 +718,8 @@ transit duration of TRAPPIST-1e and only observe 25 secondary eclipses.</p>
                       <span class="n">planet</span> <span class="o">=</span> <span class="n">planet</span><span class="p">,</span>
                       <span class="n">star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span>
                       <span class="n">ntran</span> <span class="o">=</span> <span class="mf">25.0</span><span class="p">,</span>
-                      <span class="n">nout</span> <span class="o">=</span> <span class="n">nout</span><span class="p">)</span>
+                      <span class="n">nout</span> <span class="o">=</span> <span class="n">nout</span><span class="p">,</span>
+                      <span class="n">wantsnr</span> <span class="o">=</span> <span class="n">wantsnr</span><span class="p">)</span>
 
 <span class="n">enm</span><span class="o">.</span><span class="n">run_count_rates</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">fplan</span><span class="p">)</span>
 </pre></div>
@@ -719,7 +728,7 @@ transit duration of TRAPPIST-1e and only observe 25 secondary eclipses.</p>
 <p>Here’s the emission spectrum:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [19]:
+<span></span>In [29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -737,7 +746,7 @@ transit duration of TRAPPIST-1e and only observe 25 secondary eclipses.</p>
 <p>Now we’re in business!</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [20]:
+<span></span>In [30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -754,14 +763,15 @@ transit duration of TRAPPIST-1e and only observe 25 secondary eclipses.</p>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [21]:
+<span></span>In [37]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">enm</span><span class="o">.</span><span class="n">recalc_wantsnr</span><span class="p">(</span><span class="n">wantsnr</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">enm</span><span class="o">.</span><span class="n">plot_ntran_to_wantsnr</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">200</span><span class="p">);</span>
+<span class="n">en</span><span class="o">.</span><span class="n">recalc_wantsnr</span><span class="p">(</span><span class="n">wantsnr</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">enm</span><span class="o">.</span><span class="n">plot_ntran_to_wantsnr</span><span class="p">(</span><span class="n">plot_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ls&#39;</span><span class="p">:</span> <span class="s1">&#39;steps-mid&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span> <span class="p">:</span> <span class="s2">&quot;TRAPPIST-1&quot;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span> <span class="p">:</span> <span class="s1">&#39;C3&#39;</span><span class="p">})</span>
+<span class="n">en</span><span class="o">.</span><span class="n">plot_ntran_to_wantsnr</span><span class="p">(</span><span class="n">ax0</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot_kws</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ls&#39;</span><span class="p">:</span> <span class="s1">&#39;steps-mid&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span> <span class="p">:</span> <span class="s2">&quot;Sun&quot;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span> <span class="p">:</span> <span class="s1">&#39;C1&#39;</span><span class="p">})</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">framealpha</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -772,6 +782,9 @@ transit duration of TRAPPIST-1e and only observe 25 secondary eclipses.</p>
 <img alt="../_images/notebooks_eclipse_example_40_0.png" src="../_images/notebooks_eclipse_example_40_0.png" />
 </div>
 </div>
+<p>Compared to the Sun, studying Earth temperature planets in secondary
+eclipse around TRAPPIST-1 would require better than <span class="math notranslate">\(10\times\)</span>
+fewer transits to reach the same S/N on the spectrum.</p>
 <p>Note that a S/N of 5 on each spectral element says nothing of the
 ability to detect molecules. The 15 µm CO<span class="math notranslate">\(_2\)</span> band as seen in
 the spectrum above is detected at greater than S/N=5 even though the
@@ -779,7 +792,7 @@ S/N&lt;5 <em>in each element</em> within the absorption band.</p>
 <p>Finally, let’s look at the photon count rates.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
-<span></span>In [22]:
+<span></span>In [38]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
