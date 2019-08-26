@@ -56,6 +56,12 @@ extensions = [
     'm2r'
 ]
 
+nbsphinx_prolog = """
+{% set docname = env.doc2path(env.docname, base=None) %}
+.. note:: This tutorial was generated from a Jupyter notebook that can be
+          downloaded `here <https://github.com/jlustigy/coronagraph/blob/master/docs/{{ docname }}>`_.
+"""
+
 # Custom additions for exceptions
 plot_include_source = False
 plot_html_show_source_link = False
