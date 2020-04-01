@@ -191,6 +191,7 @@ class SkyFlux:
                 wmax	=	2000.0,
                 wgrid_mode	=	'fixed_wavelength_step',
                 wdelta	=	0.1,
+                wgrid_user = None,
                 wres	=	20000,
                 lsf_type	=	'none',
                 lsf_gauss_fwhm	=	5.0,
@@ -235,6 +236,7 @@ class SkyFlux:
         self.wmax = wmax
         self.wgrid_mode = wgrid_mode
         self.wdelta = wdelta
+        self.wgrid_user = wgrid_user
         self.wres = wres
         self.lsf_type = lsf_type
         self.lsf_gauss_fwhm = lsf_gauss_fwhm
@@ -279,6 +281,7 @@ class SkyFlux:
         skycalc_params['wmin'] = self.wmin
         skycalc_params['wmax'] = self.wmax
         skycalc_params['wgrid_mode'] = self.wgrid_mode
+        skycalc_params['wgrid_user'] = self.wgrid_user
         skycalc_params['wdelta'] = self.wdelta
         skycalc_params['wres'] = self.wres
         skycalc_params['lsf_type'] = self.lsf_type
@@ -371,6 +374,48 @@ class SkyFlux:
         self.flux = flux_sky
         self.trans = trans_sky
 
+    def __str__(self):
+        string = 'Sky Flux: \n---------\n'+\
+            '- Airmass : '+"%s" % (self.airmass)+'\n'+\
+            '- PWV Mode : '+"%s" % (self.pwv_mode)+'\n'+\
+            '- Season  : '+"%s" % (self.season)+'\n'+\
+            '- Time of Night  : '+"%s" % (self.time)+' \n'+\
+            '- Precipitable Water Vapor (PWV) [mm]  : '+"%s" % (self.pwv)+' \n'+\
+            '- Monthly Averaged Solar Flux [sfu=0.01 MJy]  : '+"%s" % (self.msolflux)+' \n'+\
+            '- Include Scattered Moonlight?  : '+"%s" % (self.incl_moon)+' \n'+\
+            '- Separation of Sun and Moon as seen from Earth [deg] : '+"%s" % (self.moon_sun_sep)+' \n'+\
+            '- Separation of Moon and target [deg]  : '+"%s" % (self.moon_target_sep)+' \n'+\
+            '- Moon altitude over horizon  : '+"%s" % (self.moon_alt)+' \n'+\
+            '- Moon-Earth distance (mean=1)  : '+"%s" % (self.moon_earth_dist)+' \n'+\
+            '- Include scattered starlight?  : '+"%s" % (self.incl_starlight)+' \n'+\
+            '- Include zodiacal light?  : '+"%s" % (self.incl_zodiacal)+' \n'+\
+            '- Heliocentric ecliptic longitude [deg]  : '+"%s" % (self.ecl_lon)+' \n'+\
+            '- Ecliptic latitude [deg]  : '+"%s" % (self.ecl_lat)+' \n'+\
+            '- Include molecular emission of lower atmosphere?  : '+"%s" % (self.incl_loweratm)+' \n'+\
+            '- Include molecular emission of upper atmosphere?  : '+"%s" % (self.incl_upperatm)+' \n'+\
+            '- Include upper airglow continuum?  : '+"%s" % (self.incl_airglow)+' \n'+\
+            '- Include instrumental thermal radiation?  : '+"%s" % (self.incl_therm)+' \n'+\
+            '- Instrumental temperature 1  : '+"%s" % (self.therm_t1)+' \n'+\
+            '- Instrumental emmisivity 1  : '+"%s" % (self.therm_e1)+' \n'+\
+            '- Instrumental temperature 2  : '+"%s" % (self.therm_t2)+' \n'+\
+            '- Instrumental emmisivity 2  : '+"%s" % (self.therm_e2)+' \n'+\
+            '- Instrumental temperature 3  : '+"%s" % (self.therm_t3)+' \n'+\
+            '- Instrumental emmisivity 3  : '+"%s" % (self.therm_e3)+' \n'+\
+            '- Calculation in vacuum or air?  : '+"%s" % (self.vacair)+' \n'+\
+            '- Minimum wavelength [nm]  : '+"%s" % (self.wmin)+' \n'+\
+            '- Maximum wavelength [nm]  : '+"%s" % (self.wmax)+' \n'+\
+            '- Wavelength grid mode  : '+"%s" % (self.wgrid_mode)+' \n'+\
+            '- Wavelength sampling dlambda [nm]  : '+"%s" % (self.wdelta)+' \n'+\
+            '- User-defined wavelength sampling  : '+"%s" % (self.wgrid_user)+' \n'+\
+            '- Spectral resolution  : '+"%s" % (self.wres)+' \n'+\
+            '- Line spread function type  : '+"%s" % (self.lsf_type)+' \n'+\
+            '- Gaussian FWHM  : '+"%s" % (self.lsf_gauss_fwhm)+' \n'+\
+            '- Boxcar FWHM  : '+"%s" % (self.lsf_boxcar_fwhm)+' \n'+\
+            '- Observatory  : '+"%s" % (self.observatory)+' \n'+\
+            '- Right Ascension  : '+"%s" % (self.ra)+' \n'+\
+            '- Declination  : '+"%s" % (self.dec)+' \n'+\
+            '- Date  : '+"%s" % (self.date)+''
+        return string
 
 if __name__ == '__main__':
     sf = SkyFlux()
