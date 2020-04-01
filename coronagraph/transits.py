@@ -9,7 +9,7 @@ As a result, stellar photons dominate the noise budget.
 For transmission spectroscopy calculations use :class:`TransitNoise`,
 and for emission spectroscopy use :class:`EclipseNoise`. You may also get an
 example transmission and emission spectrum of the Earth by calling
-:func:`get_earth_trans_spectrum`. 
+:func:`get_earth_trans_spectrum`.
 
 """
 
@@ -25,6 +25,7 @@ from .noise_routines import *
 from .degrade_spec import *
 from .observe import random_draw
 from .teleplanstar import *
+from .sky_flux import *
 
 __all__ = ["TransitNoise", "EclipseNoise", "get_earth_trans_spectrum"]
 
@@ -44,6 +45,8 @@ class EclipseNoise(object):
         Initialized object containing ``Planet`` parameters
     star : Star
         Initialized object containing ``Star`` parameters
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     tdur : float
         Transit duration [s]
     ntran : float
@@ -75,6 +78,7 @@ class EclipseNoise(object):
                        telescope = Telescope(),
                        planet = Planet(),
                        star = Star(),
+                       skyflux = None,
                        ntran   = 1,
                        nout    = 1,
                        wantsnr = 1000.0,
@@ -86,6 +90,7 @@ class EclipseNoise(object):
         self.telescope = telescope
         self.planet    = planet
         self.star      = star
+        self.skyflux   = skyflux
         self.tdur      = tdur
         self.ntran     = ntran
         self.nout      = nout
@@ -305,12 +310,19 @@ class EclipseNoise(object):
             cth = np.zeros_like(cs)
 
         # Additional background from sky for ground-based observations
-        if self.GROUND:
 
+        if self.skyflux is not None:
             if self.GROUND == "ESO":
                 # Use ESO SKCALC
                 wl_sky, Isky = get_sky_flux()
                 # Convolve to instrument resolution
+                Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
+            elif self.GROUND == "SKYFLUX":
+                # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
+                wl_sky = self.skyflux.lam
+                Isky = self.skyflux.flux
+
                 Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
             else:
                 # Get SMART computed surface intensity due to sky background
@@ -694,6 +706,8 @@ class TransitNoise(object):
         Initialized object containing ``Planet`` parameters
     star : Star
         Initialized object containing ``Star`` parameters
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     tdur : float
         Transit duration [s]
     ntran : float
@@ -725,6 +739,7 @@ class TransitNoise(object):
                        telescope = Telescope(),
                        planet = Planet(),
                        star = Star(),
+                       skyflux = None,
                        ntran   = 1,
                        nout    = 1,
                        wantsnr = 1000.0,
@@ -736,6 +751,7 @@ class TransitNoise(object):
         self.telescope = telescope
         self.planet    = planet
         self.star      = star
+        self.skyflux   = skyflux
         self.tdur      = tdur
         self.ntran     = ntran
         self.nout      = nout
@@ -757,6 +773,7 @@ class TransitNoise(object):
 
         Parameters
         ----------
+
         lamhr : numpy.ndarray
             Wavelength [$\mu$m]
         tdhr : numpy.ndarray
@@ -945,13 +962,21 @@ class TransitNoise(object):
             cth = np.zeros_like(cs)
 
         # Additional background from sky for ground-based observations
-        if self.GROUND:
+        if self.skyflux is not None:
 
             if self.GROUND == "ESO":
-                # Use ESO SKCALC
+                # Use the standard ESO SKCALC output
                 wl_sky, Isky = get_sky_flux()
                 # Convolve to instrument resolution
                 Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+            elif self.GROUND == "SKYFLUX":
+                # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
+                wl_sky = self.skyflux.lam
+                Isky = self.skyflux.flux
+
+                Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
+
             else:
                 # Get SMART computed surface intensity due to sky background
                 Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)

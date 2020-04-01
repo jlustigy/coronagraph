@@ -1,4 +1,6 @@
 '''
+The following script creates an object for the flux of the Earth's sky.
+
 this script requires the user to have the ESO SkyCalc CLI installed via
 pip install --user skycalc_cli
 https://www.eso.org/observing/etc/doc/skycalc/helpskycalccli.html

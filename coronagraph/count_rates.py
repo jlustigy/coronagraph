@@ -44,6 +44,8 @@ class CoronagraphNoise(object):
         Initialized object containing ``Planet`` parameters
     star : Star
         Initialized object containing ``Star`` parameters
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     texp : float
         Exposure time for which to generate synthetic data [hours]
     wantsnr : float, optional
@@ -80,7 +82,7 @@ class CoronagraphNoise(object):
     :func:`CoronagraphNoise.run_count_rates` is called.
     """
     def __init__(self, telescope = Telescope(), planet = Planet(),
-                 star = Star(), texp = 10.0, wantsnr=10.0, FIX_OWA = False,
+                 star = Star(), skyflux = None, texp = 10.0, wantsnr=10.0, FIX_OWA = False,
                  COMPUTE_LAM = False, SILENT = False, NIR = False,
                  THERMAL = True, GROUND = False, vod=False, set_fpa=None,
                  roll_maneuver = True):
@@ -89,6 +91,7 @@ class CoronagraphNoise(object):
         self.telescope = telescope
         self.planet = planet
         self.star = star
+        self.skyflux = skyflux
         self.texp = texp
         self.wantsnr = wantsnr
         self.FIX_OWA = FIX_OWA
@@ -234,7 +237,8 @@ class CoronagraphNoise(object):
                         CIRC = CIRC,
                         roll_maneuver = self.roll_maneuver,
                         SILENT = self.SILENT,
-                        wantsnr = self.wantsnr
+                        wantsnr = self.wantsnr,
+                        skyflux = self.skyflux
                     )
 
         # Save output arrays
@@ -525,7 +529,7 @@ def count_rates(Ahr, lamhr, solhr,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
-                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
+                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -646,6 +650,8 @@ def count_rates(Ahr, lamhr, solhr,
         This assumes an extra factor of 2 hit to the background noise due to a
         telescope roll maneuver needed to subtract out the background. See
         Brown (2005) for more details.
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
 
     Returns
     -------
@@ -805,11 +811,20 @@ def count_rates(Ahr, lamhr, solhr,
         cth = np.zeros_like(cp)
 
     # Add earth thermal photons if GROUND
-    if GROUND:
-        # Use ESO SKCALC
-        wl_sky, Isky = get_sky_flux()
-        # Convolve to instrument resolution
-        Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+    if skyflux is not None:
+        if self.GROUND == "ESO":
+            # Use ESO SKCALC
+            wl_sky, Isky = get_sky_flux()
+            # Convolve to instrument resolution
+            Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
+        elif self.GROUND == "SKYFLUX":
+            # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
+            wl_sky = self.skyflux.lam
+            Isky = self.skyflux.flux
+            # Convolve to instrument resolution
+            Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
         # Compute Earth thermal photon count rate
         cthe = ctherm_earth(q, X, T, lam, dlam, diam_collect, Itherm)
         # Add earth thermal photon counts to telescope thermal counts

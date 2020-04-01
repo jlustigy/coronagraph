@@ -740,7 +740,7 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
 
     Returns
     -------
-    q : numpy.array 
+    q : numpy.array
         Wavelength-dependent instrumental quantum efficiency
     """
     Nlam = len(lam)
@@ -986,6 +986,9 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def get_sky_flux():
     """
+    THIS FUNCTION WILL BE DEGRADED 
+
+
     Get the spectral flux density from the sky viewed at a ground-based
     telescope an an average night. This calculation comes from
     `ESO SKYCALC <https://www.eso.org/observing/etc/bin/gen/form?INS.MODE=swspectr+INS.NAME=SKYCALC>`_
