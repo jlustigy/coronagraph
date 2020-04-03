@@ -11,7 +11,8 @@ import os
 import astropy.io.fits as pyfits
 import astropy.units as u
 import numpy as np
-
+import matplotlib.pyplot as plt
+import glob
 
 
 class SkyFlux:
@@ -191,7 +192,6 @@ class SkyFlux:
                 wmax	=	2000.0,
                 wgrid_mode	=	'fixed_wavelength_step',
                 wdelta	=	0.1,
-                wgrid_user = None,
                 wres	=	20000,
                 lsf_type	=	'none',
                 lsf_gauss_fwhm	=	5.0,
@@ -200,6 +200,7 @@ class SkyFlux:
                 ra	=	121.75,
                 dec	=	-29.7,
                 date	=	'2012-07-17T21:12:14'):
+                #wgrid_user = [500.0, 510.0, 520.0, 530.0, 540.0, 550.0],   # not sure what's going on here, ESO SkyCalc doesn't like this
 
         self.place = place
         self.tag = tag
@@ -236,7 +237,6 @@ class SkyFlux:
         self.wmax = wmax
         self.wgrid_mode = wgrid_mode
         self.wdelta = wdelta
-        self.wgrid_user = wgrid_user
         self.wres = wres
         self.lsf_type = lsf_type
         self.lsf_gauss_fwhm = lsf_gauss_fwhm
@@ -281,7 +281,6 @@ class SkyFlux:
         skycalc_params['wmin'] = self.wmin
         skycalc_params['wmax'] = self.wmax
         skycalc_params['wgrid_mode'] = self.wgrid_mode
-        skycalc_params['wgrid_user'] = self.wgrid_user
         skycalc_params['wdelta'] = self.wdelta
         skycalc_params['wres'] = self.wres
         skycalc_params['lsf_type'] = self.lsf_type
@@ -326,6 +325,11 @@ class SkyFlux:
             skycalc_save_fl = self.place + '/' + 'skycalc_params.txt'
             almanac_save_fl = self.place + '/' + 'almanac_params.txt'
 
+        if os.path.exists(skycalc_save_fl) | os.path.exists(almanac_save_fl):
+            # check to see if they contain the same parameters as specified here
+            # if so, no need to re-run skycalc_cli
+            pass
+
         skycalc_params_dict = self.skycalc_params_to_dict()
         almanac_params_dict = self.almanac_params_to_dict()
 
@@ -341,7 +345,7 @@ class SkyFlux:
 
         return skycalc_save_fl, almanac_save_fl
 
-    def run_skycalc(self, output_fl):
+    def run_skycalc(self, output_fl, rmfits=False, rmfits_dir=None):
         '''
         function that calls and runs the eso skycalc cli, then adds output to object
 
@@ -351,12 +355,21 @@ class SkyFlux:
             name of file to output todo
             must be .fits
         '''
+        if rmfits:
+            fits_fls = glob.glob(rmfits_dir + '/*fits')
+            for fits_fl in fits_fls:
+                os.remove(fits_fl)
+        else:
+            pass
 
-        skycalc_save_fl, almanac_save_fl = self.write_skycalc_params()
-        command = "skycalc_cli -i {0} -o {1} -a {2}".format(skycalc_save_fl, output_fl, almanac_save_fl)
-        print("RUNNING:", command)
-        subprocess.run(command.split(' '))
-        print("DONE")
+        if os.path.exists(output_fl):
+            pass
+        else:
+            skycalc_save_fl, almanac_save_fl = self.write_skycalc_params()
+            command = "skycalc_cli -i {0} -o {1} -a {2}".format(skycalc_save_fl, output_fl, almanac_save_fl)
+            print("RUNNING:", command)
+            print(subprocess.run(command.split(' ')))
+            print("DONE")
 
         output_fits = pyfits.open(output_fl)
         lam_sky = output_fits[1].data["lam"]
@@ -373,6 +386,47 @@ class SkyFlux:
         self.lam = lam_sky
         self.flux = flux_sky
         self.trans = trans_sky
+
+    def plot_skyflux(self, ax0 = None,
+                    plot_kws = {"lw" : 1.0, "alpha" : 0.8}):
+
+        '''
+        Plot the sky flux.
+
+        Parameters
+        ----------
+        ax0 : `matplotlib.axes`
+            Optional axis to provide
+        plot_kws : dic
+            Keyword arguments for `plot`
+
+        Returns
+        -------
+        fig : `matplotlib.figure.Figure`
+            Returns a figure if `ax0` is `None`
+        ax : `matplotlib.axes`
+            Returns an axis if `ax0` is `None`
+
+        Note
+        ----
+        Only returns `fig` and `ax` if ``ax0 is None``
+        '''
+
+        if ax0 is None:
+            # Create Plot
+            fig, ax = plt.subplots(figsize = (10,8))
+            ax.set_xlabel(r"Wavelength [$\mu$m]")
+            ax.set_ylabel(r"Flux of sky (W / m$^2$ / $\mu$ m )")
+        else:
+            ax = ax0
+
+        ax.plot(self.lam, self.flux, **plot_kws)
+        ax.set_yscale('log')
+
+        if ax0 is None:
+            return fig, ax
+        else:
+            return
 
     def __str__(self):
         string = 'Sky Flux: \n---------\n'+\
@@ -406,7 +460,6 @@ class SkyFlux:
             '- Maximum wavelength [nm]  : '+"%s" % (self.wmax)+' \n'+\
             '- Wavelength grid mode  : '+"%s" % (self.wgrid_mode)+' \n'+\
             '- Wavelength sampling dlambda [nm]  : '+"%s" % (self.wdelta)+' \n'+\
-            '- User-defined wavelength sampling  : '+"%s" % (self.wgrid_user)+' \n'+\
             '- Spectral resolution  : '+"%s" % (self.wres)+' \n'+\
             '- Line spread function type  : '+"%s" % (self.lsf_type)+' \n'+\
             '- Gaussian FWHM  : '+"%s" % (self.lsf_gauss_fwhm)+' \n'+\
