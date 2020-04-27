@@ -951,6 +951,40 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
         plt.show()
     return Tatmos
 
+
+def set_atmos_throughput_skyflux(wl_atmos, Tatmoshr, lam, dlam, convolve, plot=False):
+    """
+    Use SkyFlux Earth atmospheric transmission to set throughput term for
+    radiation through the atmosphere
+
+    Parameters
+    ----------
+    lam : ndarray
+        Wavelength grid
+    dlam : ndarray
+        Wavelength bin width grid
+    convolve : func
+        Function used to degrade/downbin spectrum
+
+    Returns
+    -------
+    Tatmos : numpy.array
+        Atmospheric throughput as a function of wavelength
+    """
+    # Degrade atmospheric transmission to wavelength gridpoints
+    Tatmos = convolve(Tatmoshr, wl_atmos,lam,dlam=dlam)
+    if plot:
+        import matplotlib.pyplot as plt; from matplotlib import gridspec
+        fig1 = plt.figure(figsize=(8,6))
+        gs = gridspec.GridSpec(1,1)
+        ax1 = plt.subplot(gs[0])
+        ax1.plot(lam, Tatmos, c="orange", ls="steps-mid")
+        ax1.set_ylabel("Earth Atmospheric Transmission")
+        ax1.set_xlabel("Wavelength [um]")
+        plt.show()
+    return Tatmos
+
+
 '''
 def get_thermal_ground_intensity(lam, dlam, convolve):
     """
@@ -986,7 +1020,7 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def get_sky_flux():
     """
-    THIS FUNCTION WILL BE DEGRADED 
+    THIS FUNCTION WILL BE DEGRADED
 
 
     Get the spectral flux density from the sky viewed at a ground-based

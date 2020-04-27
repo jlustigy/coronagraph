@@ -232,7 +232,8 @@ class EclipseNoise(object):
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
             # Use SMART calc
-            Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            Tatmos = set_atmos_throughput_skyflux(skyflux.lam, skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
@@ -893,7 +894,8 @@ class TransitNoise(object):
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
             # Use SMART calc
-            Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            Tatmos = set_atmos_throughput_skyflux(skyflux.lam, skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
@@ -1175,7 +1177,7 @@ class TransitNoise(object):
         else:
             return
 
-    def plot_SNRn(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
+        def plot_SNRn(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
         """
         Plot the S/N on the Transit Depth as a function of wavelength.
 

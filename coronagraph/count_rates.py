@@ -386,8 +386,8 @@ class CoronagraphNoise(object):
         #ax.set_yscale("log")
 
         # Set ylim
-        mederr = scale*np.median(self.Asig)
-        medy = scale*np.median(self.Aobs)
+        mederr = scale*np.nanmedian(self.Asig)
+        medy = scale*np.nanmedian(self.Aobs)
         ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
 
         ylims = ax.get_ylim()
@@ -776,9 +776,11 @@ def count_rates(Ahr, lamhr, solhr,
         #    pass
         #else:
         # Use SMART calc
-        Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+        Tatmos = set_atmos_throughput_skyflux(skyflux.lam, skyflux.trans, lam, dlam, convolution_function)
         # Multiply telescope throughput by atmospheric throughput
-        T = T * Tatmos
+        #T = T * Tatmos
+    else:
+        Tatmos = np.ones_like(lam)
 
     # Degrade albedo and stellar spectrum
     if COMPUTE_LAM:
@@ -797,12 +799,14 @@ def count_rates(Ahr, lamhr, solhr,
     Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope
     Cratio = FpFs(A, Phi, Rp, r)
 
+    T2 = T * Tatmos # two-component throughput (Tatmos not 1 for ground)
+
     ##### Compute count rates #####
-    cp     =  cplan(q, fpa, T, lam, dlam, Fp, diam_collect)                          # planet count rate
-    cz     =  czodi(q, X, T, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
-    cez    =  cezodi(q, X, T, lam, dlam, diam_collect, r, \
+    cp     =  cplan(q, fpa, T2, lam, dlam, Fp, diam_collect)                          # planet count rate
+    cz     =  czodi(q, X, T2, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
+    cez    =  cezodi(q, X, T2, lam, dlam, diam_collect, r, \
         Fstar(lam, Teff, Rs,1. , AU=True), Nez, MezV)                                    # exo-zodi count rate
-    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam_collect)         # speckle count rate
+    csp    =  cspeck(q, T2, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam_collect)         # speckle count rate
     cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
     cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
     if THERMAL:
@@ -812,16 +816,16 @@ def count_rates(Ahr, lamhr, solhr,
 
     # Add earth thermal photons if GROUND
     if skyflux is not None:
-        if self.GROUND == "ESO":
+        if GROUND == "ESO":
             # Use ESO SKCALC
             wl_sky, Isky = get_sky_flux()
             # Convolve to instrument resolution
             Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
 
-        elif self.GROUND == "SKYFLUX":
+        elif GROUND == "SKYFLUX":
             # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
-            wl_sky = self.skyflux.lam
-            Isky = self.skyflux.flux
+            wl_sky = skyflux.lam
+            Isky = skyflux.flux
             # Convolve to instrument resolution
             Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
 
