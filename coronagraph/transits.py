@@ -26,6 +26,7 @@ from .degrade_spec import *
 from .observe import random_draw
 from .teleplanstar import *
 from .sky_flux import *
+from .noise_routines import set_atmos_throughput_skyflux
 
 __all__ = ["TransitNoise", "EclipseNoise", "get_earth_trans_spectrum"]
 
@@ -233,7 +234,7 @@ class EclipseNoise(object):
         if self.GROUND:
             # Use SMART calc
             #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
-            Tatmos = set_atmos_throughput_skyflux(skyflux.lam, skyflux.trans, lam, dlam, convolution_function)
+            Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
@@ -504,8 +505,8 @@ class EclipseNoise(object):
 
         # Set ylim
         if Nsig is not None:
-            mederr = scale*np.median(self.sig)
-            medy = scale*np.median(self.obs)
+            mederr = scale*np.nanmedian(self.sig)
+            medy = scale*np.nanmedian(self.obs)
             ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
 
         ylims = ax.get_ylim()
@@ -895,7 +896,7 @@ class TransitNoise(object):
         if self.GROUND:
             # Use SMART calc
             #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
-            Tatmos = set_atmos_throughput_skyflux(skyflux.lam, skyflux.trans, lam, dlam, convolution_function)
+            Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
@@ -1152,8 +1153,8 @@ class TransitNoise(object):
         #ax.set_yscale("log")
 
         # Set ylim
-        mederr = scale*np.median(self.sig)
-        medy = scale*np.median(self.obs)
+        mederr = scale*np.nanmedian(self.sig)
+        medy = scale*np.nanmedian(self.obs)
         ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
 
         ylims = ax.get_ylim()
@@ -1177,7 +1178,7 @@ class TransitNoise(object):
         else:
             return
 
-        def plot_SNRn(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
+    def plot_SNRn(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
         """
         Plot the S/N on the Transit Depth as a function of wavelength.
 

@@ -21,7 +21,7 @@ from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
     set_quantum_efficiency, set_read_noise, set_dark_current, set_lenslet, \
-    set_throughput, set_atmos_throughput, \
+    set_throughput, set_atmos_throughput, set_atmos_throughput_skyflux, \
     exptime_element, get_sky_flux
 from .teleplanstar import Telescope, Planet, Star
 
