@@ -66,9 +66,20 @@ nbsphinx_prolog = """
 plot_include_source = False
 plot_html_show_source_link = False
 plot_html_show_formats = False
+
 # Remove ipython notebook prompt numbers
-nbsphinx_prompt_width = 0
+nbsphinx_prolog = """
+.. raw:: html
+    <style>
+        .nbinput .prompt,
+        .nboutput .prompt {
+        display: none;
+        }
+    </style>
+"""
+
 napoleon_use_ivar = True
+
 # Make the order of the autodocs in the order they appear in the code
 autodoc_member_order = 'bysource'
 

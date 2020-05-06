@@ -9,7 +9,7 @@ As a result, stellar photons dominate the noise budget.
 For transmission spectroscopy calculations use :class:`TransitNoise`,
 and for emission spectroscopy use :class:`EclipseNoise`. You may also get an
 example transmission and emission spectrum of the Earth by calling
-:func:`get_earth_trans_spectrum`. 
+:func:`get_earth_trans_spectrum`.
 
 """
 
