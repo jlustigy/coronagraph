@@ -70,6 +70,7 @@ plot_html_show_formats = False
 # Remove ipython notebook prompt numbers
 nbsphinx_prolog = """
 .. raw:: html
+
     <style>
         .nbinput .prompt,
         .nboutput .prompt {
