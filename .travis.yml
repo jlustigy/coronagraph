@@ -30,7 +30,7 @@ before_install:
 install:
   - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
   - source activate test
-  - conda install -c conda-forge --yes numpy scipy astropy matplotlib numba "pytest=3.2.5" "pytest-cov<2.6"
+  - conda install -c conda-forge --yes numpy scipy astropy matplotlib numba pytest pytest-cov
   - pip install coveralls
   - python setup.py install
 
@@ -45,7 +45,8 @@ services:
 script:
   #- mkdir -p $TEST_DIR
   #- cd $TEST_DIR && python -m pytest --pyargs coronagraph --doctest-modules
-  - py.test -v --cov coronagraph
+  #- py.test -v --cov coronagraph
+  - pytest -v coronagraph/tests --cov=coronagraph
 
 after_success:
   - coveralls
