@@ -51,7 +51,7 @@ def test_count_rates():
     Nez  = 1.      # number of exo-zodis
 
     # Create hi-res wavelength grid
-    lamhr = np.linspace(0.2, 2.5, 1e4)
+    lamhr = np.linspace(0.2, 2.5, int(1e4))
 
     # Create fake hi-resolution reflectivity
     Ahr   = 0.1 + 0.1 * lamhr * np.sin(np.pi * lamhr / 5.)
@@ -131,7 +131,7 @@ def test_observe():
     """
 
     # Create hi-res wavelength grid
-    lamhr = np.linspace(0.2, 2.5, 1e4)
+    lamhr = np.linspace(0.2, 2.5, int(1e4))
 
     # Create fake hi-resolution reflectivity
     Ahr   = 0.1 + 0.1 * lamhr * np.sin(np.pi * lamhr / 5.)
@@ -158,7 +158,7 @@ def test_convolution_functions():
     -------
     """
     # Create hi-res wavelength grid
-    lamhr = np.linspace(0.2, 2.5, 1e4)
+    lamhr = np.linspace(0.2, 2.5, int(1e4))
 
     # Create fake hi-resolution reflectivity
     Ahr   = 0.1 + 0.1 * lamhr * np.sin(np.pi * lamhr / 5.)
@@ -206,7 +206,7 @@ def test_imager():
     Nez  = 1.      # number of exo-zodis
 
     # Create hi-res wavelength grid
-    lamhr = np.linspace(0.2, 2.5, 1e4)
+    lamhr = np.linspace(0.2, 2.5, int(1e4))
 
     # Create fake hi-resolution reflectivity
     Ahr   = 0.1 + 0.1 * lamhr * np.sin(np.pi * lamhr / 5.)
