@@ -30,8 +30,7 @@ before_install:
 install:
   - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
   - source activate test
-  - conda install -c conda-forge --yes numpy scipy astropy matplotlib numba
-  - conda install pytest "pytest-cov<2.6"
+  - conda install -c conda-forge --yes numpy scipy astropy matplotlib numba pytest "pytest-cov<2.6"
   - pip install coveralls
   - python setup.py install
 
