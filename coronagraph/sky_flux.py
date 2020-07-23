@@ -189,7 +189,7 @@ class SkyFlux:
                 therm_e3	=	0.0,
                 vacair	=	'vac',
                 wmin	=	300.0,
-                wmax	=	2000.0,
+                wmax	=	30000.0,
                 wgrid_mode	=	'fixed_wavelength_step',
                 wdelta	=	0.1,
                 wres	=	20000,
@@ -363,6 +363,7 @@ class SkyFlux:
             pass
 
         if os.path.exists(output_fl):
+            print("SKYCALC output file already exists. Running with {}".format(output_fl))
             pass
         else:
             skycalc_save_fl, almanac_save_fl = self.write_skycalc_params()

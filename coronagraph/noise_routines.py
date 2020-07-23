@@ -149,8 +149,8 @@ def cstar(q, fpa, T, lam, dlam, Fstar, D):
         Wavelength [um]
     dlam : float or array-like
         Spectral element width [um]
-    Fplan : float or array-like
-        Planetary flux [W/m**2/um]
+    Fstar : float or array-like
+        Stellar flux [W/m**2/um]
     D : float
         Telescope diameter [m]
 
@@ -1020,7 +1020,7 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def get_sky_flux():
     """
-    THIS FUNCTION WILL BE DEGRADED
+    THIS FUNCTION WILL BE DEPRICIATED
 
 
     Get the spectral flux density from the sky viewed at a ground-based

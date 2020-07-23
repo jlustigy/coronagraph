@@ -1021,6 +1021,8 @@ class TransitNoise(object):
         #   planet occulting the star calculation in terms of observables
         SNR1 = (Nstar * RpRs2) / np.sqrt((1 + 1./self.nout - RpRs2) * Nstar + (1 + 1./self.nout) * Nback)
 
+        SNR1_rednoiseless = (Nstar * RpRs2) / np.sqrt((1 + 1./self.nout - RpRs2) * Nstar)
+
         # Calculate SNR on missing stellar photons in ntran transits
         SNRn =  np.sqrt(self.ntran) * SNR1
 
@@ -1036,6 +1038,8 @@ class TransitNoise(object):
         self.tSNR = tSNR
         self.nSNR = nSNR
 
+        self.SNR1_rednoiseless = SNR1_rednoiseless
+
         # Save additional stuff
         self.lam = lam
         self.dlam = dlam
@@ -1046,7 +1050,7 @@ class TransitNoise(object):
 
         return
 
-    def make_fake_data(self):
+    def make_fake_data(self, rednoise=True):
         """
         Make a fake dataset by sampling from a Gaussian.
 
@@ -1064,10 +1068,15 @@ class TransitNoise(object):
         assert self._computed
 
         # Calculate SNR on missing stellar photons in ntran transits
-        self.SNRn =  np.sqrt(self.ntran) * self.SNR1
+        if rednoise:
+            self.SNRn =  np.sqrt(self.ntran) * self.SNR1
+            self.sig = self.RpRs2 / self.SNRn
+        else:
+            self.SNRn_rednoiseless = np.sqrt(self.ntran) * self.SNR1_rednoiseless
+            self.sig = self.RpRs2 / self.SNRn_rednoiseless
 
         # Generate synthetic observations
-        self.sig = self.RpRs2 / self.SNRn
+
         self.obs = random_draw(self.RpRs2, self.sig)
 
     def recalc_wantsnr(self, wantsnr = None):
