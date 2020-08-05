@@ -9,8 +9,10 @@ import numpy as np
 import scipy as sp
 from scipy import interpolate
 from scipy.stats import binned_statistic
+import astropy.units as u
+import astropy.constants as c
 
-__all__ = ['downbin_spec', 'downbin_spec_err', 'degrade_spec']
+__all__ = ['downbin_spec', 'downbin_spec_err', 'degrade_spec', 'doppler_shift']
 
 def downbin_spec(specHR, lamHR, lamLR, dlam=None):
     """
@@ -216,3 +218,27 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
         specLO[i] = specs
 
     return specLO
+
+def doppler_shift(lam, flux, velocity):
+    """
+    Shifts a spectrum by a given velocity [km/s]
+
+    Parameters
+    ----------
+    lam : array-like
+        wavelength
+    flux : array-like
+        flux
+    velocity : float
+        velocity [km/s]
+
+    Returns
+    -------
+    flux_shifted : :py:obj:`numpy.ndarray`
+        Doppler shifted spectrum
+    """
+    doppler_factor = np.sqrt((1+velocity*u.km/u.s/c.c)/(1 - velocity*u.km/u.s/c.c))
+    new_lam = lam * doppler_factor
+    f = interpolate.interp1d(lam, flux, fill_value = "extrapolate")
+    flux_shifted = f(new_lam)
+    return flux_shifted

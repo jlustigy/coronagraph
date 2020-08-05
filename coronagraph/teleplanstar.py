@@ -323,12 +323,14 @@ class Star(object):
         Stellar radius [Solar Radii]
     """
 
-    def __init__(self, Teff=5780.0, Rs=1.0):
+    def __init__(self, Teff=5780.0, Rs=1.0, vs=0.0):
         self.Teff=Teff
         self.Rs=Rs
+        self.vs=vs
 
     def __str__(self):
         string = 'Star: \n-----\n'+\
             '- Effective Temperature (K) : '+"%s" % (self.Teff)+'\n'+\
-            '- Radius (Solar Radii) : '+"%s" % (self.Rs)
+            '- Radius (Solar Radii) : '+"%s" % (self.Rs)+'\n'+\
+            '- Velocity (km/s) : '+"%s" % (self.vs)
         return string

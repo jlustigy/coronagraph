@@ -733,6 +733,8 @@ class TransitNoise(object):
         Set to compute thermal photon counts due to telescope temperature
     GROUND : bool, optional
         Set to simulate ground-based observations through atmosphere
+    ZODI : bool, optional
+        Set to simulate zodiacal and exo-zodiacal photon noise
     vod : bool, optional
         "Valley of Death" red QE parameterization from Robinson et al. (2016)
 
@@ -749,7 +751,8 @@ class TransitNoise(object):
                        THERMAL = True,
                        GROUND  = False,
                        vod     = False,
-                       IMAGE   = False):
+                       IMAGE   = False,
+                       ZODI = True):
         self.telescope = telescope
         self.planet    = planet
         self.star      = star
@@ -763,6 +766,7 @@ class TransitNoise(object):
         self.GROUND    = GROUND
         self.vod       = vod
         self.IMAGE     = IMAGE
+        self.ZODI      = ZODI
 
         self._computed = False
 
@@ -900,8 +904,11 @@ class TransitNoise(object):
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
-        # Degrade transit and stellar spectrum
-        RpRs2 = convolution_function(tdhr,lamhr,lam,dlam=dlam)
+        # Degrade and doppler shift transit and stellar spectrum
+        tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs)
+        RpRs2 = convolution_function(tdhr_shifted,lamhr,lam,dlam=dlam)
+
+        Fshr_shifted = doppler_shift(lamhr, Fshr, self.star.vs)
 
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
@@ -909,7 +916,7 @@ class TransitNoise(object):
             Bstar = planck(self.star.Teff, lam)
         else:
             # Using provided TOA stellar flux
-            Fslr = convolution_function(Fshr, lamhr, lam, dlam=dlam)
+            Fslr = convolution_function(Fshr_shifted, lamhr, lam, dlam=dlam)
             Bstar = Fslr / ( np.pi*(self.star.Rs*u.Rsun.in_units(u.km)/\
                            (self.planet.a*u.AU.in_units(u.km)))**2. )
 
@@ -935,15 +942,19 @@ class TransitNoise(object):
         # Missing photon count rate (is this a thing? it is now!)
         cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*diam_collect)**2)
 
-        # Solar System Zodi count rate
-        cz =  czodi(q, self.telescope.X, T, lam, dlam,
-                    diam_collect, self.planet.MzV)
+        if self.ZODI:
+            # Solar System Zodi count rate
+            cz =  czodi(q, self.telescope.X, T, lam, dlam,
+                        diam_collect, self.planet.MzV)
 
-        # Exo-Zodi count rate
-        cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
-                      self.planet.a,
-                      Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
-                      self.planet.Nez, self.planet.MezV)
+            # Exo-Zodi count rate
+            cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
+                          self.planet.a,
+                          Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
+                          self.planet.Nez, self.planet.MezV)
+        else:
+            cz = np.zeros_like(cs)
+            cez = np.zeros_like(cs)
 
         # Dark current count rate
         cD =  cdark(De, self.telescope.X, lam,
@@ -988,8 +999,11 @@ class TransitNoise(object):
             cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
                                 diam_collect, Itherm)
 
-            # Add earth thermal photon counts to telescope thermal counts
-            cth = cth + cthe
+            if self.THERMAL:
+                # Add earth thermal photon counts to telescope thermal counts
+                cth = cth + cthe
+            else:
+                cth = np.zeros_like(cs)
 
         # Calculate background photon count rate
         cback = cz + cez + cth + cD + cR
@@ -1003,6 +1017,7 @@ class TransitNoise(object):
         self.cD = cD
         self.cR = cR
         self.cmiss = cmiss
+        self.Tatmos = Tatmos
 
         # Flip the switch
         self._computed = True
@@ -1021,8 +1036,6 @@ class TransitNoise(object):
         #   planet occulting the star calculation in terms of observables
         SNR1 = (Nstar * RpRs2) / np.sqrt((1 + 1./self.nout - RpRs2) * Nstar + (1 + 1./self.nout) * Nback)
 
-        SNR1_rednoiseless = (Nstar * RpRs2) / np.sqrt((1 + 1./self.nout - RpRs2) * Nstar)
-
         # Calculate SNR on missing stellar photons in ntran transits
         SNRn =  np.sqrt(self.ntran) * SNR1
 
@@ -1038,19 +1051,18 @@ class TransitNoise(object):
         self.tSNR = tSNR
         self.nSNR = nSNR
 
-        self.SNR1_rednoiseless = SNR1_rednoiseless
-
         # Save additional stuff
         self.lam = lam
         self.dlam = dlam
         self.RpRs2 = RpRs2
+        self.tdhr = convolution_function(tdhr, lamhr, lam, dlam=dlam)
 
         # Create fake data
         self.make_fake_data()
 
         return
 
-    def make_fake_data(self, rednoise=True):
+    def make_fake_data(self):
         """
         Make a fake dataset by sampling from a Gaussian.
 
@@ -1068,12 +1080,8 @@ class TransitNoise(object):
         assert self._computed
 
         # Calculate SNR on missing stellar photons in ntran transits
-        if rednoise:
-            self.SNRn =  np.sqrt(self.ntran) * self.SNR1
-            self.sig = self.RpRs2 / self.SNRn
-        else:
-            self.SNRn_rednoiseless = np.sqrt(self.ntran) * self.SNR1_rednoiseless
-            self.sig = self.RpRs2 / self.SNRn_rednoiseless
+        self.SNRn =  np.sqrt(self.ntran) * self.SNR1
+        self.sig = self.RpRs2 / self.SNRn
 
         # Generate synthetic observations
 
