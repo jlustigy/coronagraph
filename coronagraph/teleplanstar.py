@@ -173,20 +173,20 @@ class Telescope(object):
     @classmethod
     def default_eelt(cls):
         # return new class instance
-        return cls(Tput = 0.5,      # Throughput
+        return cls(Tput = 0.05,      # Throughput
                          D = 39.,         # Diameter [m]
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
                          lammax  = 4.5,  # Maximum Wavelength [um]
                          Tsys = 273.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
-                         emis = 1.0, # telescope emissivity
-                         De = 0.01, # dark current
+                         emis = 0.3, # telescope emissivity
+                         De = 0.05, # dark current
                          Re = 0.1, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
-                         q = 0.8, # quantum efficiency
+                         q = 0.7, # quantum efficiency
                          )
 
     @property
