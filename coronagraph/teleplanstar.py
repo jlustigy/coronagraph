@@ -177,7 +177,7 @@ class Telescope(object):
                          D = 39.,         # Diameter [m]
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
-                         lammax  = 4.5,  # Maximum Wavelength [um]
+                         lammax  = 6.0,  # Maximum Wavelength [um]
                          Tsys = 273.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.3, # telescope emissivity
