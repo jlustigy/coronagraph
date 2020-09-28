@@ -181,7 +181,7 @@ class Telescope(object):
                          Tsys = 273.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.3, # telescope emissivity
-                         De = 0.05, # dark current
+                         De = 1e-4, # dark current
                          Re = 0.1, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
