@@ -188,7 +188,119 @@ class Telescope(object):
                          X = 1.5, # size of photometric aperture
                          q = 0.7, # quantum efficiency
                          )
+    @classmethod
+    def ELT_CODEX(cls):
+        # return new class instance
+        return cls(Tput = 0.25,      # Throughput
+                         D = 39.,         # Diameter [m]
+                         R = 135000,          # Resolving power (lam / dlam)
+                         lammin  = 0.37,   # Minimum Wavelength [um]
+                         lammax  = 0.71,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.3, # telescope emissivity
+                         De = 1./60/60, # dark current
+                         Re = 0.1, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 0.9, # quantum efficiency
+                         )
+    @classmethod
+    def ELT_SIMPLE(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput
+                         D = 39.,         # Diameter [m]
+                         R = 130000,          # Resolving power (lam / dlam)
+                         lammin  = 0.8,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.3, # telescope emissivity
+                         De = 4./60/60, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 0.9, # quantum efficiency
+                         )
+    @classmethod
+    def ELT_HIRES_lt950(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 38.5,         # Diameter [m]
+                         R = 150000,          # Resolving power (lam / dlam)
+                         lammin  = 0.33,   # Minimum Wavelength [um]
+                         lammax  = 0.95,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.20, # telescope emissivity
+                         De = 1./60/60, # dark current
+                         Re = 1, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         Tput_lam = ([0.36, 0.40, 0.45, 0.55, 0.65, 0.80, 1.25, 1.65, 2.60],
+                                     [0.13, 0.28, 0.44, 0.58, 0.64, 0.68, 0.80, 0.83, 0.84]),
+                         )
 
+    @classmethod
+    def ELT_HIRES_gt950(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 38.5,         # Diameter [m]
+                         R = 150000,          # Resolving power (lam / dlam)
+                         lammin  = 0.95,   # Minimum Wavelength [um]
+                         lammax  = 2.4,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.20, # telescope emissivity
+                         De = 4./60/60, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         Tput_lam = ([0.36, 0.40, 0.45, 0.55, 0.65, 0.80, 1.25, 1.65, 2.60],
+                                     [0.13, 0.28, 0.44, 0.58, 0.64, 0.68, 0.80, 0.83, 0.84]),
+                         )
+    @classmethod
+    def TMT_MODHIS(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.95,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.2, # telescope emissivity NOT CONFIRMED
+                         De = 4./60/60, # dark current
+                         Re = 3., # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 0.9, # quantum efficiency
+                         )
+    @classmethod
+    def GMT_GCLEF(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 25.4,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.35,   # Minimum Wavelength [um]
+                         lammax  = 0.9,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.2, # telescope emissivity
+                         De = 3./60/60, # dark current
+                         Re = 2.5, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 0.8, # quantum efficiency
+                         )
     @property
     def mode(self):
         return self._mode
