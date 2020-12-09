@@ -182,7 +182,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.3, # telescope emissivity
                          De = 1e-4, # dark current
-                         Re = 0.1, # readnoise per pixel
+                         Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
@@ -200,7 +200,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.3, # telescope emissivity
                          De = 1./60/60, # dark current
-                         Re = 0.1, # readnoise per pixel
+                         Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
@@ -218,7 +218,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.3, # telescope emissivity
                          De = 4./60/60, # dark current
-                         Re = 3, # readnoise per pixel
+                         Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
@@ -236,7 +236,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.20, # telescope emissivity
                          De = 1./60/60, # dark current
-                         Re = 1, # readnoise per pixel
+                         Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
@@ -257,7 +257,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.20, # telescope emissivity
                          De = 4./60/60, # dark current
-                         Re = 3, # readnoise per pixel
+                         Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
@@ -277,7 +277,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.2, # telescope emissivity NOT CONFIRMED
                          De = 4./60/60, # dark current
-                         Re = 3., # readnoise per pixel
+                         Re = 0., # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
@@ -295,7 +295,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.2, # telescope emissivity
                          De = 3./60/60, # dark current
-                         Re = 2.5, # readnoise per pixel
+                         Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 1.5, # size of photometric aperture
