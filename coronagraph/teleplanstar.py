@@ -301,6 +301,26 @@ class Telescope(object):
                          X = 1.5, # size of photometric aperture
                          q = 0.8, # quantum efficiency
                          )
+
+    @classmethod
+    def SUBARU_IRD(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 8.2,         # Diameter [m]
+                         R = 70000,          # Resolving power (lam / dlam)
+                         lammin  = 0.97,   # Minimum Wavelength [um]
+                         lammax  = 1.75,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.2, # telescope emissivity
+                         De = 0.01, # dark current
+                         Re = 0, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 1.5, # size of photometric aperture
+                         q = 0.8, # quantum efficiency
+                         )
+
     @property
     def mode(self):
         return self._mode
