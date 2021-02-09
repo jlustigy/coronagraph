@@ -26,7 +26,6 @@ from .degrade_spec import *
 from .observe import random_draw
 from .teleplanstar import *
 from .sky_flux import *
-from .noise_routines import set_atmos_throughput_skyflux
 
 __all__ = ["TransitNoise", "EclipseNoise", "get_earth_trans_spectrum"]
 
@@ -905,11 +904,11 @@ class TransitNoise(object):
             T = T * Tatmos
 
         # Degrade and doppler shift transit and stellar spectrum
-        tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs)
+        tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs + self.planet.vp)
         RpRs2 = convolution_function(tdhr_shifted,lamhr,lam,dlam=dlam)
 
         Fshr_shifted = doppler_shift(lamhr, Fshr, self.star.vs)
-
+        self.Fshr_shifted = Fshr_shifted
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
             # Using a blackbody
@@ -932,7 +931,11 @@ class TransitNoise(object):
         Fstar_miss = Fs * RpRs2
 
         # Fraction of planetary signal in Airy pattern
-        fpa = 1.0   # No fringe pattern here --> all of stellar psf falls on CCD
+        if self.GROUND:
+            #fpa = set_AO_fpa(self.telescope.X, self.telescope.AO_mode, self.telescope.diameter)
+            fpa = 0.7 # this is a good approximation as in Kawahara 2012
+        else:
+            fpa = 1.0   # No fringe pattern here --> all of stellar psf falls on CCD
 
         ########## Calculate Photon Count Rates ##########
 
@@ -1014,6 +1017,7 @@ class TransitNoise(object):
         self.cz = cz
         self.cez = cez
         self.cth = cth
+        self.cthe = cthe
         self.cD = cD
         self.cR = cR
         self.cmiss = cmiss
@@ -1057,6 +1061,17 @@ class TransitNoise(object):
         self.RpRs2 = RpRs2
         self.tdhr = convolution_function(tdhr, lamhr, lam, dlam=dlam)
 
+        Npix = calculate_Npix(self.telescope.X, lam,
+                              diam_collect, theta,
+                              self.telescope.DNHpix,
+                              IMAGE=self.IMAGE)
+        self.Npix = Npix
+        self.Fs = Fs
+        self.fpa = fpa
+        self.theta = theta
+
+
+
         # Create fake data
         self.make_fake_data()
 
@@ -1083,9 +1098,15 @@ class TransitNoise(object):
         self.SNRn =  np.sqrt(self.ntran) * self.SNR1
         self.sig = self.RpRs2 / self.SNRn
 
+        vis_inds = np.where(self.lam < 1.0)
+        IR_inds = np.where(self.lam >= 1.0)
+        self.sig_rednoise = np.copy(self.sig)
+        self.sig_rednoise[vis_inds] += 0.2*self.sig[vis_inds]
+        self.sig_rednoise[IR_inds] += 0.5*self.sig[IR_inds]
         # Generate synthetic observations
 
         self.obs = random_draw(self.RpRs2, self.sig)
+        self.obs_rednoise = random_draw(self.RpRs2, self.sig_rednoise)
 
     def recalc_wantsnr(self, wantsnr = None):
         """

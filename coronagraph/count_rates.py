@@ -12,11 +12,12 @@ from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
 # Import dependent modules
+import astropy.units as u
 import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
 
-from .degrade_spec import downbin_spec
+from .degrade_spec import downbin_spec, doppler_shift
 from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
@@ -238,7 +239,10 @@ class CoronagraphNoise(object):
                         roll_maneuver = self.roll_maneuver,
                         SILENT = self.SILENT,
                         wantsnr = self.wantsnr,
-                        skyflux = self.skyflux
+                        skyflux = self.skyflux,
+                        vs = self.star.vs,
+                        vp = self.planet.vp,
+                        vb = 0,
                     )
 
         # Save output arrays
@@ -313,10 +317,13 @@ class CoronagraphNoise(object):
 
         # Calculate signal-to-noise
         SNRt  = self.cp * Dt / np.sqrt((self.cp + roll_factor*self.cb) * Dt)
-
+        SNRt_filtered = np.copy(SNRt)
+        SNRt_floor = 1e-5 # introducing a floor to SNR measurements or else you get ridiculous observations
+        SNRt_filter_inds = np.where(SNRt_filtered < SNRt_floor)
+        SNRt_filtered[SNRt_filter_inds] = 0
         # Calculate 1-sigma errors on contrast ratio and albedo
-        Csig = self.Cratio/SNRt
-        Asig = self.A/SNRt
+        Csig = self.Cratio/SNRt_filtered
+        Asig = self.A/SNRt_filtered
 
         # Calculate Gaussian noise
         gaus = np.random.randn(len(self.Cratio))
@@ -529,7 +536,7 @@ def count_rates(Ahr, lamhr, solhr,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False,
-                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None):
+                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -652,6 +659,12 @@ def count_rates(Ahr, lamhr, solhr,
         Brown (2005) for more details.
     skyflux : SkyFlux
         Initialized object containing ``SkyFlux`` parameters
+    vs : float
+        stellar radial velocity in km/s
+    vp : float
+        planetary radial velocity relative to star in km/s
+    vb : float
+        barycentric radial velocity in km/s relative to star
 
     Returns
     -------
@@ -785,7 +798,7 @@ def count_rates(Ahr, lamhr, solhr,
     # Degrade albedo and stellar spectrum
     if COMPUTE_LAM:
         A = convolution_function(Ahr, lamhr, lam, dlam=dlam)
-        Fs = convolution_function(solhr, lamhr, lam, dlam=dlam)
+        Fs = convolution_function(solhr, lamhr, lam, dlam=dlam) # stellar flux at planet TOA
     elif IMAGE:
         # Convolve with filter response
         A = convolve_spec(Ahr, lamhr, filters)
@@ -795,9 +808,21 @@ def count_rates(Ahr, lamhr, solhr,
         Fs = solhr
 
     # Compute fluxes
-    #Fs = Fstar(lam, Teff, Rs, r, AU=True) # stellar flux on planet
-    Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope
+    Bstar = Fs / ( np.pi*(Rs*u.Rsun.in_units(u.km)/\
+                   (r*u.AU.in_units(u.km)))**2. )
+    omega_star = np.pi*(Rs*u.Rsun.in_units(u.km)/\
+                       (d*u.pc.in_units(u.km)))**2.
+    Fs_earth = Bstar * omega_star # stellar flux at earth
+
+    Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope; don't doppler shift the star here
     Cratio = FpFs(A, Phi, Rp, r)
+
+    # doppler shift Fp and Cratio to total planet RV
+    Fp = doppler_shift(lam, Fp, vs+vp+vb)
+    Cratio = doppler_shift(lam, Cratio, vs+vp+vb)
+
+    # now we can doppler shift the star to total stellar RV
+    Fs_earth = doppler_shift(lam, Fs_earth, vs+vb)
 
     T2 = T * Tatmos # two-component throughput (Tatmos not 1 for ground)
 
@@ -805,8 +830,8 @@ def count_rates(Ahr, lamhr, solhr,
     cp     =  cplan(q, fpa, T2, lam, dlam, Fp, diam_collect)                          # planet count rate
     cz     =  czodi(q, X, T2, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
     cez    =  cezodi(q, X, T2, lam, dlam, diam_collect, r, \
-        Fstar(lam, Teff, Rs,1. , AU=True), Nez, MezV)                                    # exo-zodi count rate
-    csp    =  cspeck(q, T2, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam_collect)         # speckle count rate
+        Fs_earth, Nez, MezV)                                    # exo-zodi count rate
+    csp    =  cspeck(q, T2, C, lam, dlam, Fs_earth, diam_collect)         # speckle count rate
     cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
     cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
     if THERMAL:

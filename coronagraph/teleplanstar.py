@@ -87,6 +87,9 @@ class Telescope(object):
     dlam : array-like, optional
         Wavelength grid `widths` for spectrograph [microns] (uses ``lammin``, ``lammax``,
         and ``resolution`` to determine if ``None`` provided)
+    AO_mode : string
+        For ground-based observations, choice of ``seeing_limited``, ``ground_layer``,
+        or ``laser_tomography``. Default is None, which sets fpa = 1
 
     Methods
     -------
@@ -105,7 +108,7 @@ class Telescope(object):
                  filter_wheel=None, aperture = "circular", A_collect = None,
                  Tput_lam = None, qe_lam = None, lammin_lenslet = None,
                  diam_circumscribed = None, diam_inscribed = None, lam = None,
-                 dlam = None):
+                 dlam = None, AO_mode=None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -137,6 +140,8 @@ class Telescope(object):
         self.lammin_lenslet = lammin_lenslet
 
         self._filter_wheel=filter_wheel
+
+        self.AO_mode=AO_mode
 
         if self._mode == 'Imaging':
             from filters.imager import johnson_cousins
@@ -173,21 +178,22 @@ class Telescope(object):
     @classmethod
     def default_eelt(cls):
         # return new class instance
-        return cls(Tput = 0.05,      # Throughput
+        return cls(Tput = 0.25,      # Throughput
                          D = 39.,         # Diameter [m]
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
-                         lammax  = 6.0,  # Maximum Wavelength [um]
-                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
-                         emis = 0.3, # telescope emissivity
-                         De = 1e-4, # dark current
-                         Re = 0, # readnoise per pixel
+                         emis = 0.14, # telescope emissivity
+                         De = 0.0005556, # dark current
+                         Re = 2, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
-                         q = 0.7, # quantum efficiency
-                         )
+                         X = 3, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22)
     @classmethod
     def ELT_CODEX(cls):
         # return new class instance
@@ -200,12 +206,12 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.3, # telescope emissivity
                          De = 1./60/60, # dark current
-                         Re = 0, # readnoise per pixel
+                         Re = 2, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 0.9, # quantum efficiency
-                         )
+                         AO_mode="laser_tomography")
     @classmethod
     def ELT_SIMPLE(cls):
         # HgCdTe detector
@@ -221,9 +227,9 @@ class Telescope(object):
                          Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 0.9, # quantum efficiency
-                         )
+                         AO_mode="laser_tomography")
     @classmethod
     def ELT_HIRES_lt950(cls):
         # HgCdTe detector
@@ -236,14 +242,14 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.20, # telescope emissivity
                          De = 1./60/60, # dark current
-                         Re = 0, # readnoise per pixel
+                         Re = 2, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 1., # quantum efficiency
                          Tput_lam = ([0.36, 0.40, 0.45, 0.55, 0.65, 0.80, 1.25, 1.65, 2.60],
                                      [0.13, 0.28, 0.44, 0.58, 0.64, 0.68, 0.80, 0.83, 0.84]),
-                         )
+                         AO_mode="laser_tomography")
 
     @classmethod
     def ELT_HIRES_gt950(cls):
@@ -257,14 +263,14 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.20, # telescope emissivity
                          De = 4./60/60, # dark current
-                         Re = 0, # readnoise per pixel
+                         Re = 2, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 1., # quantum efficiency
                          Tput_lam = ([0.36, 0.40, 0.45, 0.55, 0.65, 0.80, 1.25, 1.65, 2.60],
                                      [0.13, 0.28, 0.44, 0.58, 0.64, 0.68, 0.80, 0.83, 0.84]),
-                         )
+                         AO_mode="laser_tomography")
     @classmethod
     def TMT_MODHIS(cls):
         # HgCdTe detector
@@ -280,9 +286,9 @@ class Telescope(object):
                          Re = 0., # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 0.9, # quantum efficiency
-                         )
+                         AO_mode="laser_tomography")
     @classmethod
     def GMT_GCLEF(cls):
         # HgCdTe detector
@@ -298,9 +304,9 @@ class Telescope(object):
                          Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 0.8, # quantum efficiency
-                         )
+                         AO_mode="laser_tomography")
 
     @classmethod
     def SUBARU_IRD(cls):
@@ -317,9 +323,9 @@ class Telescope(object):
                          Re = 0, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 1.5, # size of photometric aperture
+                         X = 3, # size of photometric aperture
                          q = 0.8, # quantum efficiency
-                         )
+                         AO_mode="laser_tomography")
 
     @property
     def mode(self):
@@ -399,6 +405,8 @@ class Planet(object):
         Zodiacal light surface brightness (mag/arcsec**2)
     MezV : float
         exozodiacal light surface brightness (mag/arcsec**2)
+    vp : float
+        planetary radial velocity
 
     Methods
     -------
@@ -409,7 +417,7 @@ class Planet(object):
     # Define a constructor
     def __init__(self, name='earth', star='sun', d=10.0,Nez=1.0,\
                  Rp=1.0, a=1.0, alpha=90.,\
-                 MzV=23.0, MezV=22.0):
+                 MzV=23.0, MezV=22.0, vp=0):
         self.name=name
         self.star=star
         self.distance=d
@@ -420,6 +428,7 @@ class Planet(object):
         self._Phi = None
         self.MzV  = MzV     # zodiacal light surface brightness (mag/arcsec**2)
         self.MezV = MezV     # exozodiacal light surface brightness (mag/arcsec**2)
+        self.vp = vp
 
         if self._Phi is None:
             self._Phi = lambertPhaseFunction(self._alpha)

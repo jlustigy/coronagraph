@@ -230,14 +230,14 @@ def doppler_shift(lam, flux, velocity):
     flux : array-like
         flux
     velocity : float
-        velocity [km/s]
+        velocity [km/s] away from earth = positive
 
     Returns
     -------
     flux_shifted : :py:obj:`numpy.ndarray`
         Doppler shifted spectrum
     """
-    doppler_factor = np.sqrt((1+velocity*u.km/u.s/c.c)/(1 - velocity*u.km/u.s/c.c))
+    doppler_factor = np.sqrt((1-velocity*u.km/u.s/c.c)/(1+velocity*u.km/u.s/c.c))
     new_lam = lam * doppler_factor
     f = interpolate.interp1d(lam, flux, fill_value = "extrapolate")
     flux_shifted = f(new_lam)
