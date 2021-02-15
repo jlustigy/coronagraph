@@ -1017,11 +1017,13 @@ class TransitNoise(object):
         self.cz = cz
         self.cez = cez
         self.cth = cth
-        self.cthe = cthe
+        if self.GROUND:
+            self.cthe = cthe
+            self.Tatmos = Tatmos
         self.cD = cD
         self.cR = cR
         self.cmiss = cmiss
-        self.Tatmos = Tatmos
+
 
         # Flip the switch
         self._computed = True
@@ -1069,6 +1071,9 @@ class TransitNoise(object):
         self.Fs = Fs
         self.fpa = fpa
         self.theta = theta
+
+        self.Nstar = Nstar
+        self.Nback = Nback
 
 
 

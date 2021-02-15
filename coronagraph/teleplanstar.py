@@ -187,7 +187,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
                          De = 0.0005556, # dark current
-                         Re = 2, # readnoise per pixel
+                         Re = 0.1, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 3, # size of photometric aperture
