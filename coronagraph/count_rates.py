@@ -23,7 +23,7 @@ from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
     set_quantum_efficiency, set_read_noise, set_dark_current, set_lenslet, \
     set_throughput, set_atmos_throughput, set_atmos_throughput_skyflux, \
-    exptime_element, get_sky_flux
+    exptime_element, get_sky_flux, cstar
 from .teleplanstar import Telescope, Planet, Star
 
 __all__ = ['count_rates', 'CoronagraphNoise']
@@ -192,7 +192,7 @@ class CoronagraphNoise(object):
             assert False, "telescope.aperture is invalid"
 
         # Call count_rates
-        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
+        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR, cs = \
             count_rates(Ahr, lamhr, solhr,
                         alpha = self.planet.alpha,
                         Phi = self.planet.Phi,
@@ -251,6 +251,7 @@ class CoronagraphNoise(object):
         self.A       = A
         self.Cratio  = Cratio
         self.cp      = cp
+        self.cs      = cs
         self.csp     = csp
         self.cz      = cz
         self.cez     = cez
@@ -828,6 +829,7 @@ def count_rates(Ahr, lamhr, solhr,
 
     ##### Compute count rates #####
     cp     =  cplan(q, fpa, T2, lam, dlam, Fp, diam_collect)                          # planet count rate
+    cs     =  cstar(q, fpa, T2, lam, dlam, Fs_earth, diam_collect)
     cz     =  czodi(q, X, T2, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
     cez    =  cezodi(q, X, T2, lam, dlam, diam_collect, r, \
         Fs_earth, Nez, MezV)                                    # exo-zodi count rate
@@ -915,4 +917,4 @@ def count_rates(Ahr, lamhr, solhr,
     # Exposure time to SNR
     DtSNR = exptime_element(lam, cp, cnoise, wantsnr)
 
-    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR
+    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR, cs
