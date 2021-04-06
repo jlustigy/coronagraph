@@ -39,7 +39,8 @@ setup(name='coronagraph',
                         'scipy',
                         'matplotlib',
                         'numba',
-                        'astropy'
+                        'astropy',
+                        'skycalc_cli'
                         ],
       dependency_links=[],
       scripts=[],

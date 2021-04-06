@@ -14,7 +14,7 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
                    telescope, planet, star,
                    wantsnr=10.0, FIX_OWA=False, COMPUTE_LAM=False,
                    SILENT=False, NIR=True, THERMAL=False, GROUND=False,
-                   vod=False, otype=1):
+                   vod=False, otype=1, skyflux=None):
     """
 
     Parameters
@@ -45,6 +45,8 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
         "Valley of Death" red QE parameterization from Robinson et al. (2016)
     otype : int, optional
         Set to 1 to return output object, 2 to return arrays
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     """
 
     # Planet Parameters
@@ -115,7 +117,7 @@ def count_rates_wrapper(Ahr, lamhr, solhr,
                     MezV   = MezV,
                     wantsnr=wantsnr, FIX_OWA=FIX_OWA, COMPUTE_LAM=COMPUTE_LAM,
                     SILENT=SILENT, NIR=NIR, THERMAL=THERMAL, GROUND=GROUND,
-                    vod=vod)
+                    vod=vod, skyflux=skyflux)
 
     if otype == 1:
 

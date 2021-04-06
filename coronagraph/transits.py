@@ -25,6 +25,7 @@ from .noise_routines import *
 from .degrade_spec import *
 from .observe import random_draw
 from .teleplanstar import *
+from .sky_flux import *
 
 __all__ = ["TransitNoise", "EclipseNoise", "get_earth_trans_spectrum"]
 
@@ -44,6 +45,8 @@ class EclipseNoise(object):
         Initialized object containing ``Planet`` parameters
     star : Star
         Initialized object containing ``Star`` parameters
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     tdur : float
         Transit duration [s]
     ntran : float
@@ -75,6 +78,7 @@ class EclipseNoise(object):
                        telescope = Telescope(),
                        planet = Planet(),
                        star = Star(),
+                       skyflux = None,
                        ntran   = 1,
                        nout    = 1,
                        wantsnr = 1000.0,
@@ -86,6 +90,7 @@ class EclipseNoise(object):
         self.telescope = telescope
         self.planet    = planet
         self.star      = star
+        self.skyflux   = skyflux
         self.tdur      = tdur
         self.ntran     = ntran
         self.nout      = nout
@@ -227,7 +232,8 @@ class EclipseNoise(object):
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
             # Use SMART calc
-            Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
@@ -305,12 +311,19 @@ class EclipseNoise(object):
             cth = np.zeros_like(cs)
 
         # Additional background from sky for ground-based observations
-        if self.GROUND:
 
+        if self.skyflux is not None:
             if self.GROUND == "ESO":
                 # Use ESO SKCALC
                 wl_sky, Isky = get_sky_flux()
                 # Convolve to instrument resolution
+                Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
+            elif self.GROUND == "SKYFLUX":
+                # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
+                wl_sky = self.skyflux.lam
+                Isky = self.skyflux.flux
+
                 Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
             else:
                 # Get SMART computed surface intensity due to sky background
@@ -491,8 +504,8 @@ class EclipseNoise(object):
 
         # Set ylim
         if Nsig is not None:
-            mederr = scale*np.median(self.sig)
-            medy = scale*np.median(self.obs)
+            mederr = scale*np.nanmedian(self.sig)
+            medy = scale*np.nanmedian(self.obs)
             ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
 
         ylims = ax.get_ylim()
@@ -694,6 +707,8 @@ class TransitNoise(object):
         Initialized object containing ``Planet`` parameters
     star : Star
         Initialized object containing ``Star`` parameters
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     tdur : float
         Transit duration [s]
     ntran : float
@@ -717,6 +732,8 @@ class TransitNoise(object):
         Set to compute thermal photon counts due to telescope temperature
     GROUND : bool, optional
         Set to simulate ground-based observations through atmosphere
+    ZODI : bool, optional
+        Set to simulate zodiacal and exo-zodiacal photon noise
     vod : bool, optional
         "Valley of Death" red QE parameterization from Robinson et al. (2016)
 
@@ -725,6 +742,7 @@ class TransitNoise(object):
                        telescope = Telescope(),
                        planet = Planet(),
                        star = Star(),
+                       skyflux = None,
                        ntran   = 1,
                        nout    = 1,
                        wantsnr = 1000.0,
@@ -732,10 +750,12 @@ class TransitNoise(object):
                        THERMAL = True,
                        GROUND  = False,
                        vod     = False,
-                       IMAGE   = False):
+                       IMAGE   = False,
+                       ZODI = True):
         self.telescope = telescope
         self.planet    = planet
         self.star      = star
+        self.skyflux   = skyflux
         self.tdur      = tdur
         self.ntran     = ntran
         self.nout      = nout
@@ -745,6 +765,7 @@ class TransitNoise(object):
         self.GROUND    = GROUND
         self.vod       = vod
         self.IMAGE     = IMAGE
+        self.ZODI      = ZODI
 
         self._computed = False
 
@@ -757,6 +778,7 @@ class TransitNoise(object):
 
         Parameters
         ----------
+
         lamhr : numpy.ndarray
             Wavelength [$\mu$m]
         tdhr : numpy.ndarray
@@ -876,20 +898,24 @@ class TransitNoise(object):
         # Modify throughput by atmospheric transmission if GROUND-based
         if self.GROUND:
             # Use SMART calc
-            Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+            Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             T = T * Tatmos
 
-        # Degrade transit and stellar spectrum
-        RpRs2 = convolution_function(tdhr,lamhr,lam,dlam=dlam)
+        # Degrade and doppler shift transit and stellar spectrum
+        tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs + self.planet.vp)
+        RpRs2 = convolution_function(tdhr_shifted,lamhr,lam,dlam=dlam)
 
+        Fshr_shifted = doppler_shift(lamhr, Fshr, self.star.vs)
+        self.Fshr_shifted = Fshr_shifted
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
             # Using a blackbody
             Bstar = planck(self.star.Teff, lam)
         else:
             # Using provided TOA stellar flux
-            Fslr = convolution_function(Fshr, lamhr, lam, dlam=dlam)
+            Fslr = convolution_function(Fshr_shifted, lamhr, lam, dlam=dlam)
             Bstar = Fslr / ( np.pi*(self.star.Rs*u.Rsun.in_units(u.km)/\
                            (self.planet.a*u.AU.in_units(u.km)))**2. )
 
@@ -905,7 +931,11 @@ class TransitNoise(object):
         Fstar_miss = Fs * RpRs2
 
         # Fraction of planetary signal in Airy pattern
-        fpa = 1.0   # No fringe pattern here --> all of stellar psf falls on CCD
+        if self.GROUND:
+            #fpa = set_AO_fpa(self.telescope.X, self.telescope.AO_mode, self.telescope.diameter)
+            fpa = 0.7 # this is a good approximation as in Kawahara 2012
+        else:
+            fpa = 1.0   # No fringe pattern here --> all of stellar psf falls on CCD
 
         ########## Calculate Photon Count Rates ##########
 
@@ -915,15 +945,19 @@ class TransitNoise(object):
         # Missing photon count rate (is this a thing? it is now!)
         cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*diam_collect)**2)
 
-        # Solar System Zodi count rate
-        cz =  czodi(q, self.telescope.X, T, lam, dlam,
-                    diam_collect, self.planet.MzV)
+        if self.ZODI:
+            # Solar System Zodi count rate
+            cz =  czodi(q, self.telescope.X, T, lam, dlam,
+                        diam_collect, self.planet.MzV)
 
-        # Exo-Zodi count rate
-        cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
-                      self.planet.a,
-                      Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
-                      self.planet.Nez, self.planet.MezV)
+            # Exo-Zodi count rate
+            cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
+                          self.planet.a,
+                          Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
+                          self.planet.Nez, self.planet.MezV)
+        else:
+            cz = np.zeros_like(cs)
+            cez = np.zeros_like(cs)
 
         # Dark current count rate
         cD =  cdark(De, self.telescope.X, lam,
@@ -945,13 +979,21 @@ class TransitNoise(object):
             cth = np.zeros_like(cs)
 
         # Additional background from sky for ground-based observations
-        if self.GROUND:
+        if self.skyflux is not None:
 
             if self.GROUND == "ESO":
-                # Use ESO SKCALC
+                # Use the standard ESO SKCALC output
                 wl_sky, Isky = get_sky_flux()
                 # Convolve to instrument resolution
                 Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+            elif self.GROUND == "SKYFLUX":
+                # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
+                wl_sky = self.skyflux.lam
+                Isky = self.skyflux.flux
+
+                Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
+
             else:
                 # Get SMART computed surface intensity due to sky background
                 Itherm  = get_thermal_ground_intensity(lam, dlam, convolution_function)
@@ -960,8 +1002,11 @@ class TransitNoise(object):
             cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
                                 diam_collect, Itherm)
 
-            # Add earth thermal photon counts to telescope thermal counts
-            cth = cth + cthe
+            if self.THERMAL:
+                # Add earth thermal photon counts to telescope thermal counts
+                cth = cth + cthe
+            else:
+                cth = np.zeros_like(cs)
 
         # Calculate background photon count rate
         cback = cz + cez + cth + cD + cR
@@ -972,9 +1017,13 @@ class TransitNoise(object):
         self.cz = cz
         self.cez = cez
         self.cth = cth
+        if self.GROUND:
+            self.cthe = cthe
+            self.Tatmos = Tatmos
         self.cD = cD
         self.cR = cR
         self.cmiss = cmiss
+
 
         # Flip the switch
         self._computed = True
@@ -1012,6 +1061,21 @@ class TransitNoise(object):
         self.lam = lam
         self.dlam = dlam
         self.RpRs2 = RpRs2
+        self.tdhr = convolution_function(tdhr, lamhr, lam, dlam=dlam)
+
+        Npix = calculate_Npix(self.telescope.X, lam,
+                              diam_collect, theta,
+                              self.telescope.DNHpix,
+                              IMAGE=self.IMAGE)
+        self.Npix = Npix
+        self.Fs = Fs
+        self.fpa = fpa
+        self.theta = theta
+
+        self.Nstar = Nstar
+        self.Nback = Nback
+
+
 
         # Create fake data
         self.make_fake_data()
@@ -1037,10 +1101,17 @@ class TransitNoise(object):
 
         # Calculate SNR on missing stellar photons in ntran transits
         self.SNRn =  np.sqrt(self.ntran) * self.SNR1
-
-        # Generate synthetic observations
         self.sig = self.RpRs2 / self.SNRn
+
+        vis_inds = np.where(self.lam < 1.0)
+        IR_inds = np.where(self.lam >= 1.0)
+        self.sig_rednoise = np.copy(self.sig)
+        self.sig_rednoise[vis_inds] += 0.2*self.sig[vis_inds]
+        self.sig_rednoise[IR_inds] += 0.5*self.sig[IR_inds]
+        # Generate synthetic observations
+
         self.obs = random_draw(self.RpRs2, self.sig)
+        self.obs_rednoise = random_draw(self.RpRs2, self.sig_rednoise)
 
     def recalc_wantsnr(self, wantsnr = None):
         """
@@ -1125,8 +1196,8 @@ class TransitNoise(object):
         #ax.set_yscale("log")
 
         # Set ylim
-        mederr = scale*np.median(self.sig)
-        medy = scale*np.median(self.obs)
+        mederr = scale*np.nanmedian(self.sig)
+        medy = scale*np.nanmedian(self.obs)
         ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
 
         ylims = ax.get_ylim()
