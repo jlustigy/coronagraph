@@ -235,7 +235,7 @@ class EclipseNoise(object):
             #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
             Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
-            T = T * Tatmos
+            #T = T * Tatmos
 
         # Calculate intensity of the planet [W/m^2/um/sr]
         if Fphr is None:
@@ -276,17 +276,17 @@ class EclipseNoise(object):
         ########## Calculate Photon Count Rates ##########
 
         # Planet photon count rate
-        cp = cplan(q, fpa, T, lam, dlam, Fplr, diam_collect)
+        cp = cplan(q, fpa, T*Tatmos, lam, dlam, Fplr, diam_collect)
 
         # Stellar photon count rate
-        cs = cstar(q, fpa, T, lam, dlam, Fslr, diam_collect)
+        cs = cstar(q, fpa, T*Tatmos, lam, dlam, Fslr, diam_collect)
 
         # Solar System Zodi count rate
-        cz =  czodi(q, self.telescope.X, T, lam, dlam,
+        cz =  czodi(q, self.telescope.X, T*Tatmos, lam, dlam,
                     diam_collect, self.planet.MzV)
 
         # Exo-Zodi count rate
-        cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
+        cez =  cezodi(q, self.telescope.X, T*Tatmos, lam, dlam, diam_collect,
                       self.planet.a,
                       Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
                       self.planet.Nez, self.planet.MezV)
@@ -901,7 +901,7 @@ class TransitNoise(object):
             #Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
             Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
-            T = T * Tatmos
+            #T = T * Tatmos
 
         # Degrade and doppler shift transit and stellar spectrum
         tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs + self.planet.vp)
@@ -940,18 +940,18 @@ class TransitNoise(object):
         ########## Calculate Photon Count Rates ##########
 
         # Stellar photon count rate
-        cs = cstar(q, fpa, T, lam, dlam, Fs, diam_collect)
+        cs = cstar(q, fpa, T*Tatmos, lam, dlam, Fs, diam_collect)
 
         # Missing photon count rate (is this a thing? it is now!)
-        cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*(np.pi * (0.5*diam_collect)**2)
+        cmiss = Fstar_miss*dlam*(lam*1e-6)/(h*c)*T*Tatmos*(np.pi * (0.5*diam_collect)**2)
 
         if self.ZODI:
             # Solar System Zodi count rate
-            cz =  czodi(q, self.telescope.X, T, lam, dlam,
+            cz =  czodi(q, self.telescope.X, T*Tatmos, lam, dlam,
                         diam_collect, self.planet.MzV)
 
             # Exo-Zodi count rate
-            cez =  cezodi(q, self.telescope.X, T, lam, dlam, diam_collect,
+            cez =  cezodi(q, self.telescope.X, T*Tatmos, lam, dlam, diam_collect,
                           self.planet.a,
                           Fstar(lam, self.star.Teff, self.star.Rs, 1., AU=True),
                           self.planet.Nez, self.planet.MezV)
@@ -1001,7 +1001,7 @@ class TransitNoise(object):
             # Compute Earth thermal photon count rate
             cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
                                 diam_collect, Itherm)
-
+            cth_tele = cth
             if self.THERMAL:
                 # Add earth thermal photon counts to telescope thermal counts
                 cth = cth + cthe
@@ -1023,6 +1023,8 @@ class TransitNoise(object):
         self.cD = cD
         self.cR = cR
         self.cmiss = cmiss
+        self.cth_tele = cth_tele
+        self.cthe = cthe
 
 
         # Flip the switch
