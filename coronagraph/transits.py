@@ -1024,7 +1024,6 @@ class TransitNoise(object):
         self.cR = cR
         self.cmiss = cmiss
         self.cth_tele = cth_tele
-        self.cthe = cthe
 
 
         # Flip the switch

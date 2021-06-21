@@ -191,9 +191,30 @@ class Telescope(object):
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 3, # size of photometric aperture
-                         q = 1., # quantum efficiency
+                         q = 0.8, # quantum efficiency
                          AO_mode="laser_tomography",
                          IWA=1.22)
+
+    @classmethod
+    def default_tmt(cls):
+        # return new class instance
+        return cls(Tput = 0.25,      # Throughput
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.0005556, # dark current
+                         Re = 0.1, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 0.8, # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22)
+
     @classmethod
     def ELT_CODEX(cls):
         # return new class instance
@@ -283,7 +304,7 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.2, # telescope emissivity NOT CONFIRMED
                          De = 4./60/60, # dark current
-                         Re = 0., # readnoise per pixel
+                         Re = 0.1, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 3, # size of photometric aperture
