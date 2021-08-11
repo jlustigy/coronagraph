@@ -979,7 +979,7 @@ class TransitNoise(object):
                           self.telescope.emissivity)
         else:
             cth = np.zeros_like(cs)
-
+        cth_tele = cth
         # Additional background from sky for ground-based observations
         if self.skyflux is not None:
 
@@ -1003,7 +1003,7 @@ class TransitNoise(object):
             # Compute Earth thermal photon count rate
             cthe = ctherm_earth(q, self.telescope.X, T, lam, dlam,
                                 diam_collect, Itherm)
-            cth_tele = cth
+
             if self.THERMAL:
                 # Add earth thermal photon counts to telescope thermal counts
                 cth = cth + cthe
