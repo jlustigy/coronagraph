@@ -902,6 +902,8 @@ class TransitNoise(object):
             Tatmos = set_atmos_throughput_skyflux(self.skyflux.lam, self.skyflux.trans, lam, dlam, convolution_function)
             # Multiply telescope throughput by atmospheric throughput
             #T = T * Tatmos
+        else:
+            Tatmos = np.ones_like(T)
 
         # Degrade and doppler shift transit and stellar spectrum
         tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs + self.planet.vp)
