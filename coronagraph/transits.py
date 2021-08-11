@@ -1042,6 +1042,7 @@ class TransitNoise(object):
         #   and comes from standard error propigation on the missing photons due to the
         #   planet occulting the star calculation in terms of observables
         SNR1 = (Nstar * RpRs2) / np.sqrt((1 + 1./self.nout - RpRs2) * Nstar + (1 + 1./self.nout) * Nback)
+        SNR1_bkgrm = (Nstar * RpRs2) / np.sqrt((1 + 1./self.nout - RpRs2) * Nstar)
 
         # Calculate SNR on missing stellar photons in ntran transits
         SNRn =  np.sqrt(self.ntran) * SNR1
@@ -1054,6 +1055,7 @@ class TransitNoise(object):
 
         # Save SNR quantities as attributes
         self.SNR1 = SNR1
+        self.SNR1_bkgrm = SNR1_bkgrm
         self.SNRn = SNRn
         self.tSNR = tSNR
         self.nSNR = nSNR
@@ -1104,15 +1106,12 @@ class TransitNoise(object):
         self.SNRn =  np.sqrt(self.ntran) * self.SNR1
         self.sig = self.RpRs2 / self.SNRn
 
-        vis_inds = np.where(self.lam < 1.0)
-        IR_inds = np.where(self.lam >= 1.0)
-        self.sig_rednoise = np.copy(self.sig)
-        self.sig_rednoise[vis_inds] += 0.2*self.sig[vis_inds]
-        self.sig_rednoise[IR_inds] += 0.5*self.sig[IR_inds]
         # Generate synthetic observations
-
         self.obs = random_draw(self.RpRs2, self.sig)
-        self.obs_rednoise = random_draw(self.RpRs2, self.sig_rednoise)
+
+        self.SNRn_bkgrm =  np.sqrt(self.ntran) * self.SNR1_bkgrm
+        self.sig_bkgrm = self.RpRs2 / self.SNRn_bkgrm
+        self.obs_bkgrm = random_draw(self.RpRs2, self.sig_bkgrm)
 
     def recalc_wantsnr(self, wantsnr = None):
         """
