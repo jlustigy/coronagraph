@@ -198,7 +198,7 @@ class Telescope(object):
     @classmethod
     def default_tmt(cls):
         # return new class instance
-        return cls(Tput = 0.25,      # Throughput
+        return cls(Tput = 0.1,      # Throughput
                          D = 30.,         # Diameter [m]
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
@@ -211,7 +211,7 @@ class Telescope(object):
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 3, # size of photometric aperture
-                         q = 0.8, # quantum efficiency
+                         q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
                          IWA=1.22)
 

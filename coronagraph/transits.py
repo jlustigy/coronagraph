@@ -933,12 +933,12 @@ class TransitNoise(object):
         Fstar_miss = Fs * RpRs2
 
         # Fraction of planetary signal in Airy pattern
-        if self.GROUND:
-            #fpa = set_AO_fpa(self.telescope.X, self.telescope.AO_mode, self.telescope.diameter)
-            fpa = 0.7 # this is a good approximation as in Kawahara 2012
-        else:
-            fpa = 1.0   # No fringe pattern here --> all of stellar psf falls on CCD
-
+        # if self.GROUND:
+        #     #fpa = set_AO_fpa(self.telescope.X, self.telescope.AO_mode, self.telescope.diameter)
+        #     fpa = 0.7 # this is a good approximation as in Kawahara 2012
+        # else:
+        #     fpa = 1.0   # No fringe pattern here --> all of stellar psf falls on CCD
+        fpa = 1.0
         ########## Calculate Photon Count Rates ##########
 
         # Stellar photon count rate
@@ -1114,6 +1114,16 @@ class TransitNoise(object):
         self.SNRn_bkgrm =  np.sqrt(self.ntran) * self.SNR1_bkgrm
         self.sig_bkgrm = self.RpRs2 / self.SNRn_bkgrm
         self.obs_bkgrm = random_draw(self.RpRs2, self.sig_bkgrm)
+
+        vis_mask = self.lam < 0.8
+        NIR_mask = self.lam >= 0.8
+
+        self.sig_bkgrm_red = np.copy(self.sig_bkgrm)
+        self.sig_bkgrm_red[vis_mask] *= 0.2
+        self.sig_bkgrm_red[NIR_mask] *= 0.5
+
+        self.obs_bkgrm_red = random_draw(self.RpRs2, self.sig_bkgrm_red)
+
 
     def recalc_wantsnr(self, wantsnr = None):
         """
