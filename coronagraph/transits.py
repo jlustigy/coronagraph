@@ -1119,8 +1119,8 @@ class TransitNoise(object):
         NIR_mask = self.lam >= 0.8
 
         self.sig_bkgrm_red = np.copy(self.sig_bkgrm)
-        self.sig_bkgrm_red[vis_mask] *= 0.2
-        self.sig_bkgrm_red[NIR_mask] *= 0.5
+        self.sig_bkgrm_red[vis_mask] *= 1.2
+        self.sig_bkgrm_red[NIR_mask] *= 1.5
 
         self.obs_bkgrm_red = random_draw(self.RpRs2, self.sig_bkgrm_red)
 
