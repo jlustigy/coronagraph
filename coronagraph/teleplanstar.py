@@ -178,12 +178,13 @@ class Telescope(object):
     @classmethod
     def default_eelt(cls):
         # return new class instance
-        return cls(Tput = 0.25,      # Throughput
-                         D = 39.,         # Diameter [m]
+        return cls(Tput = 0.1,      # Throughput
+                         A_collect = 978, # collecting area m2
+                         D = 39.,
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
                          lammax  = 2.5,  # Maximum Wavelength [um]
-                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
                          De = 0.0005556, # dark current
@@ -191,7 +192,7 @@ class Telescope(object):
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
                          X = 3, # size of photometric aperture
-                         q = 0.8, # quantum efficiency
+                         q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
                          IWA=1.22)
 
@@ -203,7 +204,7 @@ class Telescope(object):
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
                          lammax  = 2.5,  # Maximum Wavelength [um]
-                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
                          De = 0.0005556, # dark current
