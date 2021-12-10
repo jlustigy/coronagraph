@@ -863,7 +863,7 @@ def set_lenslet(lam, lammin, diam, X,
         theta[iNIR] = X*lammin_nir/1e6/diam/2.*(180/np.pi*3600.)
     else:
         # Should there be in X multiplying below?
-        theta = lammin/1.e6/diam/2.*(180/np.pi*3600.) # assumes sampled at ~lambda/2D (arcsec)
+        theta = X*lammin/1.e6/diam/2.*(180/np.pi*3600.) # assumes sampled at ~lambda/2D (arcsec)
 
     return theta
 

@@ -377,7 +377,7 @@ class SkyFlux:
         flux_sky = output_fits[1].data["flux"]
         trans_sky = output_fits[1].data["trans"]
 
-        # Convert sky flux to W/m^2/um to match existing function
+        # Convert sky flux to W/m^2/um/sr to match existing function
         hc = 1.986446e-25 # h*c (kg*m**3/s**2)
         flux_sky = flux_sky * (np.pi * u.steradian)
         flux_sky = flux_sky * (u.radian.in_units(u.arcsec))**2 * (u.arcsec**2 / u.steradian)

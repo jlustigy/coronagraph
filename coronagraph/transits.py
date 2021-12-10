@@ -20,6 +20,7 @@ import numpy as np
 import astropy.units as u
 import matplotlib.pyplot as plt
 import sys, os
+import math
 
 from .noise_routines import *
 from .degrade_spec import *
@@ -961,15 +962,20 @@ class TransitNoise(object):
             cz = np.zeros_like(cs)
             cez = np.zeros_like(cs)
 
-        # Dark current count rate
-        cD =  cdark(De, self.telescope.X, lam,
-                    diam_collect, theta,
-                    self.telescope.DNHpix, IMAGE=self.IMAGE)
+        if self.telescope.fixed_Npix is None:
+            # Dark current count rate
+            cD =  cdark(De, self.telescope.X, lam,
+                        diam_collect, theta,
+                        self.telescope.DNHpix, IMAGE=self.IMAGE)
 
-        # Read noise count rate
-        cR =  cread(Re, self.telescope.X, lam, diam_collect,
-                    theta, self.telescope.DNHpix, self.telescope.Dtmax,
-                    IMAGE=self.IMAGE)
+            # Read noise count rate
+            cR =  cread(Re, self.telescope.X, lam, diam_collect,
+                        theta, self.telescope.DNHpix, self.telescope.Dtmax,
+                        IMAGE=self.IMAGE)
+        else:
+            # if a custom number of pixels per wavelength element is specified
+            cD = self.telescope.fixed_Npix * De
+            cR = self.telescope.fixed_Npix * Re * math.ceil(self.tdur / (self.telescope.Dtmax*3600)) / self.tdur
 
         # Thermal background count rate
         if self.THERMAL:

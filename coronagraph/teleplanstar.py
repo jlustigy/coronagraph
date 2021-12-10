@@ -108,7 +108,7 @@ class Telescope(object):
                  filter_wheel=None, aperture = "circular", A_collect = None,
                  Tput_lam = None, qe_lam = None, lammin_lenslet = None,
                  diam_circumscribed = None, diam_inscribed = None, lam = None,
-                 dlam = None, AO_mode=None):
+                 dlam = None, AO_mode=None, fixed_Npix=None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -142,6 +142,7 @@ class Telescope(object):
         self._filter_wheel=filter_wheel
 
         self.AO_mode=AO_mode
+        self.fixed_Npix=fixed_Npix
 
         if self._mode == 'Imaging':
             from filters.imager import johnson_cousins
@@ -184,17 +185,18 @@ class Telescope(object):
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
                          lammax  = 2.5,  # Maximum Wavelength [um]
-                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
-                         De = 0.0005556, # dark current
-                         Re = 0.1, # readnoise per pixel
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 3, # size of photometric aperture
+                         X = 85, # size of photometric aperture; set at 85 to approximate 70% encircled energy on PSF
                          q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
-                         IWA=1.22)
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3)) # num spectral pix x spatial pix
 
     @classmethod
     def default_tmt(cls):
@@ -204,7 +206,28 @@ class Telescope(object):
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
                          lammax  = 2.5,  # Maximum Wavelength [um]
-                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 0.1, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3))
+
+    @classmethod
+    def default_gmt(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
                          De = 0.0005556, # dark current
@@ -214,7 +237,29 @@ class Telescope(object):
                          X = 3, # size of photometric aperture
                          q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
-                         IWA=1.22)
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3))
+
+    @classmethod
+    def default_vlt(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.0005556, # dark current
+                         Re = 0.1, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3))
 
     @classmethod
     def ELT_CODEX(cls):
