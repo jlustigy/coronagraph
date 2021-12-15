@@ -210,10 +210,10 @@ class Telescope(object):
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
                          De = 0.00111111, # dark current
-                         Re = 0.1, # readnoise per pixel
+                         Re = 3, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 3, # size of photometric aperture
+                         X = 85, # size of photometric aperture
                          q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
                          IWA=1.22,
@@ -230,11 +230,11 @@ class Telescope(object):
                          Tsys = 285.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
-                         De = 0.0005556, # dark current
-                         Re = 0.1, # readnoise per pixel
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 3, # size of photometric aperture
+                         X = 85, # size of photometric aperture
                          q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
                          IWA=1.22,
@@ -244,18 +244,18 @@ class Telescope(object):
     def default_vlt(cls):
         # return new class instance
         return cls(Tput = 0.1,      # Throughput
-                         D = 30.,         # Diameter [m]
+                         D = 8.2,         # Diameter [m]
                          R = 100000,          # Resolving power (lam / dlam)
                          lammin  = 0.51,   # Minimum Wavelength [um]
                          lammax  = 2.5,  # Maximum Wavelength [um]
                          Tsys = 285.,      # Telescope mirror temperature [K]
                          Tdet = 90., # detector temperature
                          emis = 0.14, # telescope emissivity
-                         De = 0.0005556, # dark current
-                         Re = 0.1, # readnoise per pixel
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
                          Rc = 0, # clock induced charge
                          Dtmax = 0.2, # maximum exporure time [hr]
-                         X = 3, # size of photometric aperture
+                         X = 85, # size of photometric aperture
                          q = 1., # quantum efficiency
                          AO_mode="laser_tomography",
                          IWA=1.22,
