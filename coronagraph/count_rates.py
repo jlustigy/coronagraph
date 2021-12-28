@@ -66,6 +66,8 @@ class CoronagraphNoise(object):
         Set to compute thermal photon counts due to telescope temperature
     GROUND : bool, optional
         Set to simulate ground-based observations through atmosphere
+    ZODI : bool, optional
+        Set to simulate zodiacal and exo-zodiacal photon noise
     vod : bool, optional
         "Valley of Death" red QE parameterization from Robinson et al. (2016)
     set_fpa : float, optional
@@ -86,7 +88,7 @@ class CoronagraphNoise(object):
                  star = Star(), skyflux = None, texp = 10.0, wantsnr=10.0, FIX_OWA = False,
                  COMPUTE_LAM = False, SILENT = False, NIR = False,
                  THERMAL = True, GROUND = False, vod=False, set_fpa=None,
-                 roll_maneuver = True):
+                 roll_maneuver = True, ZODI = True):
         """
         """
         self.telescope = telescope
@@ -104,7 +106,7 @@ class CoronagraphNoise(object):
         self.vod = vod
         self.set_fpa = set_fpa
         self.roll_maneuver = roll_maneuver
-
+        self.ZODI = ZODI
         self._computed = False
 
         return
@@ -234,6 +236,7 @@ class CoronagraphNoise(object):
                         lammin_lenslet = self.telescope.lammin_lenslet,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
+                        ZODI = self.ZODI
                         THERMAL = self.THERMAL,
                         CIRC = CIRC,
                         roll_maneuver = self.roll_maneuver,
@@ -536,7 +539,7 @@ def count_rates(Ahr, lamhr, solhr,
                 qe_lam = None,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
-                SILENT = False, NIR = False, THERMAL = False, GROUND = False,
+                SILENT = False, NIR = False, THERMAL = False, GROUND = False, ZODI=True
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
@@ -830,9 +833,13 @@ def count_rates(Ahr, lamhr, solhr,
     ##### Compute count rates #####
     cp     =  cplan(q, fpa, T2, lam, dlam, Fp, diam_collect)                          # planet count rate
     cs     =  cstar(q, fpa, T2, lam, dlam, Fs_earth, diam_collect)
-    cz     =  czodi(q, X, T2, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
-    cez    =  cezodi(q, X, T2, lam, dlam, diam_collect, r, \
-        Fs_earth, Nez, MezV)                                    # exo-zodi count rate
+    if ZODI:
+        cz     =  czodi(q, X, T2, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
+        cez    =  cezodi(q, X, T2, lam, dlam, diam_collect, r, \
+                        Fs_earth, Nez, MezV)                                    # exo-zodi count rate
+    else:
+        cz = np.zeros_like(cs)
+        cez = np.zeros_like(cs)
     csp    =  cspeck(q, T2, C, lam, dlam, Fs_earth, diam_collect)         # speckle count rate
     cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
     cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
