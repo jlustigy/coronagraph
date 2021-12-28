@@ -236,7 +236,7 @@ class CoronagraphNoise(object):
                         lammin_lenslet = self.telescope.lammin_lenslet,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
-                        ZODI = self.ZODI
+                        ZODI = self.ZODI,
                         THERMAL = self.THERMAL,
                         CIRC = CIRC,
                         roll_maneuver = self.roll_maneuver,
