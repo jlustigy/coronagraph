@@ -539,7 +539,7 @@ def count_rates(Ahr, lamhr, solhr,
                 qe_lam = None,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
-                SILENT = False, NIR = False, THERMAL = False, GROUND = False, ZODI=True
+                SILENT = False, NIR = False, THERMAL = False, GROUND = False, ZODI=True,
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
