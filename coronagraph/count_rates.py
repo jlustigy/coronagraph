@@ -246,6 +246,7 @@ class CoronagraphNoise(object):
                         vs = self.star.vs,
                         vp = self.planet.vp,
                         vb = 0,
+                        fixed_Npix = self.telescope.fixed_Npix,
                     )
 
         # Save output arrays
@@ -540,7 +541,8 @@ def count_rates(Ahr, lamhr, solhr,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False, ZODI=True,
-                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0):
+                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0,
+                fixed_Npix=None):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -841,8 +843,14 @@ def count_rates(Ahr, lamhr, solhr,
         cz = np.zeros_like(cs)
         cez = np.zeros_like(cs)
     csp    =  cspeck(q, T2, C, lam, dlam, Fs_earth, diam_collect)         # speckle count rate
-    cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
-    cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
+
+    if fixed_Npix is None:
+        cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
+        cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
+    else:
+        # if a custom number of pixels per wavelength element is specified
+        cD = fixed_Npix * De
+        cR = fixed_Npix * Re * math.ceil(texp / Dtmax) / texp
     if THERMAL:
         cth    =  ctherm(q, X, T, lam, dlam, diam_collect, Tsys, emis)               # internal thermal count rate
     else:
