@@ -248,6 +248,7 @@ class CoronagraphNoise(object):
                         vp = self.planet.vp,
                         vb = 0,
                         fixed_Npix = self.telescope.fixed_Npix,
+                        texp = self.texp
                     )
 
         # Save output arrays
@@ -543,7 +544,7 @@ def count_rates(Ahr, lamhr, solhr,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
                 SILENT = False, NIR = False, THERMAL = False, GROUND = False, ZODI=True,
                 vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0,
-                fixed_Npix=None):
+                fixed_Npix=None, texp=None):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -851,7 +852,7 @@ def count_rates(Ahr, lamhr, solhr,
     else:
         # if a custom number of pixels per wavelength element is specified
         cD = fixed_Npix * De
-        cR = fixed_Npix * Re * math.ceil(self.texp / Dtmax) / (self.texp*3600)
+        cR = fixed_Npix * Re * math.ceil(texp / Dtmax) / (texp*3600)
     if THERMAL:
         cth    =  ctherm(q, X, T, lam, dlam, diam_collect, Tsys, emis)               # internal thermal count rate
     else:
