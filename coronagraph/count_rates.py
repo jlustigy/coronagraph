@@ -851,7 +851,7 @@ def count_rates(Ahr, lamhr, solhr,
     else:
         # if a custom number of pixels per wavelength element is specified
         cD = fixed_Npix * De
-        cR = fixed_Npix * Re * math.ceil(texp / Dtmax) / texp
+        cR = fixed_Npix * Re * math.ceil(self.texp / Dtmax) / (self.texp*3600)
     if THERMAL:
         cth    =  ctherm(q, X, T, lam, dlam, diam_collect, Tsys, emis)               # internal thermal count rate
     else:
