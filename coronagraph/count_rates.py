@@ -16,6 +16,7 @@ import astropy.units as u
 import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
+import math
 
 from .degrade_spec import downbin_spec, doppler_shift
 from .convolve_spec import convolve_spec
