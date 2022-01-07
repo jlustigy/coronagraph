@@ -825,12 +825,12 @@ def count_rates(Ahr, lamhr, solhr,
     Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope; don't doppler shift the star here
     Cratio = FpFs(A, Phi, Rp, r)
 
-    # # doppler shift Fp and Cratio to total planet RV
-    # Fp = doppler_shift(lam, Fp, vs+vp+vb)
-    # Cratio = doppler_shift(lam, Cratio, vs+vp+vb)
-    #
-    # # now we can doppler shift the star to total stellar RV
-    # Fs_earth = doppler_shift(lam, Fs_earth, vs+vb)
+    # doppler shift Fp and Cratio to total planet RV
+    Fp = doppler_shift(lam, Fp, vs+vp+vb)
+    Cratio = doppler_shift(lam, Cratio, vs+vp+vb)
+
+    # now we can doppler shift the star to total stellar RV
+    Fs_earth = doppler_shift(lam, Fs_earth, vs+vb)
 
     T2 = T * Tatmos # two-component throughput (Tatmos not 1 for ground)
 
