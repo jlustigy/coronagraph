@@ -908,17 +908,24 @@ class TransitNoise(object):
 
         # Degrade and doppler shift transit and stellar spectrum
         tdhr_shifted = doppler_shift(lamhr, tdhr, self.star.vs + self.planet.vp)
-        RpRs2 = convolution_function(tdhr_shifted,lamhr,lam,dlam=dlam)
+        #RpRs2 = convolution_function(tdhr_shifted,lamhr,lam,dlam=dlam)
+        # instrumental broadening
+        tdhr_shifted_broadened = instrumental_broadening(tdhr_shifted, lamhr, self.telescope.resolution)
+        # interpolate into instrumental wl grid
+        RpRs2 = convolution_function(tdhr_shifted_broadened, lamhr, lam, dlam=dlam)
 
+        # doppler shift star
         Fshr_shifted = doppler_shift(lamhr, Fshr, self.star.vs)
-        self.Fshr_shifted = Fshr_shifted
+        # instrumental broadening
+        Fshr_shifted_broadened = instrumental_broadening(Fshr_shifted, lamhr, self.telescope.resolution)
+
         # Calculate intensity of the star [W/m^2/um/sr]
         if Fshr is None:
             # Using a blackbody
             Bstar = planck(self.star.Teff, lam)
         else:
             # Using provided TOA stellar flux
-            Fslr = convolution_function(Fshr_shifted, lamhr, lam, dlam=dlam)
+            Fslr = convolution_function(Fshr_shifted_broadened, lamhr, lam, dlam=dlam)
             Bstar = Fslr / ( np.pi*(self.star.Rs*u.Rsun.in_units(u.km)/\
                            (self.planet.a*u.AU.in_units(u.km)))**2. )
 

@@ -18,7 +18,7 @@ import sys, os
 import matplotlib.pyplot as plt
 import math
 
-from .degrade_spec import downbin_spec, doppler_shift
+from .degrade_spec import downbin_spec, doppler_shift, instrumental_broadening
 from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
@@ -803,10 +803,23 @@ def count_rates(Ahr, lamhr, solhr,
     else:
         Tatmos = np.ones_like(lam)
 
+
+    # doppler shift Ahr to total planet RV
+    Ahr_shifted = doppler_shift(lamhr, Ahr, vs+vp+vb)
+    # instrumental broadening
+    Ahr_shifted_broadened = instrumental_broadening(Ahr_shifted, lamhr, Res)
+
+    # doppler shift the star to total stellar RV
+    solhr_shifted_earth = doppler_shift(lamhr, solhr, vs+vb)
+    # instrumental broadening
+    solhr_shifted_broadened_earth = instrumental_broadening(solhr_shifted_earth, lamhr, Res)
+    solhr_broadened_toa = instrumental_broadening(solhr, lamhr, Res)
+
     # Degrade albedo and stellar spectrum
     if COMPUTE_LAM:
-        A = convolution_function(Ahr, lamhr, lam, dlam=dlam)
-        Fs = convolution_function(solhr, lamhr, lam, dlam=dlam) # stellar flux at planet TOA
+        A = convolution_function(Ahr_shifted_broadened, lamhr, lam, dlam=dlam)
+        Fs_toa = convolution_function(solhr_broadened_toa, lamhr, lam, dlam=dlam) # stellar flux at planet TOA
+        Fs_earth = convolution_function(solhr_shifted_broadened_earth, lamhr, lam, dlam=dlam)
     elif IMAGE:
         # Convolve with filter response
         A = convolve_spec(Ahr, lamhr, filters)
@@ -816,21 +829,14 @@ def count_rates(Ahr, lamhr, solhr,
         Fs = solhr
 
     # Compute fluxes
-    Bstar = Fs / ( np.pi*(Rs*u.Rsun.in_units(u.km)/\
+    Bstar = Fs_earth / ( np.pi*(Rs*u.Rsun.in_units(u.km)/\
                    (r*u.AU.in_units(u.km)))**2. )
     omega_star = np.pi*(Rs*u.Rsun.in_units(u.km)/\
                        (d*u.pc.in_units(u.km)))**2.
     Fs_earth = Bstar * omega_star # stellar flux at earth
 
-    Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope; don't doppler shift the star here
+    Fp = Fplan(A, Phi, Fs_toa, Rp, d)         # planet flux at telescope; don't doppler shift the star here
     Cratio = FpFs(A, Phi, Rp, r)
-
-    # doppler shift Fp and Cratio to total planet RV
-    Fp = doppler_shift(lam, Fp, vs+vp+vb)
-    Cratio = doppler_shift(lam, Cratio, vs+vp+vb)
-
-    # now we can doppler shift the star to total stellar RV
-    Fs_earth = doppler_shift(lam, Fs_earth, vs+vb)
 
     T2 = T * Tatmos # two-component throughput (Tatmos not 1 for ground)
 

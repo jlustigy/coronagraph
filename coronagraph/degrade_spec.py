@@ -12,7 +12,7 @@ from scipy.stats import binned_statistic
 import astropy.units as u
 import astropy.constants as c
 
-__all__ = ['downbin_spec', 'downbin_spec_err', 'degrade_spec', 'doppler_shift']
+__all__ = ['downbin_spec', 'downbin_spec_err', 'degrade_spec', 'doppler_shift', 'instrumental_broadening']
 
 def downbin_spec(specHR, lamHR, lamLR, dlam=None):
     """
@@ -242,3 +242,32 @@ def doppler_shift(lam, flux, velocity):
     f = interpolate.interp1d(lam, flux, fill_value = "extrapolate")
     flux_shifted = f(new_lam)
     return flux_shifted
+
+def instrumental_broadening(specHR, lamHR, res):
+    # gaussian broadening
+    # adapted from https://github.com/sczesla/PyAstronomy/blob/master/src/pyasl/asl/broad.py
+    """
+    Broadens a high res spectrum according to instrumental resolution
+
+    Parameters
+    ----------
+    specHR : array-like
+        Spectrum to be degraded
+    lamHR : array-like
+        High-res wavelength grid
+    res : int
+        Resolution of instrument
+    """
+
+    fwhm = 1.0 / float(res) * np.mean(lamHR)
+    sigma = fwhm / (2.0 * np.sqrt(2. * np.log(2.)))
+
+    len_lam = len(lamHR)
+    dxs = lamHR[1:] - lamHR[0:-1]
+    x_ker = (np.arange(len_lam, dtype=np.int) - np.sum(np.divmod(len_lam, 2)) + 1) * dxs[0]
+    y_ker = 1 / np.sqrt(2.*np.pi*sigma**2) * np.exp(-(0 - x_ker)**2/(2.0 * sigma**2))
+
+    y_ker /= np.sum(y_ker)
+    result = np.convolve(specHR, y_ker, mode="same")
+
+    return result
