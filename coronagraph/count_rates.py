@@ -808,6 +808,7 @@ def count_rates(Ahr, lamhr, solhr,
     Ahr_shifted = doppler_shift(lamhr, Ahr, vs+vp+vb)
     # instrumental broadening
     Ahr_shifted_broadened = instrumental_broadening(Ahr_shifted, lamhr, Res)
+    Ahr_broadened_planetrest = instrumental_broadening(Ahr, lamhr, Res)
 
     # doppler shift the star to total stellar RV
     solhr_shifted_earth = doppler_shift(lamhr, solhr, vs+vb)
@@ -818,6 +819,7 @@ def count_rates(Ahr, lamhr, solhr,
     # Degrade albedo and stellar spectrum
     if COMPUTE_LAM:
         A = convolution_function(Ahr_shifted_broadened, lamhr, lam, dlam=dlam)
+        A_planetrest = convolution_function(Ahr_broadened_planetrest, lamhr, lam, dlam=dlam)
         Fs_toa = convolution_function(solhr_broadened_toa, lamhr, lam, dlam=dlam) # stellar flux at planet TOA
         Fs_earth = convolution_function(solhr_shifted_broadened_earth, lamhr, lam, dlam=dlam)
     elif IMAGE:
@@ -835,7 +837,8 @@ def count_rates(Ahr, lamhr, solhr,
                        (d*u.pc.in_units(u.km)))**2.
     Fs_earth = Bstar * omega_star # stellar flux at earth
 
-    Fp = Fplan(A, Phi, Fs_toa, Rp, d)         # planet flux at telescope; don't doppler shift the star here
+    Fp = Fplan(A_planetrest, Phi, Fs_toa, Rp, d)         # planet flux at telescope; don't doppler shift the star here
+    Fp = doppler_shift(lam, Fp, vs+vp+vb)
     Cratio = FpFs(A, Phi, Rp, r)
 
     T2 = T * Tatmos # two-component throughput (Tatmos not 1 for ground)
