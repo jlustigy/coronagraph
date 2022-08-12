@@ -87,6 +87,9 @@ class Telescope(object):
     dlam : array-like, optional
         Wavelength grid `widths` for spectrograph [microns] (uses ``lammin``, ``lammax``,
         and ``resolution`` to determine if ``None`` provided)
+    AO_mode : string
+        For ground-based observations, choice of ``seeing_limited``, ``ground_layer``,
+        or ``laser_tomography``. Default is None, which sets fpa = 1
 
     Methods
     -------
@@ -105,7 +108,7 @@ class Telescope(object):
                  filter_wheel=None, aperture = "circular", A_collect = None,
                  Tput_lam = None, qe_lam = None, lammin_lenslet = None,
                  diam_circumscribed = None, diam_inscribed = None, lam = None,
-                 dlam = None):
+                 dlam = None, AO_mode=None, fixed_Npix=None):
         self._mode=mode
         self.lammin=lammin
         self.lammax=lammax
@@ -137,6 +140,9 @@ class Telescope(object):
         self.lammin_lenslet = lammin_lenslet
 
         self._filter_wheel=filter_wheel
+
+        self.AO_mode=AO_mode
+        self.fixed_Npix=fixed_Npix
 
         if self._mode == 'Imaging':
             from filters.imager import johnson_cousins
@@ -170,6 +176,245 @@ class Telescope(object):
                    OWA=20.0, emis=0.9, C=1e-9, De=1e-4,
                    DNHpix=3.0, Re=0.1, Dtmax=1.0, X=1.5,
                    q=0.9, filter_wheel=None)
+    @classmethod
+    def default_eelt(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         A_collect = 978, # collecting area m2
+                         D = 39.,
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 85, # size of photometric aperture; set at 85 to approximate 70% encircled energy on PSF
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3)) # num spectral pix x spatial pix
+    
+    @classmethod
+    def default_ultimate(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         A_collect = 20000, # collecting area m2
+                         D = 39.,
+                         R = 150000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 85, # size of photometric aperture; set at 85 to approximate 70% encircled energy on PSF
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3)) # num spectral pix x spatial pix
+
+    @classmethod
+    def default_tmt(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 85, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3))
+
+    @classmethod
+    def default_gmt(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 85, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3))
+
+    @classmethod
+    def default_vlt(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         D = 8.2,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 85, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3))
+
+    @classmethod
+    def ELT_CODEX(cls):
+        # return new class instance
+        return cls(Tput = 0.25,      # Throughput
+                         D = 39.,         # Diameter [m]
+                         R = 135000,          # Resolving power (lam / dlam)
+                         lammin  = 0.37,   # Minimum Wavelength [um]
+                         lammax  = 0.71,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.3, # telescope emissivity
+                         De = 1./60/60, # dark current
+                         Re = 2, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 0.9, # quantum efficiency
+                         AO_mode="laser_tomography")
+    @classmethod
+    def ELT_SIMPLE(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput
+                         D = 39.,         # Diameter [m]
+                         R = 130000,          # Resolving power (lam / dlam)
+                         lammin  = 0.8,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.3, # telescope emissivity
+                         De = 4./60/60, # dark current
+                         Re = 0, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 0.9, # quantum efficiency
+                         AO_mode="laser_tomography")
+    @classmethod
+    def ELT_HIRES_lt950(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 38.5,         # Diameter [m]
+                         R = 150000,          # Resolving power (lam / dlam)
+                         lammin  = 0.33,   # Minimum Wavelength [um]
+                         lammax  = 0.95,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.20, # telescope emissivity
+                         De = 1./60/60, # dark current
+                         Re = 2, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         Tput_lam = ([0.36, 0.40, 0.45, 0.55, 0.65, 0.80, 1.25, 1.65, 2.60],
+                                     [0.13, 0.28, 0.44, 0.58, 0.64, 0.68, 0.80, 0.83, 0.84]),
+                         AO_mode="laser_tomography")
+
+    @classmethod
+    def ELT_HIRES_gt950(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 38.5,         # Diameter [m]
+                         R = 150000,          # Resolving power (lam / dlam)
+                         lammin  = 0.95,   # Minimum Wavelength [um]
+                         lammax  = 2.4,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.20, # telescope emissivity
+                         De = 4./60/60, # dark current
+                         Re = 2, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 1., # quantum efficiency
+                         Tput_lam = ([0.36, 0.40, 0.45, 0.55, 0.65, 0.80, 1.25, 1.65, 2.60],
+                                     [0.13, 0.28, 0.44, 0.58, 0.64, 0.68, 0.80, 0.83, 0.84]),
+                         AO_mode="laser_tomography")
+    @classmethod
+    def TMT_MODHIS(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 30.,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.95,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.2, # telescope emissivity NOT CONFIRMED
+                         De = 4./60/60, # dark current
+                         Re = 0.1, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 0.9, # quantum efficiency
+                         AO_mode="laser_tomography")
+    @classmethod
+    def GMT_GCLEF(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 25.4,         # Diameter [m]
+                         R = 100000,          # Resolving power (lam / dlam)
+                         lammin  = 0.35,   # Minimum Wavelength [um]
+                         lammax  = 0.9,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.2, # telescope emissivity
+                         De = 3./60/60, # dark current
+                         Re = 0, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 0.8, # quantum efficiency
+                         AO_mode="laser_tomography")
+
+    @classmethod
+    def SUBARU_IRD(cls):
+        # HgCdTe detector
+        return cls(Tput = 0.1,      # Throughput for the instrument
+                         D = 8.2,         # Diameter [m]
+                         R = 70000,          # Resolving power (lam / dlam)
+                         lammin  = 0.97,   # Minimum Wavelength [um]
+                         lammax  = 1.75,  # Maximum Wavelength [um]
+                         Tsys = 273.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.2, # telescope emissivity
+                         De = 0.01, # dark current
+                         Re = 0, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 3, # size of photometric aperture
+                         q = 0.8, # quantum efficiency
+                         AO_mode="laser_tomography")
 
     @property
     def mode(self):
@@ -249,6 +494,8 @@ class Planet(object):
         Zodiacal light surface brightness (mag/arcsec**2)
     MezV : float
         exozodiacal light surface brightness (mag/arcsec**2)
+    vp : float
+        planetary radial velocity
 
     Methods
     -------
@@ -259,7 +506,7 @@ class Planet(object):
     # Define a constructor
     def __init__(self, name='earth', star='sun', d=10.0,Nez=1.0,\
                  Rp=1.0, a=1.0, alpha=90.,\
-                 MzV=23.0, MezV=22.0):
+                 MzV=23.0, MezV=22.0, vp=0):
         self.name=name
         self.star=star
         self.distance=d
@@ -270,6 +517,7 @@ class Planet(object):
         self._Phi = None
         self.MzV  = MzV     # zodiacal light surface brightness (mag/arcsec**2)
         self.MezV = MezV     # exozodiacal light surface brightness (mag/arcsec**2)
+        self.vp = vp
 
         if self._Phi is None:
             self._Phi = lambertPhaseFunction(self._alpha)
@@ -323,12 +571,14 @@ class Star(object):
         Stellar radius [Solar Radii]
     """
 
-    def __init__(self, Teff=5780.0, Rs=1.0):
+    def __init__(self, Teff=5780.0, Rs=1.0, vs=0.0):
         self.Teff=Teff
         self.Rs=Rs
+        self.vs=vs
 
     def __str__(self):
         string = 'Star: \n-----\n'+\
             '- Effective Temperature (K) : '+"%s" % (self.Teff)+'\n'+\
-            '- Radius (Solar Radii) : '+"%s" % (self.Rs)
+            '- Radius (Solar Radii) : '+"%s" % (self.Rs)+'\n'+\
+            '- Velocity (km/s) : '+"%s" % (self.vs)
         return string

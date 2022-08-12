@@ -32,7 +32,9 @@ from __future__ import (division as _, print_function as _,
 
 import numpy as np
 import scipy as sp
+import pandas as pd
 from scipy import special
+from scipy.interpolate import interp1d
 import os
 import astropy.units as u
 from astropy.io import fits
@@ -42,7 +44,8 @@ __all__ = ["Fstar", "Fplan", "FpFs", "cplan", "czodi", "cezodi", "cspeck", "cdar
            "construct_lam", "set_quantum_efficiency", "set_dark_current",
            "set_read_noise", "set_lenslet", "set_throughput", "set_atmos_throughput",
            "exptime_element", "lambertPhaseFunction",
-           "get_sky_flux", "planck"]
+           "get_sky_flux", "planck", "set_atmos_throughput_skyflux", "set_AO_fpa",
+           "calculate_Npix"]
 
 def Fstar(lam, Teff, Rs, d, AU=False):
     """
@@ -149,8 +152,8 @@ def cstar(q, fpa, T, lam, dlam, Fstar, D):
         Wavelength [um]
     dlam : float or array-like
         Spectral element width [um]
-    Fplan : float or array-like
-        Planetary flux [W/m**2/um]
+    Fstar : float or array-like
+        Stellar flux [W/m**2/um]
     D : float
         Telescope diameter [m]
 
@@ -740,7 +743,7 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
 
     Returns
     -------
-    q : numpy.array 
+    q : numpy.array
         Wavelength-dependent instrumental quantum efficiency
     """
     Nlam = len(lam)
@@ -860,7 +863,7 @@ def set_lenslet(lam, lammin, diam, X,
         theta[iNIR] = X*lammin_nir/1e6/diam/2.*(180/np.pi*3600.)
     else:
         # Should there be in X multiplying below?
-        theta = lammin/1.e6/diam/2.*(180/np.pi*3600.) # assumes sampled at ~lambda/2D (arcsec)
+        theta = X*lammin/1.e6/diam/2.*(180/np.pi*3600.) # assumes sampled at ~lambda/2D (arcsec)
 
     return theta
 
@@ -951,6 +954,40 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
         plt.show()
     return Tatmos
 
+
+def set_atmos_throughput_skyflux(wl_atmos, Tatmoshr, lam, dlam, convolve, plot=False):
+    """
+    Use SkyFlux Earth atmospheric transmission to set throughput term for
+    radiation through the atmosphere
+
+    Parameters
+    ----------
+    lam : ndarray
+        Wavelength grid
+    dlam : ndarray
+        Wavelength bin width grid
+    convolve : func
+        Function used to degrade/downbin spectrum
+
+    Returns
+    -------
+    Tatmos : numpy.array
+        Atmospheric throughput as a function of wavelength
+    """
+    # Degrade atmospheric transmission to wavelength gridpoints
+    Tatmos = convolve(Tatmoshr, wl_atmos,lam,dlam=dlam)
+    if plot:
+        import matplotlib.pyplot as plt; from matplotlib import gridspec
+        fig1 = plt.figure(figsize=(8,6))
+        gs = gridspec.GridSpec(1,1)
+        ax1 = plt.subplot(gs[0])
+        ax1.plot(lam, Tatmos, c="orange", ls="steps-mid")
+        ax1.set_ylabel("Earth Atmospheric Transmission")
+        ax1.set_xlabel("Wavelength [um]")
+        plt.show()
+    return Tatmos
+
+
 '''
 def get_thermal_ground_intensity(lam, dlam, convolve):
     """
@@ -986,6 +1023,9 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def get_sky_flux():
     """
+    THIS FUNCTION WILL BE DEPRICIATED
+
+
     Get the spectral flux density from the sky viewed at a ground-based
     telescope an an average night. This calculation comes from
     `ESO SKYCALC <https://www.eso.org/observing/etc/bin/gen/form?INS.MODE=swspectr+INS.NAME=SKYCALC>`_
@@ -1066,3 +1106,85 @@ def planck(temp, wav):
     wav = wav * 1e-6
     # Returns B_lambda [W/m^2/um/sr]
     return 1e-6 * (2. * h * c**2) / (wav**5) / (np.exp(h * c / (wav * k * temp)) - 1.0)
+
+
+def set_AO_fpa(X, AO_mode, D, ref_lam=0.76):
+    """
+    Sets the fraction of light captured by the aperture for ground-based
+    observations.
+
+    Parameters
+    ----------
+    theta : float or array-like
+        Angular size of photometric aperture [arcsec]
+    AO_mode : float or array-like
+        Wavelength [microns]
+
+    Returns
+    -------
+    A_fpa (frac)
+    """
+
+    if AO_mode is not None:
+        if AO_mode == "seeing_limited":
+            AO_fl = os.path.join(os.path.dirname(__file__), "ground/seeing_lim.txt")
+        elif AO_mode == "ground_layer":
+            AO_fl = os.path.join(os.path.dirname(__file__), "ground/GLAO.txt")
+        elif AO_mode == "laser_tomography":
+            AO_fl = os.path.join(os.path.dirname(__file__), "ground/LTAO.txt")
+
+        R_ref = X * ref_lam / 1e6 / D / 2 * (180/np.pi*3600.) * 1000 # in mas
+        band_central_lams = [0.36, 0.44, 0.55, 0.64, 0.79, 1.25, 1.65, 2.16, 3.50, 4.80, 10.20, 21.00]
+        band_names = ["U", "B", "V", "R", "I", "J", "H", "K", "L", "M", "N", "Q"]
+        closest_ind = min(range(len(band_central_lams)), key=lambda i: abs(band_central_lams[i]-ref_lam))
+        band = band_names[closest_ind]
+
+        data = pd.read_csv(AO_fl, sep=" ", header=0, comment='#')
+        Rref_table, frac_light_table = data.Rref, data[band]/100 # data are listed as percentages, so divide by 100 to get frac
+        interp_func = interp1d(Rref_table, frac_light_table, fill_value = "extrapolate")
+
+        AO_fpa = interp_func(R_ref)
+        return AO_fpa
+
+    else:
+        AO_fpa = 1.
+        return AO_fpa
+
+def calculate_Npix(X, lam, D, theta, DNhpix, IMAGE=False, CIRC=False):
+    """
+    Calculate number of pixels per wavelength element
+
+    Parameters
+    ----------
+    X : float, optional
+        Width of photometric aperture ( * lambda / diam)
+    lam : float or array-like
+        Wavelength [um]
+    D : float
+        Telescope diameter [m]
+    theta :
+        Angular size of lenslet or pixel [arcsec**2]
+    DNHpix : float, optional
+        Number of horizontal/spatial pixels for dispersed spectrum
+    IMAGE : bool, optional
+        Set to indicate imaging mode (not IFS)
+    CIRC : bool, optional
+        Set to use a circular aperture
+
+    Returns
+    -------
+    Npix :
+        number of pixels per wavelength element
+    """
+    if CIRC:
+        # circular aperture diameter (arcsec**2)
+        Omega = np.pi*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    else:
+        # square aperture diameter (arcsec**2)
+        Omega = 4.*(X*lam*1e-6/D*180.*3600./np.pi)**2.
+    Npix  = Omega/np.pi/theta**2.
+    # If not in imaging mode
+    if ~IMAGE:
+        Npix = 2*DNhpix*Npix
+
+    return Npix

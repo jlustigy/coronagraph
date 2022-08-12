@@ -12,17 +12,19 @@ from __future__ import (division as _, print_function as _,
                 absolute_import as _, unicode_literals as _)
 
 # Import dependent modules
+import astropy.units as u
 import numpy as np
 import sys, os
 import matplotlib.pyplot as plt
+import math
 
-from .degrade_spec import downbin_spec
+from .degrade_spec import downbin_spec, doppler_shift, instrumental_broadening
 from .convolve_spec import convolve_spec
 from .noise_routines import Fstar, Fplan, FpFs, cplan, czodi, cezodi, cspeck, \
     cdark, cread, ctherm, ccic, f_airy, ctherm_earth, construct_lam, \
     set_quantum_efficiency, set_read_noise, set_dark_current, set_lenslet, \
-    set_throughput, set_atmos_throughput, \
-    exptime_element, get_sky_flux
+    set_throughput, set_atmos_throughput, set_atmos_throughput_skyflux, \
+    exptime_element, get_sky_flux, cstar
 from .teleplanstar import Telescope, Planet, Star
 
 __all__ = ['count_rates', 'CoronagraphNoise']
@@ -44,6 +46,8 @@ class CoronagraphNoise(object):
         Initialized object containing ``Planet`` parameters
     star : Star
         Initialized object containing ``Star`` parameters
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
     texp : float
         Exposure time for which to generate synthetic data [hours]
     wantsnr : float, optional
@@ -63,6 +67,8 @@ class CoronagraphNoise(object):
         Set to compute thermal photon counts due to telescope temperature
     GROUND : bool, optional
         Set to simulate ground-based observations through atmosphere
+    ZODI : bool, optional
+        Set to simulate zodiacal and exo-zodiacal photon noise
     vod : bool, optional
         "Valley of Death" red QE parameterization from Robinson et al. (2016)
     set_fpa : float, optional
@@ -80,15 +86,16 @@ class CoronagraphNoise(object):
     :func:`CoronagraphNoise.run_count_rates` is called.
     """
     def __init__(self, telescope = Telescope(), planet = Planet(),
-                 star = Star(), texp = 10.0, wantsnr=10.0, FIX_OWA = False,
+                 star = Star(), skyflux = None, texp = 10.0, wantsnr=10.0, FIX_OWA = False,
                  COMPUTE_LAM = False, SILENT = False, NIR = False,
                  THERMAL = True, GROUND = False, vod=False, set_fpa=None,
-                 roll_maneuver = True):
+                 roll_maneuver = True, ZODI = True):
         """
         """
         self.telescope = telescope
         self.planet = planet
         self.star = star
+        self.skyflux = skyflux
         self.texp = texp
         self.wantsnr = wantsnr
         self.FIX_OWA = FIX_OWA
@@ -100,7 +107,7 @@ class CoronagraphNoise(object):
         self.vod = vod
         self.set_fpa = set_fpa
         self.roll_maneuver = roll_maneuver
-
+        self.ZODI = ZODI
         self._computed = False
 
         return
@@ -188,7 +195,7 @@ class CoronagraphNoise(object):
             assert False, "telescope.aperture is invalid"
 
         # Call count_rates
-        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR = \
+        lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR, cs = \
             count_rates(Ahr, lamhr, solhr,
                         alpha = self.planet.alpha,
                         Phi = self.planet.Phi,
@@ -230,11 +237,18 @@ class CoronagraphNoise(object):
                         lammin_lenslet = self.telescope.lammin_lenslet,
                         NIR    = self.NIR,
                         GROUND = self.GROUND,
+                        ZODI = self.ZODI,
                         THERMAL = self.THERMAL,
                         CIRC = CIRC,
                         roll_maneuver = self.roll_maneuver,
                         SILENT = self.SILENT,
-                        wantsnr = self.wantsnr
+                        wantsnr = self.wantsnr,
+                        skyflux = self.skyflux,
+                        vs = self.star.vs,
+                        vp = self.planet.vp,
+                        vb = 0,
+                        fixed_Npix = self.telescope.fixed_Npix,
+                        texp = self.texp
                     )
 
         # Save output arrays
@@ -243,6 +257,7 @@ class CoronagraphNoise(object):
         self.A       = A
         self.Cratio  = Cratio
         self.cp      = cp
+        self.cs      = cs
         self.csp     = csp
         self.cz      = cz
         self.cez     = cez
@@ -309,10 +324,13 @@ class CoronagraphNoise(object):
 
         # Calculate signal-to-noise
         SNRt  = self.cp * Dt / np.sqrt((self.cp + roll_factor*self.cb) * Dt)
-
+        SNRt_filtered = np.copy(SNRt)
+        SNRt_floor = 1e-5 # introducing a floor to SNR measurements or else you get ridiculous observations
+        SNRt_filter_inds = np.where(SNRt_filtered < SNRt_floor)
+        SNRt_filtered[SNRt_filter_inds] = 0
         # Calculate 1-sigma errors on contrast ratio and albedo
-        Csig = self.Cratio/SNRt
-        Asig = self.A/SNRt
+        Csig = self.Cratio/SNRt_filtered
+        Asig = self.A/SNRt_filtered
 
         # Calculate Gaussian noise
         gaus = np.random.randn(len(self.Cratio))
@@ -382,8 +400,8 @@ class CoronagraphNoise(object):
         #ax.set_yscale("log")
 
         # Set ylim
-        mederr = scale*np.median(self.Asig)
-        medy = scale*np.median(self.Aobs)
+        mederr = scale*np.nanmedian(self.Asig)
+        medy = scale*np.nanmedian(self.Aobs)
         ax.set_ylim([medy - Nsig*mederr, medy + Nsig*mederr])
 
         ylims = ax.get_ylim()
@@ -524,8 +542,9 @@ def count_rates(Ahr, lamhr, solhr,
                 qe_lam = None,
                 lammin_lenslet = None,
                 wantsnr=10.0, FIX_OWA = False, COMPUTE_LAM = False,
-                SILENT = False, NIR = False, THERMAL = False, GROUND = False,
-                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True):
+                SILENT = False, NIR = False, THERMAL = False, GROUND = False, ZODI=True,
+                vod=False, set_fpa=None, CIRC = True, roll_maneuver = True, skyflux=None, vs=0, vp=0, vb=0,
+                fixed_Npix=None, texp=None):
     """
     Runs coronagraph model (Robinson et al., 2016) to calculate planet and noise
     photon count rates for specified telescope and system parameters.
@@ -646,6 +665,14 @@ def count_rates(Ahr, lamhr, solhr,
         This assumes an extra factor of 2 hit to the background noise due to a
         telescope roll maneuver needed to subtract out the background. See
         Brown (2005) for more details.
+    skyflux : SkyFlux
+        Initialized object containing ``SkyFlux`` parameters
+    vs : float
+        stellar radial velocity in km/s
+    vp : float
+        planetary radial velocity relative to star in km/s
+    vb : float
+        barycentric radial velocity in km/s relative to star
 
     Returns
     -------
@@ -770,14 +797,31 @@ def count_rates(Ahr, lamhr, solhr,
         #    pass
         #else:
         # Use SMART calc
-        Tatmos = set_atmos_throughput(lam, dlam, convolution_function)
+        Tatmos = set_atmos_throughput_skyflux(skyflux.lam, skyflux.trans, lam, dlam, convolution_function)
         # Multiply telescope throughput by atmospheric throughput
-        T = T * Tatmos
+        #T = T * Tatmos
+    else:
+        Tatmos = np.ones_like(lam)
+
+
+    # doppler shift Ahr to total planet RV
+    Ahr_shifted = doppler_shift(lamhr, Ahr, vs+vp+vb)
+    # instrumental broadening
+    Ahr_shifted_broadened = instrumental_broadening(Ahr_shifted, lamhr, Res)
+    Ahr_broadened_planetrest = instrumental_broadening(Ahr, lamhr, Res)
+
+    # doppler shift the star to total stellar RV
+    solhr_shifted_earth = doppler_shift(lamhr, solhr, vs+vb)
+    # instrumental broadening
+    solhr_shifted_broadened_earth = instrumental_broadening(solhr_shifted_earth, lamhr, Res)
+    solhr_broadened_toa = instrumental_broadening(solhr, lamhr, Res)
 
     # Degrade albedo and stellar spectrum
     if COMPUTE_LAM:
-        A = convolution_function(Ahr, lamhr, lam, dlam=dlam)
-        Fs = convolution_function(solhr, lamhr, lam, dlam=dlam)
+        A = convolution_function(Ahr_shifted_broadened, lamhr, lam, dlam=dlam)
+        A_planetrest = convolution_function(Ahr_broadened_planetrest, lamhr, lam, dlam=dlam)
+        Fs_toa = convolution_function(solhr_broadened_toa, lamhr, lam, dlam=dlam) # stellar flux at planet TOA
+        Fs_earth = convolution_function(solhr_shifted_broadened_earth, lamhr, lam, dlam=dlam)
     elif IMAGE:
         # Convolve with filter response
         A = convolve_spec(Ahr, lamhr, filters)
@@ -787,29 +831,57 @@ def count_rates(Ahr, lamhr, solhr,
         Fs = solhr
 
     # Compute fluxes
-    #Fs = Fstar(lam, Teff, Rs, r, AU=True) # stellar flux on planet
-    Fp = Fplan(A, Phi, Fs, Rp, d)         # planet flux at telescope
+    Bstar = Fs_earth / ( np.pi*(Rs*u.Rsun.in_units(u.km)/\
+                   (r*u.AU.in_units(u.km)))**2. )
+    omega_star = np.pi*(Rs*u.Rsun.in_units(u.km)/\
+                       (d*u.pc.in_units(u.km)))**2.
+    Fs_earth = Bstar * omega_star # stellar flux at earth
+
+    Fp = Fplan(A_planetrest, Phi, Fs_toa, Rp, d)         # planet flux at telescope; don't doppler shift the star here
+    Fp = doppler_shift(lam, Fp, vs+vp+vb)
     Cratio = FpFs(A, Phi, Rp, r)
 
+    T2 = T * Tatmos # two-component throughput (Tatmos not 1 for ground)
+
     ##### Compute count rates #####
-    cp     =  cplan(q, fpa, T, lam, dlam, Fp, diam_collect)                          # planet count rate
-    cz     =  czodi(q, X, T, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
-    cez    =  cezodi(q, X, T, lam, dlam, diam_collect, r, \
-        Fstar(lam, Teff, Rs,1. , AU=True), Nez, MezV)                                    # exo-zodi count rate
-    csp    =  cspeck(q, T, C, lam, dlam, Fstar(lam,Teff,Rs,d), diam_collect)         # speckle count rate
-    cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
-    cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
+    cp     =  cplan(q, fpa, T2, lam, dlam, Fp, diam_collect)                          # planet count rate
+    cs     =  cstar(q, fpa, T2, lam, dlam, Fs_earth, diam_collect)
+    if ZODI:
+        cz     =  czodi(q, X, T2, lam, dlam, diam_collect, MzV)                           # solar system zodi count rate
+        cez    =  cezodi(q, X, T2, lam, dlam, diam_collect, r, \
+                        Fs_earth, Nez, MezV)                                    # exo-zodi count rate
+    else:
+        cz = np.zeros_like(cs)
+        cez = np.zeros_like(cs)
+    csp    =  cspeck(q, T2, C, lam, dlam, Fs_earth, diam_collect)         # speckle count rate
+
+    if fixed_Npix is None:
+        cD     =  cdark(De, X, lam, diam_collect, theta, DNHpix, IMAGE=IMAGE)            # dark current count rate
+        cR     =  cread(Re, X, lam, diam_collect, theta, DNHpix, Dtmax, IMAGE=IMAGE)     # readnoise count rate
+    else:
+        # if a custom number of pixels per wavelength element is specified
+        cD = fixed_Npix * De
+        cR = fixed_Npix * Re * math.ceil(texp / Dtmax) / (texp*3600)
     if THERMAL:
         cth    =  ctherm(q, X, T, lam, dlam, diam_collect, Tsys, emis)               # internal thermal count rate
     else:
         cth = np.zeros_like(cp)
 
     # Add earth thermal photons if GROUND
-    if GROUND:
-        # Use ESO SKCALC
-        wl_sky, Isky = get_sky_flux()
-        # Convolve to instrument resolution
-        Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+    if skyflux is not None:
+        if GROUND == "ESO":
+            # Use ESO SKCALC
+            wl_sky, Isky = get_sky_flux()
+            # Convolve to instrument resolution
+            Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
+        elif GROUND == "SKYFLUX":
+            # Custom ESO SkyCalc option. See sky_flux.py. Must pass in a skyflux object
+            wl_sky = skyflux.lam
+            Isky = skyflux.flux
+            # Convolve to instrument resolution
+            Itherm = convolution_function(Isky, wl_sky, lam, dlam=dlam)
+
         # Compute Earth thermal photon count rate
         cthe = ctherm_earth(q, X, T, lam, dlam, diam_collect, Itherm)
         # Add earth thermal photon counts to telescope thermal counts
@@ -871,4 +943,4 @@ def count_rates(Ahr, lamhr, solhr,
     # Exposure time to SNR
     DtSNR = exptime_element(lam, cp, cnoise, wantsnr)
 
-    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR
+    return lam, dlam, A, q, Cratio, cp, csp, cz, cez, cD, cR, cth, cc, DtSNR, cs
