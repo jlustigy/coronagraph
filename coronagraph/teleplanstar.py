@@ -197,6 +197,28 @@ class Telescope(object):
                          AO_mode="laser_tomography",
                          IWA=1.22,
                          fixed_Npix=2*(2*3)) # num spectral pix x spatial pix
+    
+    @classmethod
+    def default_ultimate(cls):
+        # return new class instance
+        return cls(Tput = 0.1,      # Throughput
+                         A_collect = 20000, # collecting area m2
+                         D = 39.,
+                         R = 150000,          # Resolving power (lam / dlam)
+                         lammin  = 0.51,   # Minimum Wavelength [um]
+                         lammax  = 2.5,  # Maximum Wavelength [um]
+                         Tsys = 285.,      # Telescope mirror temperature [K]
+                         Tdet = 90., # detector temperature
+                         emis = 0.14, # telescope emissivity
+                         De = 0.00111111, # dark current
+                         Re = 3, # readnoise per pixel
+                         Rc = 0, # clock induced charge
+                         Dtmax = 0.2, # maximum exporure time [hr]
+                         X = 85, # size of photometric aperture; set at 85 to approximate 70% encircled energy on PSF
+                         q = 1., # quantum efficiency
+                         AO_mode="laser_tomography",
+                         IWA=1.22,
+                         fixed_Npix=2*(2*3)) # num spectral pix x spatial pix
 
     @classmethod
     def default_tmt(cls):
