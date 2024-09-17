@@ -710,6 +710,11 @@ def construct_lam(lammin, lammax, Res=None, dlam=None):
         lam = np.arange(lammin, lammax+dlam, dlam)
         dlam = dlam + np.zeros_like(lam)
 
+    # Remove any points beyond max
+    #mask = lam <= lammax
+    #lam = lam[mask]
+    #dlam = dlam[mask]
+
     return lam, dlam
 
 def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
