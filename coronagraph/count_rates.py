@@ -216,7 +216,8 @@ class CoronagraphNoise(object):
                         CIRC = CIRC,
                         set_fpa = self.set_fpa,
                         roll_maneuver = self.roll_maneuver,
-                        SILENT = self.SILENT
+                        SILENT = self.SILENT, 
+                        wantsnr=self.wantsnr
                     )
 
         # Save output arrays
