@@ -1,33 +1,30 @@
 '''
-Routines for simulating coronagraph noise.
+Routines for simulating `coronagraph` model noise terms are listed below. These
+functions are used within the :class:`coronagraph.CoronagraphNoise` and
+:func:`coronagraph.count_rates` functions, but are provided here for
+independent use.
 
-Contents:
+The most important functions are the individual photon count rate terms due to
+different photon sources. This including photons from the planet :func:`cplan`,
+from zodiacal light :func:`czodi` and exo-zodiacal light :func:`cezodi`, from
+coronagraph speckles :func:`cspeck`, from dark current :func:`cdark` and read
+noise :func:`cread`, from thermal emission from the telescope mirror
+:func:`ctherm`, and from clock-induced charge :func:`ccic`.
 
-* :class:`Fstar`
-* :class:`Fplan`
-* :class:`FpFs`
-* :class:`cplan`
-* :class:`czodi`
-* :class:`cezodi`
-* :class:`cspeck`
-* :class:`cdark`
-* :class:`cread`
-* :class:`ccic`
-* :class:`ctherm`
-* :class:`ctherm_earth`
-* :class:`cstar`
-* :class:`f_airy`
-* :class:`construct_lam`
-* :class:`set_quantum_efficiency`
-* :class:`set_dark_current`
-* :class:`set_read_noise`
-* :class:`set_lenslet`
-* :class:`set_throughput`
-* :class:`set_atmos_throughput`
-* :class:`exptime_element`
-* :class:`lambertPhaseFunction`
-* :class:`get_sky_flux`
-* :class:`planck`
+Optional ground-based telescope noise modeling includes extra terms for the
+emission from Earth's atmosphere incident on the telescope,
+:func:`ctherm_earth` (also see :func:`get_sky_flux`), and an additional
+throughput term due to atmospheric extinction :func:`set_atmos_throughput`.
+
+Finally, there are some extra convenience functions:
+Calculate the fraction of Airy power contained in square or circular aperture
+using :func:`f_airy`;
+Construct a wavelength grid by specifying either a spectral resolving power or
+a fixed wavelength bandwidth using :func:`construct_lam`;
+Calculate the Lambertian Phase Function of a planet from the phase angle using
+:func:`lambertPhaseFunction`;
+Calculate the Planck blackbody radiance given temperature and wavelength
+using :func:`planck`.
 '''
 
 from __future__ import (division as _, print_function as _,
@@ -112,7 +109,9 @@ def Fplan(A, Phi, Fstar, Rp, d, AU=False):
 
 def FpFs(A, Phi, Rp, r):
     """
-    Planet-star flux ratio
+    Planet-star flux ratio (Equation 11 from Robinson et al. 2016).
+
+    :math:`\\frac{{F}_{p,\\lambda }}{{F}_{{\\rm{s}},\\lambda }}=A{\\rm{\\Phi }}(\\alpha ){\\left(\\displaystyle \\frac{{R}_{{\\rm{p}}}}{r}\\right)}^{2}`
 
     Parameters
     ----------
@@ -165,7 +164,9 @@ def cstar(q, fpa, T, lam, dlam, Fstar, D):
 
 def cplan(q, fpa, T, lam, dlam, Fplan, D):
     """
-    Exoplanetary photon count rate
+    Exoplanetary photon count rate (Equation 12 from Robinson et al. 2016)
+
+    :math:`{c}_{{\\rm{p}}}=\\pi {{qf}}_{\\mathrm{pa}}{ \\mathcal T }\\displaystyle \\frac{\\lambda }{{hc}}{F}_{{\\rm{p}},\\lambda }(d)\\Delta \\lambda {\\left(\\displaystyle \\frac{D}{2}\\right)}^{2}`
 
     Parameters
     ----------
@@ -194,7 +195,9 @@ def cplan(q, fpa, T, lam, dlam, Fplan, D):
 
 def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
     """
-    Zodiacal light count rate
+    Zodiacal light count rate (Equation 15 from Robinson et al. 2016)
+
+    :math:`{c}_{{\\rm{z}}}=\\pi q{ \\mathcal T }{\\rm{\\Omega }}\\Delta \\lambda \\displaystyle \\frac{\\lambda }{{hc}}{\\left(\\displaystyle \\frac{D}{2}\\right)}^{2}\\displaystyle \\frac{{F}_{\\odot ,\\lambda }(1\\;{\\rm{AU}})}{{F}_{\\odot ,V}(1\\;{\\rm{AU}})}\\;{F}_{0,V}{10}^{-{M}_{{\\rm{z}},V}/2.5}`
 
     Parameters
     ----------
@@ -245,7 +248,9 @@ def czodi(q, X, T, lam, dlam, D, Mzv, SUN=False, CIRC=False):
 
 def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
     """
-    Exozodiacal light count rate
+    Exozodiacal light count rate (Equation 18 from Robinson et al. 2016)
+
+    :math:`{c}_{\\mathrm{ez}} = \\pi q{ \\mathcal T }{X}^{2}\\displaystyle \\frac{{\\lambda }^{4}}{4{hc}{ \\mathcal R }}{\\left(\\displaystyle \\frac{1{\\rm{AU}}}{r}\\right)}^{2}\\displaystyle \\frac{{F}_{{\\rm{s}},\\lambda }(1\\;{\\rm{AU}})}{{F}_{{\\rm{s}},V}(1\\;{\\rm{AU}})}\\\\ \\times \\displaystyle \\frac{{F}_{{\\rm{s}},V}(1\\;{\\rm{AU}})}{{F}_{\\odot ,V}(1\\;{\\rm{AU}})}{N}_{\\mathrm{ez}}{F}_{0,V}{10}^{-{M}_{\\mathrm{ez},V}/2.5}`
 
     Parameters
     ----------
@@ -302,7 +307,9 @@ def cezodi(q, X, T, lam, dlam, D, r, Fstar, Nez, Mezv, SUN=False, CIRC=False):
 
 def cspeck(q, T, C, lam, dlam, Fstar, D):
     """
-    Speckle count rate
+    Speckle count rate (Equation 19 from Robinson et al. 2016)
+
+    :math:`{c}_{\\mathrm{sp}} = \\pi q{ \\mathcal T }C\\Delta \\lambda {F}_{{\\rm{s}},\\lambda }(d)\\displaystyle \\frac{\\lambda }{{hc}}{\\left(\\displaystyle \\frac{D}{2}\\right)}^{2}`
 
     Parameters
     ----------
@@ -624,7 +631,9 @@ def ctherm_earth(q, X, T, lam, dlam, D, Itherm, CIRC=False):
 
 def lambertPhaseFunction(alpha):
     """
-    Calculate the Lambertian Phase Function from the phase angle
+    Calculate the Lambertian Phase Function from the phase angle,
+
+    :math:`{{\\rm{\\Phi }}}_{{\\rm{L}}}(\\alpha )=\\displaystyle \\frac{\\mathrm{sin}\\alpha +(\\pi -\\alpha )\\mathrm{cos}\\alpha }{\\pi }`
 
     Parameters
     ----------
@@ -736,7 +745,7 @@ def set_quantum_efficiency(lam, qe, NIR=False, qe_nir=0.9, vod=False):
 
     Returns
     -------
-    q : array-like
+    q : numpy.array 
         Wavelength-dependent instrumental quantum efficiency
     """
     Nlam = len(lam)
@@ -775,7 +784,7 @@ def set_dark_current(lam, De, lammax, Tdet, NIR=False, De_nir=1e-3):
 
     Returns
     -------
-    De : array-like
+    De : numpy.array
         Dark current as a function of wavelength
     """
     De = np.zeros(len(lam)) + De
@@ -810,7 +819,7 @@ def set_read_noise(lam, Re, NIR=False, Re_nir=2.):
 
     Returns
     -------
-    Re : array-like
+    Re : numpy.array
         Read noise as a function of wavelength
     """
     Re = np.zeros(len(lam)) + Re
@@ -843,7 +852,7 @@ def set_lenslet(lam, lammin, diam, X,
 
     Returns
     -------
-    theta : ndarray
+    theta : numpy.array
         Angular size of lenslet
     """
     Nlam = len(lam)
@@ -863,7 +872,8 @@ def set_lenslet(lam, lammin, diam, X,
 def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
                    FIX_OWA=False, SILENT=False):
     """
-    Set wavelength-dependent telescope throughput
+    Set wavelength-dependent telescope throughput such that it is zero
+    inside the IWA and outside the OWA.
 
     Parameters
     ----------
@@ -881,12 +891,13 @@ def set_throughput(lam, Tput, diam, sep, IWA, OWA, lammin,
         Outer working angle
     lammin : float
         Minimum wavelength
-    FIX_OWA : bool, optional
+    SILENT : bool, optional
+        Suppress printing
 
     Returns
     -------
-    SILENT : bool, optional
-        Suppress printing
+    T : numpy.array
+        Wavelength-dependent throughput
     """
     Nlam = len(lam)
     T    = Tput + np.zeros(Nlam)
@@ -924,7 +935,7 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
 
     Returns
     -------
-    Tatmos : ndarray
+    Tatmos : numpy.array
         Atmospheric throughput as a function of wavelength
     """
     # Read in earth transmission file
@@ -980,6 +991,20 @@ def get_thermal_ground_intensity(lam, dlam, convolve):
 
 def get_sky_flux():
     """
+    Get the spectral flux density from the sky viewed at a ground-based
+    telescope an an average night. This calculation comes from
+    `ESO SKYCALC <https://www.eso.org/observing/etc/bin/gen/form?INS.MODE=swspectr+INS.NAME=SKYCALC>`_
+    and includes contributions from molecular emission of lower atmosphere,
+    emission lines of upper atmosphere, and airglow/residual continuum, but
+    neglects scattered moonlight, starlight, and zodi.
+
+    Returns
+    -------
+    lam_sky : `numpy.array`
+        Wavelength grid [microns]
+    flux_sky : `numpy.array`
+        Flux from the sky [W/m^2/um]
+
     """
     hc    = 1.986446e-25 # h*c (kg*m**3/s**2)
 

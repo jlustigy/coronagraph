@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Simulate exoplanet transmission spectroscopy with a blank mask coronagraph.
-This uses the same telesope and detector as the coronagraph, but does not
-block the star's light. As a result, stellar photons dominate the noise
-budget.
+Simulate exoplanet transmission and/or emission spectroscopy without
+using the coronagraph routines. This uses the same telesope and detector
+parameters as the coronagraph model, but does not suppress the star's light.
+As a result, stellar photons dominate the noise budget.
+
+For transmission spectroscopy calculations use :class:`TransitNoise`,
+and for emission spectroscopy use :class:`EclipseNoise`. You may also get an
+example transmission and emission spectrum of the Earth by calling
+:func:`get_earth_trans_spectrum`.
 
 """
 

@@ -2,7 +2,7 @@ language: python
 
 python:
   #- 2.7
-  - 3.5
+  #- 3.5
   - 3.6
 
 env:
@@ -36,13 +36,17 @@ install:
 
 before_script: # configure a headless display to test plot generation
   - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+#  - "sh -e /etc/init.d/xvfb start"
+#  - sleep 3 # give xvfb some time to start
+
+services:
+  - xvfb
 
 script:
   #- mkdir -p $TEST_DIR
   #- cd $TEST_DIR && python -m pytest --pyargs coronagraph --doctest-modules
-  - py.test -v --cov coronagraph
+  #- py.test -v --cov coronagraph
+  - pytest -v coronagraph/tests --cov=coronagraph
 
 after_success:
   - coveralls

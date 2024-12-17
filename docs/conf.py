@@ -56,13 +56,31 @@ extensions = [
     'm2r'
 ]
 
+nbsphinx_prolog = """
+{% set docname = env.doc2path(env.docname, base=None) %}
+.. note:: This tutorial was generated from a Jupyter notebook that can be
+          downloaded `here <https://github.com/jlustigy/coronagraph/blob/master/docs/{{ docname }}>`_.
+"""
+
 # Custom additions for exceptions
 plot_include_source = False
 plot_html_show_source_link = False
 plot_html_show_formats = False
+
 # Remove ipython notebook prompt numbers
-nbsphinx_prompt_width = 0
+nbsphinx_prolog = """
+.. raw:: html
+
+    <style>
+        .nbinput .prompt,
+        .nboutput .prompt {
+        display: none;
+        }
+    </style>
+"""
+
 napoleon_use_ivar = True
+
 # Make the order of the autodocs in the order they appear in the code
 autodoc_member_order = 'bysource'
 

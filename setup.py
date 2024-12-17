@@ -44,5 +44,19 @@ setup(name='coronagraph',
       dependency_links=[],
       scripts=[],
       include_package_data=True,
-      zip_safe=False
+      zip_safe=False,
+      data_files=["coronagraph/planets/ArcheanEarth_geo_albedo.txt",
+                  "coronagraph/planets/EarlyMars_geo_albedo.txt",
+                  "coronagraph/planets/EarlyVenus_geo_albedo.txt",
+                  "coronagraph/planets/earth_avg_hitran2012_300_100000cm.trnst",
+                  "coronagraph/planets/earth_avg_hitran2012_300_100000cm_toa.rad", 
+                  "coronagraph/planets/Hazy_ArcheanEarth_geo_albedo.txt",
+                  "coronagraph/planets/Jupiter_geo_albedo.txt",
+                  "coronagraph/planets/Mars_geo_albedo.txt",
+                  "coronagraph/planets/Neptune_geo_albedo.txt",
+                  "coronagraph/planets/Saturn_geo_albedo.txt",
+                  "coronagraph/planets/Uranus_geo_albedo.txt",
+                  "coronagraph/planets/Venus_geo_albedo.txt",
+                  "coronagraph/planets/earth_quadrature_radiance_refl.dat"
+                  ]
       )

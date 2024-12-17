@@ -1,3 +1,8 @@
+"""
+The following :class:`Filter` and :class:`Wheel` classes can be used to simulate
+coronagraph observations in imaging mode.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -58,7 +63,7 @@ class Wheel(object):
         """
         setattr(self, name, filt)
 
-    def plot(self, ax=None):
+    def plot(self, ax=None, ylim = None):
         """
         Plot the filter response functions
 
@@ -99,7 +104,11 @@ class Wheel(object):
             #ax1.plot(wl,response, lw=3.0, label=value.name, c=colors[i])
             ax1.fill_between(wl,response, color='purple', alpha=0.3)
             i += 1
-        ax1.set_ylim([0.0,fmax*10.])
+
+        if ylim is None:
+            ax1.set_ylim([0.0,fmax*10.])
+        else:
+            ax1.set_ylim(ylim)
 
         if ax==None:
             return ax1
@@ -114,6 +123,20 @@ class Wheel(object):
 
 
 def read_jc():
+    """
+    Read and parse the Johnson-Cousins filter files.
+
+    Returns
+    -------
+    filters : `numpy.ndarray`
+        Array of filter response functions
+    filter_names : list
+        List of string names for the filters
+    bandcenters : `numpy.array`
+        Wavelength bandcenters for the filters [microns]
+    FWHM : `numpy.array`
+        Full-width at half max for the filters
+    """
     path = 'filters/UBVRI/'
     # set file path relative to this file
     path = os.path.join(os.path.dirname(__file__), path)
@@ -134,7 +157,25 @@ def read_jc():
     return filters, filter_names, bandcenters, FWHM
 
 class johnson_cousins(Wheel):
+    """
+    Instantiate a filter :class:`Wheel` with the Johnson-Cousins filters
+    (U, B, V, R, I).
 
+    Example
+    -------
+    >>> jc = cg.imager.johnson_cousins()
+    >>> jc.plot(ylim = (0.0, 1.2))
+
+    .. plot::
+      :align: center
+
+      import coronagraph as cg
+      jc = cg.imager.johnson_cousins()
+      import matplotlib.pyplot as plt
+      cg.plot_setup.setup()
+      jc.plot(ylim = (0.0, 1.2))
+      plt.show()
+    """
     def __init__(self):
 
         filters, filter_names, bandcenters, FWHM = read_jc()
@@ -147,6 +188,22 @@ class johnson_cousins(Wheel):
 
 
 def read_landsat():
+    """
+    Read and parse the LANDSAT filter files.
+
+    Returns
+    -------
+    wl : list
+        List of wavelength grids for each filter [microns]
+    response : list
+        Filter responses for each filter
+    LANDSAT_names : list
+        Names of each LANDSAT filter
+    FWHM : `numpy.array`
+        Full-width at half max for the filters
+    bandcenters : `numpy.array`
+        Wavelength bandcenters for the filters [microns]
+    """
     path = 'filters/LANDSAT/'
     # set file path relative to this file
     path    = os.path.join(os.path.dirname(__file__), path)
@@ -170,7 +227,9 @@ def read_landsat():
     return wl, response, LANDSAT_names, FWHM, bandcenters
 
 class landsat(Wheel):
-
+    """
+    Instantiate a filter :class:`Wheel` with the LANDSAT filters.
+    """
     def __init__(self):
 
         wl, response, LANDSAT_names, FWHM, bandcenters = read_landsat()
@@ -187,6 +246,20 @@ class landsat(Wheel):
 
 
 def read_jc2():
+    """
+    Read and parse the Johnson-Cousins Bessel filter files.
+
+    Returns
+    -------
+    filters : `numpy.ndarray`
+        Array of filter response functions
+    filter_names : list
+        List of string names for the filters
+    bandcenters : `numpy.array`
+        Wavelength bandcenters for the filters [microns]
+    FWHM : `numpy.array`
+        Full-width at half max for the filters
+    """
     path = 'filters/UBVRI2/'
     # set file path relative to this file
     path = os.path.join(os.path.dirname(__file__), path)
@@ -207,7 +280,10 @@ def read_jc2():
     return filters, filter_names, bandcenters, FWHM
 
 class johnson_cousins2(Wheel):
-
+    """
+    Instantiate a filter :class:`Wheel` with the Johnson-Cousins Bessel filters
+    (U, B, V, R, I).
+    """
     def __init__(self):
 
         filters, filter_names, bandcenters, FWHM = read_jc2()
