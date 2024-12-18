@@ -9,6 +9,7 @@ from __future__ import (division as _, print_function as _,
 
 import numpy as np
 from .noise_routines import lambertPhaseFunction
+from warnings import warn
 
 __all__ = ['Telescope', 'Planet', 'Star']
 
@@ -156,6 +157,7 @@ class Telescope(object):
     @classmethod
     def default_luvoir(cls):
         # Return new class instance
+        warn('These LUVOIR parameters are significantly outdated and do not reflect final values!', DeprecationWarning, stacklevel=2)
         return cls(mode="IFS", lammin=0.5, lammax=1.0, R=70.,
                    Tput=0.05, D=12., Tsys=150., Tdet=50., IWA=3.0,
                    OWA=20.0, emis=0.9, C=1e-10, De=1e-4,
@@ -164,7 +166,7 @@ class Telescope(object):
 
     @classmethod
     def default_habex(cls):
-        print("These HabEx parameters are not confirmed yet!")
+        warn('These HabEx parameters are significantly outdated and do not reflect final values!', DeprecationWarning, stacklevel=2)
         # Return new class instance
         return cls(mode="IFS", lammin=0.4, lammax=2.5, R=70.,
                    Tput=0.05, D=6., Tsys=150., Tdet=50., IWA=3.0,
@@ -174,7 +176,7 @@ class Telescope(object):
 
     @classmethod
     def default_wfirst(cls):
-        print("These WFIRST parameters are not confirmed yet!")
+        warn('These WFIRST (now Roman CGI) parameters are significantly outdated and do not reflect final values!', DeprecationWarning, stacklevel=2)
         # Return new class instance
         return cls(mode="IFS", lammin=0.6, lammax=1.0, R=70.,
                    Tput=0.05, D=2.4, Tsys=150., Tdet=50., IWA=3.0,
@@ -343,3 +345,170 @@ class Star(object):
             '- Effective Temperature (K) : '+"%s" % (self.Teff)+'\n'+\
             '- Radius (Solar Radii) : '+"%s" % (self.Rs)
         return string
+
+################################################################################
+# DEFAULT LUVOIR from Final Report Appendix
+################################################################################
+
+def get_default_luvoir(architecture = "A", channel = "vis"):
+    """
+    Returns the :class:`coronagraph.Telescope` for the `architecture` and
+    `channel` specified by the user. 
+
+    Parameters
+    ----------
+    architecture : str
+        Telescope architecture, options: "A", "B", "A (APLC1)", "B (PIAA1)", "B (DMVC1)" 
+    channel : str
+        Wavelength channel, options: "UV", "vis", "NIR" 
+
+    Returns
+    -------
+    :class:`coronagraph.Telescope` 
+        Initialized telescope object with parameters specified 
+    """
+
+    import os
+    HERE = os.path.abspath(os.path.split(__file__)[0])
+
+    # Create default telescope
+    telescope = Telescope()
+
+    # Set paramaters for Architecture A
+    if architecture.lower().startswith("a"):
+        telescope.diameter = 15.0
+        telescope.contrast = 1e-10
+        telescope.A_collect = 155.2
+        telescope.diam_inscribed = 13.5
+        telescope.Tsys = 270.
+        telescope.OWA = 64.
+        telescope.qe = 0.9 * 0.75   # Detector QE * charge transfer term
+        if channel.lower() == "vis".lower():
+            # Visible channel parameters:
+            telescope.IWA = 3.5
+            telescope.resolution = 140.
+            telescope.throughput = 0.18
+            telescope.darkcurrent = 3e-5
+            telescope.readnoise = 0.0
+            telescope.lammin = 0.515
+            telescope.lammax = 1.030
+            telescope.Rc = 1.3e-3     # Clock induced charge [counts/pixel/photon]
+        elif channel.lower() == "UV".lower():
+            # UV channel parameters:
+            telescope.IWA = 4.0
+            telescope.resolution = 7.
+            telescope.throughput = 0.18
+            telescope.darkcurrent = 3e-5
+            telescope.readnoise = 0.0
+            telescope.lammin = 0.2
+            telescope.lammax = 0.525
+            telescope.Rc = 1.3e-3     # Clock induced charge [counts/pixel/photon]
+        elif channel.lower() == "NIR".lower():
+            # NIR channel parameters:
+            telescope.IWA = 3.5
+            telescope.resolution = 70.
+            telescope.throughput = 0.18
+            telescope.darkcurrent = 2e-3
+            telescope.readnoise = 2.5
+            telescope.lammin = 1.0
+            telescope.lammax = 2.0
+            telescope.Rc = 0.0       # Clock induced charge [counts/pixel/photon]
+        else:
+            print("Unknown `channel`")
+            return None
+
+    # Set paramaters for Architecture B
+    elif architecture.lower().startswith("b"):
+        telescope.diameter = 8.0
+        telescope.contrast = 1e-10
+        telescope.A_collect = 43.4
+        telescope.diam_inscribed = 6.7
+        telescope.Tsys = 270.
+        telescope.OWA = 64.
+        telescope.qe = 0.9 * 0.75   # Detector QE * charge transfer term
+        if channel.lower() == "vis".lower():
+            # Visible channel parameters:
+            telescope.IWA = 2.0
+            telescope.resolution = 140.
+            telescope.throughput = 0.48
+            telescope.darkcurrent = 3e-5
+            telescope.readnoise = 0.0
+            telescope.lammin = 0.515
+            telescope.lammax = 1.030
+            telescope.Rc = 1.3e-3     # Clock induced charge [counts/pixel/photon]
+        elif channel.lower() == "UV".lower():
+            # UV channel parameters:
+            telescope.IWA = 4.0
+            telescope.resolution = 7.
+            telescope.throughput = 0.48
+            telescope.darkcurrent = 3e-5
+            telescope.readnoise = 0.0
+            telescope.lammin = 0.200
+            telescope.lammax = 0.525
+            telescope.Rc = 1.3e-3     # Clock induced charge [counts/pixel/photon]
+        elif channel.lower() == "NIR".lower():
+            # NIR channel parameters:
+            telescope.IWA = 2.0
+            telescope.resolution = 70.
+            telescope.throughput = 0.48
+            telescope.darkcurrent = 2e-3
+            telescope.readnoise = 2.5
+            telescope.lammin = 1.00
+            telescope.lammax = 2.00
+            telescope.Rc = 0.0       # Clock induced charge [counts/pixel/photon]
+        else:
+            print("Unknown `channel`")
+            return None
+    else:
+        print("Unknown `architecture`")
+        return None
+
+    # Set wavelength-dependent throughput for the optics
+    tpath = os.path.join(HERE, "inputs/LUVOIR_coronagraphs/LUVOIR_optical_throughput.txt")
+    data = np.genfromtxt(tpath, skip_header=1)
+    midlamt = 1e-3 * data[:,2]
+    Tput_optics = data[:,3]
+    telescope.Tput_lam = (midlamt, Tput_optics)
+
+    # Specify type of coronagraph:
+    # set separation (lam/D) dependent throughput and contrast based on
+    if "aplc" in architecture.lower():
+        try:
+            # Extract the int following the coronagraph name
+            imask = int(architecture.lower().split("aplc")[-1][:-1])
+        except ValueError:
+            imask = 1
+        # Read-in APLC files
+        c_aplc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/APLC_Contrast%i.txt" %imask), skiprows=1)
+        t_aplc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/APLC_Throughput%i.txt" %imask), skiprows=1)
+        # Set quantities for coronagraph
+        telescope.C_sep = (c_aplc[:,0], c_aplc[:,1])
+        telescope.Tput_sep = (t_aplc[:,0], t_aplc[:,1])
+    elif "dmvc" in architecture.lower():
+        try:
+            # Extract the int following the coronagraph name
+            imask = int(architecture.lower().split("dmvc")[-1][:-1])
+        except ValueError:
+            imask = 1
+        # Read-in DMVC files
+        c_dmvc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/DMVC_Contrast%s.txt" %imask), skiprows=1)
+        t_dmvc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/DMVC_Throughput%s.txt" %imask), skiprows=1)
+        # Set quantities for coronagraph
+        telescope.C_sep = (c_dmvc[:,0], c_dmvc[:,1])
+        telescope.Tput_sep = (t_dmvc[:,0], t_dmvc[:,1])
+    elif "piaa" in architecture.lower():
+        try:
+            # Extract the int following the coronagraph name
+            imask = int(architecture.lower().split("piaa")[-1][:-1])
+        except ValueError:
+            imask = 1
+        # Read-in PIAA files
+        c_piaa = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/PIAA_Contrast%i.txt" %imask), skiprows=1)
+        t_piaa = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/PIAA_Throughput%i.txt" %imask), skiprows=1)
+        # Set quantities for coronagraph
+        telescope.C_sep = (c_piaa[:,0], c_piaa[:,1])
+        telescope.Tput_sep = (t_piaa[:,0], t_piaa[:,1])
+    else:
+        pass
+
+    return telescope
