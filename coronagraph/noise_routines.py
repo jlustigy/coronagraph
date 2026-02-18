@@ -950,7 +950,7 @@ def set_atmos_throughput(lam, dlam, convolve, plot=False):
         fig1 = plt.figure(figsize=(8,6))
         gs = gridspec.GridSpec(1,1)
         ax1 = plt.subplot(gs[0])
-        ax1.plot(lam, Tatmos, c="orange", ls="steps-mid")
+        ax1.plot(lam, Tatmos, c="orange", ds="steps-mid")
         ax1.set_ylabel("Earth Atmospheric Transmission")
         ax1.set_xlabel("Wavelength [um]")
         plt.show()

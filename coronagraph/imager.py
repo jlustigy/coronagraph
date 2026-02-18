@@ -150,7 +150,9 @@ def read_jc():
     R[:,0] = R[:,0]/1e4
     I = np.genfromtxt(path+'bess-i.pass')
     I[:,0] = I[:,0]/1e4
-    filters = np.array([U,B,V,R,I])
+    
+    # Making this an array does not work because each filter could have a different number of rows. Leave as python list.
+    filters = [U,B,V,R,I]
     filter_names = ['U','B','V','R','I']
     bandcenters = np.array([365.6, 435.3, 547.7, 634.9, 800.0]) / 1e3
     FWHM = np.array([34.0, 78.1, 99.1, 106.56, 289.2]) / 1e3
@@ -273,7 +275,10 @@ def read_jc2():
     R[:,0] = R[:,0]/1e3
     I = np.genfromtxt(path+'Bessel_I-1.txt', skip_header=1)
     I[:,0] = I[:,0]/1e3
-    filters = np.array([U[::-1,:],B[::-1,:],V[::-1,:],R[::-1,:],I[::-1,:]])
+    
+    # Making this an array does not work because each filter could have a different number of rows. Leave as python list.
+    filters = [U[::-1,:],B[::-1,:],V[::-1,:],R[::-1,:],I[::-1,:]]
+
     filter_names = ['U','B','V','R','I']
     bandcenters = np.array([365.6, 435.3, 547.7, 634.9, 879.7]) / 1e3
     FWHM = np.array([34.0, 78.1, 99.1, 106.56, 289.2]) / 1e3

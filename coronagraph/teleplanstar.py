@@ -464,7 +464,7 @@ def get_default_luvoir(architecture = "A", channel = "vis"):
         return None
 
     # Set wavelength-dependent throughput for the optics
-    tpath = os.path.join(HERE, "inputs/LUVOIR_coronagraphs/LUVOIR_optical_throughput.txt")
+    tpath = os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "LUVOIR_optical_throughput.txt")
     data = np.genfromtxt(tpath, skip_header=1)
     midlamt = 1e-3 * data[:,2]
     Tput_optics = data[:,3]
@@ -479,8 +479,8 @@ def get_default_luvoir(architecture = "A", channel = "vis"):
         except ValueError:
             imask = 1
         # Read-in APLC files
-        c_aplc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/APLC_Contrast%i.txt" %imask), skiprows=1)
-        t_aplc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/APLC_Throughput%i.txt" %imask), skiprows=1)
+        c_aplc = np.loadtxt(os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "APLC_Contrast%i.txt" %imask), skiprows=1)
+        t_aplc = np.loadtxt(os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "APLC_Throughput%i.txt" %imask), skiprows=1)
         # Set quantities for coronagraph
         telescope.C_sep = (c_aplc[:,0], c_aplc[:,1])
         telescope.Tput_sep = (t_aplc[:,0], t_aplc[:,1])
@@ -491,8 +491,8 @@ def get_default_luvoir(architecture = "A", channel = "vis"):
         except ValueError:
             imask = 1
         # Read-in DMVC files
-        c_dmvc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/DMVC_Contrast%s.txt" %imask), skiprows=1)
-        t_dmvc = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/DMVC_Throughput%s.txt" %imask), skiprows=1)
+        c_dmvc = np.loadtxt(os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "DMVC_Contrast%s.txt" %imask), skiprows=1)
+        t_dmvc = np.loadtxt(os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "DMVC_Throughput%s.txt" %imask), skiprows=1)
         # Set quantities for coronagraph
         telescope.C_sep = (c_dmvc[:,0], c_dmvc[:,1])
         telescope.Tput_sep = (t_dmvc[:,0], t_dmvc[:,1])
@@ -503,8 +503,8 @@ def get_default_luvoir(architecture = "A", channel = "vis"):
         except ValueError:
             imask = 1
         # Read-in PIAA files
-        c_piaa = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/PIAA_Contrast%i.txt" %imask), skiprows=1)
-        t_piaa = np.loadtxt(os.path.join(HERE, "inputs/LUVOIR_coronagraphs/PIAA_Throughput%i.txt" %imask), skiprows=1)
+        c_piaa = np.loadtxt(os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "PIAA_Contrast%i.txt" %imask), skiprows=1)
+        t_piaa = np.loadtxt(os.path.join(HERE, "inputs", "LUVOIR_coronagraphs", "PIAA_Throughput%i.txt" %imask), skiprows=1)
         # Set quantities for coronagraph
         telescope.C_sep = (c_piaa[:,0], c_piaa[:,1])
         telescope.Tput_sep = (t_piaa[:,0], t_piaa[:,1])

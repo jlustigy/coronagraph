@@ -473,7 +473,7 @@ class EclipseNoise(object):
         Only returns `fig` and `ax` is ``ax0 is None``
         """
 
-        m = [self.SNRn > SNR_threshold]
+        m = self.SNRn > SNR_threshold
 
         scale = 1e6
 
@@ -485,7 +485,7 @@ class EclipseNoise(object):
         else:
             ax = ax0
 
-        #ax.plot(lam, scale*RpRs2, alpha = 1.0, ls = "steps-mid")
+        #ax.plot(lam, scale*RpRs2, alpha = 1.0, ds = "steps-mid")
         ax.errorbar(self.lam[m], scale*self.obs[m], yerr=scale*self.sig[m], zorder = 100, **err_kws)
         #ax.set_yscale("log")
 
@@ -516,7 +516,7 @@ class EclipseNoise(object):
         else:
             return
 
-    def plot_SNRn(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
+    def plot_SNRn(self, ax0 = None, plot_kws = {"ds" : "steps-mid"}):
         """
         Plot the S/N on the Eclipse Depth as a function of wavelength.
 
@@ -556,7 +556,7 @@ class EclipseNoise(object):
             return
 
     def plot_ntran_to_wantsnr(self, ax0 = None,
-                              plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+                              plot_kws = {"ds" : "steps-mid", "alpha" : 1.0}):
         """
         Plot the number of eclipses to get a SNR on the eclipse depth as
         a function of wavelength.
@@ -596,7 +596,7 @@ class EclipseNoise(object):
         else:
             return
 
-    def plot_time_to_wantsnr(self, ax0 = None, plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+    def plot_time_to_wantsnr(self, ax0 = None, plot_kws = {"ds" : "steps-mid", "alpha" : 1.0}):
         """
         Plot the time to get a SNR on the eclipse depth as
         a function of wavelength.
@@ -1108,7 +1108,7 @@ class TransitNoise(object):
         Only returns `fig` and `ax` is ``ax0 is None``
         """
 
-        m = [self.SNRn > SNR_threshold]
+        m = self.SNRn > SNR_threshold
 
         scale = 1e6
 
@@ -1120,7 +1120,7 @@ class TransitNoise(object):
         else:
             ax = ax0
 
-        #ax.plot(lam, scale*RpRs2, alpha = 1.0, ls = "steps-mid")
+        #ax.plot(lam, scale*RpRs2, alpha = 1.0, ds = "steps-mid")
         ax.errorbar(self.lam[m], scale*self.obs[m], yerr=scale*self.sig[m], zorder = 100, **err_kws)
         #ax.set_yscale("log")
 
@@ -1150,7 +1150,7 @@ class TransitNoise(object):
         else:
             return
 
-    def plot_SNRn(self, ax0 = None, plot_kws = {"ls" : "steps-mid"}):
+    def plot_SNRn(self, ax0 = None, plot_kws = {"ds" : "steps-mid"}):
         """
         Plot the S/N on the Transit Depth as a function of wavelength.
 
@@ -1190,7 +1190,7 @@ class TransitNoise(object):
             return
 
     def plot_ntran_to_wantsnr(self, ax0 = None,
-                              plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+                              plot_kws = {"ds" : "steps-mid", "alpha" : 1.0}):
         """
         Plot the number of transits to get a SNR on the transit depth as
         a function of wavelength.
@@ -1230,7 +1230,7 @@ class TransitNoise(object):
         else:
             return
 
-    def plot_time_to_wantsnr(self, ax0 = None, plot_kws = {"ls" : "steps-mid", "alpha" : 1.0}):
+    def plot_time_to_wantsnr(self, ax0 = None, plot_kws = {"ds" : "steps-mid", "alpha" : 1.0}):
         """
         Plot the time to get a SNR on the transit depth as
         a function of wavelength.
@@ -1333,16 +1333,14 @@ def get_earth_trans_spectrum():
 
     # Read in transit data
     here = os.path.join(os.path.dirname(__file__))
-    plus = "planets/earth_avg_hitran2012_300_100000cm.trnst"
-    data = np.loadtxt(os.path.join(here, plus))
+    data = np.loadtxt(os.path.join(here, "planets", "earth_avg_hitran2012_300_100000cm.trnst"))
 
     # Parse
     lam = data[:,0]
     tdepth = data[:,3]
 
     # Read in flux data
-    plus = "planets/earth_avg_hitran2012_300_100000cm_toa.rad"
-    data = np.loadtxt(os.path.join(here, plus))
+    data = np.loadtxt(os.path.join(here, "planets", "earth_avg_hitran2012_300_100000cm_toa.rad"))
 
     # Parse
     fplan = data[:,3]

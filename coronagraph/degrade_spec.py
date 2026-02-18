@@ -209,7 +209,7 @@ def degrade_spec(specHR, lamHR, lamLR, dlam=None):
             #print speci
             lami = np.hstack([lamS,lamHI[iss],lamL])
             #print lami
-            specs = np.trapz(speci,x=lami) / (lamL - lamS)
+            specs = np.trapezoid(speci,x=lami) / (lamL - lamS)
             #print specs
 
         # Insert result into output array

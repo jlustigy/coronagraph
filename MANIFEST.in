@@ -2,3 +2,7 @@
 include LICENSE
 include *.md
 recursive-include coronagraph *.py
+recursive-include coronagraph/inputs *
+recursive-include coronagraph/filters *
+recursive-include coronagraph/ground *
+recursive-include coronagraph/planets *

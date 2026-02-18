@@ -97,7 +97,7 @@ def run():
     ################################
 
     # Read-in spectrum file
-    fn = os.path.join(RELPATH, '../coronagraph/planets/earth_quadrature_radiance_refl.dat')
+    fn = os.path.join(RELPATH, os.pardir, "coronagraph", "planets", "earth_quadrature_radiance_refl.dat")
     model = np.loadtxt(fn, skiprows=8)
     lamhr = model[:,0]
     radhr = model[:,1]
@@ -158,7 +158,7 @@ def run():
                 ' at '+"{:.2f}".format(lam[ireflam])+r' $\mu$m'
 
         # Draw plot
-        ax.plot(lam, Cratio*1e9, lw=2.0, color="purple", alpha=0.7, ls="steps-mid")
+        ax.plot(lam, Cratio*1e9, lw=2.0, color="purple", alpha=0.7, ds="steps-mid")
         ax.errorbar(lam, spec*1e9, yerr=sig*1e9, fmt='o', color='k', ms=5.0)
 
         # Set labels

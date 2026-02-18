@@ -447,7 +447,7 @@ def plot_coronagraph_spectrum(wl, ofrat, sig, itime, d, ref_lam, SNR,
             ' at '+"{:.2f}".format(wl[ireflam])+r' $\mu$m'
 
     if truth is not None:
-        ax.plot(wl, truth*1e9, lw=2.0, color="purple", alpha=0.7, ls="steps-mid")
+        ax.plot(wl, truth*1e9, lw=2.0, color="purple", alpha=0.7, ds="steps-mid")
     ax.errorbar(wl, ofrat*1e9, yerr=sig*1e9, fmt='o', color='k', ms=5.0)
 
     ax.set_ylabel(r"F$_p$/F$_s$ ($\times 10^9$)")
@@ -769,7 +769,7 @@ def plot_interactive_band(lam, Cratio, cp, cb, itime=None, SNR=5.0):
     #    plot_text = plot_text + '\n SNR = '+"{:.1f}".format(ref_SNR)+\
     #        ' at '+"{:.2f}".format(wl[ireflam])+r' $\mu$m'
 
-    ax.plot(lam, Cratio*1e9, "-", lw=2.0, color=OGC, alpha=0.7, ls="steps-mid")
+    ax.plot(lam, Cratio*1e9, "-", lw=2.0, color=OGC, alpha=0.7, ds="steps-mid")
     ax.scatter(lam, Cratio*1e9, s=40.0, color=OGC, alpha=1.0, picker=True)
     #ax.errorbar(lam, spec*1e9, yerr=sig*1e9, fmt='o', color='k', ms=5.0)
 

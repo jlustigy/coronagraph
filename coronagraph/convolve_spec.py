@@ -4,7 +4,6 @@ from __future__ import (division as _, print_function as _,
 import numpy as np
 import scipy as sp
 from .degrade_spec import degrade_spec
-from scipy import interp
 from scipy import ndimage
 
 __all__ = ['convolve_spec']
@@ -87,7 +86,7 @@ def convolve_filter_response(wlh, fh, wlf, response, degrade=False):
 def tophat_instrument(Fp, wl_hr, wlgrid, FWHM=0.035):
 
     Fratio11=tophatfold(wl_hr, Fp, FWHM)
-    Fratio=interp(wlgrid,wl_hr,Fratio11)
+    Fratio=np.interp(wlgrid,wl_hr,Fratio11)
 
     return Fratio
 
@@ -96,12 +95,12 @@ def tophatfold(lam, flux, FWHM=0.035):
     lammax=max(lam)
     dlambda=FWHM/17.
     interlam=np.arange(lammin,lammax,dlambda)
-    interflux=interp(interlam,lam,flux)
+    interflux=np.interp(interlam,lam,flux)
 
     #convovle flux array with gaussian--use smooth
     fold=sp.ndimage.filters.uniform_filter(interflux,size=17)
 
     #interpolate back to original grid
-    fluxfold=interp(lam,interlam,fold)
+    fluxfold=np.interp(lam,interlam,fold)
 
     return fluxfold
